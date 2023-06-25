@@ -1,10 +1,7 @@
 package io.wisoft.wasabi.domain.tag.persistence;
 
 import io.wisoft.wasabi.domain.usage.persistence.Usage;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +19,7 @@ public class Tag {
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "tag")
