@@ -18,10 +18,16 @@ public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String name;
-    private String photoPath;
+
+    @Column(nullable = false)
+    private String profileImage;
+
+    @Column(nullable = false)
     private String oAuthId;
 
     @OneToMany(mappedBy = "member")
@@ -30,16 +36,16 @@ public class Member {
     @OneToMany(mappedBy = "board")
     private Set<Board> boards = new HashSet<>();
 
-    public static Member registerMember(
+    public static Member createMember(
             final String email,
             final String name,
-            final String photoPath,
+            final String profileImage,
             final String oAuthId) {
 
         final Member member = new Member();
         member.email = email;
         member.name = name;
-        member.photoPath = photoPath;
+        member.profileImage = profileImage;
         member.oAuthId = oAuthId;
 
         return member;

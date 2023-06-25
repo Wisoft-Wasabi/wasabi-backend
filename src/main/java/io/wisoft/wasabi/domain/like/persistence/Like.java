@@ -38,7 +38,7 @@ public class Like {
         member.getLikes().add(this);
     }
 
-    public static Like thumbsUpBro(
+    public static Like createLike(
             final Board board,
             final Member member) {
 
