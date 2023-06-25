@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 import java.util.HashSet;
 import java.util.Set;
 
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.*;
-import static lombok.AccessLevel.*;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @Entity
@@ -23,9 +23,11 @@ public class Board {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
-    private String body;
+    @Column(nullable = false)
+    private String content;
 
     private int views;
 
@@ -39,22 +41,26 @@ public class Board {
     @OneToMany(mappedBy = "board")
     private Set<Usage> usages = new HashSet<>();
 
+    @OneToMany(mappedBy = "board")
+    private Set<BoardImage> boardImages = new HashSet<>();
+
     public void setMember(final Member member) {
         this.member = member;
         member.getBoards().add(this);
     }
 
-    public static Board writeBoard(
+    public static Board createBoard(
             final String title,
-            final String body,
-            final int views,
-            final Member member) {
+            final String content,
+            final Member member,
+            final Set<BoardImage> boardImages) {
 
         final Board board = new Board();
         board.title = title;
-        board.body = body;
-        board.views = views;
+        board.content = content;
+        board.views = 0;
         board.setMember(member);
+        board.boardImages = boardImages;
 
         return board;
     }
