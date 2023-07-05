@@ -40,6 +40,7 @@ public class Member {
     @Column(nullable = false)
     private Role role;
 
+
     @OneToMany(mappedBy = "member")
     private Set<Like> likes = new HashSet<>();
 
@@ -55,6 +56,7 @@ public class Member {
             final Boolean activation,
             final Role role
     ) {
+
         final Member member = new Member();
         member.email = email;
         member.password = password;
