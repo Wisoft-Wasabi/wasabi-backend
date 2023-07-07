@@ -19,11 +19,6 @@ public record CreateMemberRequest(
         @NotBlank String phoneNumber,
         @NotNull Role role
 ) {
-    public CreateMemberRequest {
-        if (!password.equals(checkPassword)) {
-            throw new IllegalArgumentException("비밀번호와 확인 비밀번호가 일치하지 않습니다.");
-        }
-    }
 
     public String getEmail() {
         return email;
