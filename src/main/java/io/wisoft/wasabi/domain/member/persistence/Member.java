@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.domain.member.persistence;
 
 import io.wisoft.wasabi.domain.auth.Role;
+import io.wisoft.wasabi.domain.auth.dto.CreateMemberRequest;
 import io.wisoft.wasabi.domain.board.persistence.Board;
 import io.wisoft.wasabi.domain.like.persistence.Like;
 import jakarta.persistence.*;
@@ -47,24 +48,23 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private Set<Board> boards = new HashSet<>();
 
+    public String getEmail() {
+        return email;
+    }
+
     public static Member createMember(
-            final String email,
-            final String password,
-            final String name,
-            final String phoneNumber,
-            final LocalDateTime createAt,
-            final Boolean activation,
-            final Role role
+            CreateMemberRequest request
     ) {
 
         final Member member = new Member();
-        member.email = email;
-        member.password = password;
-        member.name = name;
-        member.phoneNumber = phoneNumber;
-        member.createAt = createAt;
-        member.activation = activation;
-        member.role = role;
+
+        member.setEmail(request.getEmail());
+        member.setPassword(request.getPassword());
+        member.setName(request.getName());
+        member.setPhoneNumber(request.getPhoneNumber());
+        member.setActivation(false);
+        member.setRole(request.getRole());
+        member.setCreateAt(LocalDateTime.now());
 
         return member;
     }
@@ -110,5 +110,9 @@ public class Member {
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
