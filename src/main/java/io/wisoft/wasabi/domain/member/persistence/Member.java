@@ -1,13 +1,11 @@
 package io.wisoft.wasabi.domain.member.persistence;
 
 import io.wisoft.wasabi.domain.auth.Role;
-import io.wisoft.wasabi.domain.auth.dto.CreateMemberRequest;
+import io.wisoft.wasabi.domain.auth.dto.MemberSignupRequestDto;
 import io.wisoft.wasabi.domain.board.persistence.Board;
 import io.wisoft.wasabi.domain.like.persistence.Like;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -48,56 +46,38 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private Set<Board> boards = new HashSet<>();
 
-    public String getEmail() {
-        return email;
-    }
+
 
     public static Member createMember(
-            CreateMemberRequest request
+            MemberSignupRequestDto request
     ) {
 
         final Member member = new Member();
 
-        member.setEmail(request.getEmail());
-        member.setPassword(request.getPassword());
-        member.setName(request.getName());
-        member.setPhoneNumber(request.getPhoneNumber());
-        member.setActivation(false);
-        member.setRole(request.getRole());
-        member.setCreateAt(LocalDateTime.now());
+        // 2. DTO 값 기반으로 member 생성.
+        // 3. 생성 중 예외 발생 시 예외 처리.
+
+        member.email = request.email();
+        member.password = BCrypt.hashpw(request.password(), BCrypt.gensalt());
+        member.name = request.name();
+        member.phoneNumber = request.phoneNumber();
+        member.activation = false;
+        member.role = request.role();
+        member.createAt = LocalDateTime.now();
 
         return member;
     }
 
-    public Member() {
+    protected Member() {
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void setActivation(boolean activation) {
-        this.activation = activation;
-    }
 
     public Long getId() {
         return id;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public String getEmail() {
+        return email;
     }
 
     public Set<Board> getBoards() {
@@ -108,11 +88,31 @@ public class Member {
         return likes;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
+    public String getName() {
+        return name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public boolean isActivation() {
+        return activation;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public String getPassword() {
         return password;
+    }
+
+    public boolean checkPassword(String expectedPassword) {
+        return BCrypt.checkpw(expectedPassword, this.password);
     }
 }
