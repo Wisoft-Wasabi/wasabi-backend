@@ -1,14 +1,15 @@
 package io.wisoft.wasabi.domain.auth;
 
-import io.wisoft.wasabi.domain.auth.dto.CreateMemberRequest;
-import io.wisoft.wasabi.domain.auth.dto.LoginRequest;
+import io.wisoft.wasabi.domain.auth.dto.MemberSigninResponseDto;
+import io.wisoft.wasabi.domain.auth.dto.MemberSignupRequestDto;
+import io.wisoft.wasabi.domain.auth.dto.MemberSigninRequestDto;
 import io.wisoft.wasabi.domain.auth.dto.MemberSignupResponseDto;
+import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
 import io.wisoft.wasabi.global.bcrypt.EncryptHelper;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,36 +35,41 @@ public class AuthService {
     }
 
     @Transactional
-    public MemberSignupResponseDto signupMember(final CreateMemberRequest request) {
-        String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+    public MemberSignupResponseDto signupMember(final MemberSignupRequestDto request) {
 
-        final Member member = createMember(request);
-        member.setPassword(hashedPassword);
-        Member saveMember = memberRepository.save(member);
-        MemberSignupResponseDto dataResponseDto = new MemberSignupResponseDto(saveMember);
-
-        return dataResponseDto;
-    }
-
-    @Transactional
-    public String login(final LoginRequest request) {
-        final Member member = memberRepository.findMemberByEmail(request.email())
-                .orElseThrow(MemberExceptionExecutor.MemberNotFound());
-
-        validatePassword(request, member.getPassword());
-
-        final String accessToken = jwtTokenProvider.createAccessToken(member.getEmail());
-
-        return accessToken;
-
-    }
-
-    /**
-     * 예외처리 필요
-     */
-    private void validatePassword(final LoginRequest request, final String member) {
-        if (!encryptHelper.isMatch(request.password(), member)) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        // 1. signup DTO 중, password, checkPassword가 동일한지 check
+        if( !request.password().equals(request.checkPassword()) ) {
+            // TODO: PasswordInvalidException은 DTO Validate 과정에 문제가 발생한 것. 해당 권한으로 옮겨야함.
+            throw AuthExceptionExecutor.PasswordInvalid();
         }
+
+        // 2. 중복된 회원이 있는지 조회
+        if(memberRepository.findMemberByEmail(request.email()).isPresent()) {
+           throw MemberExceptionExecutor.MemberEmailOverlap();
+        }
+
+        // 3. 회원가입 DTO 값을 기반으로 Member 생성
+        final Member member = createMember(request);
+        memberRepository.save(member);
+
+        // 4. 생성한 member 기반으로 dataResponse 반환
+        return new MemberSignupResponseDto(member);
     }
+
+
+    public MemberSigninResponseDto signin(final MemberSigninRequestDto requestDto) {
+
+        final Member member = memberRepository.findMemberByEmail(requestDto.email())
+                .orElseThrow(AuthExceptionExecutor::SigninFail);
+        if(!member.checkPassword(requestDto.password())) {
+            throw AuthExceptionExecutor.SigninFail();
+        }
+
+        final String accessToken = jwtTokenProvider.createMemberToken(member);
+        final String tokenType = "bearer";
+
+        return new MemberSigninResponseDto(accessToken, tokenType);
+
+    }
+
 }
