@@ -1,9 +1,12 @@
 package io.wisoft.wasabi.domain.member.exception;
 
-import java.util.function.Supplier;
-
 public class MemberExceptionExecutor {
-    public static Supplier<MemberNotFoundException> MemberNotFound() {
-        return MemberNotFoundException::new;
+
+    public static MemberNotFoundException MemberNotFound() {
+        return new MemberNotFoundException();
+    }
+
+    public static MemberEmailOverlapException MemberEmailOverlap() {
+        return new MemberEmailOverlapException();
     }
 }

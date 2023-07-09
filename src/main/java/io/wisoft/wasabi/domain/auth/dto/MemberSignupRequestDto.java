@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record CreateMemberRequest(
+public record MemberSignupRequestDto(
         @NotBlank(message = "Email을 입력해주세요.") @Email String email,
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).{4,20}",
                 message = "비밀번호는 영문과 숫자가 포함된 4자 ~ 20자의 비밀번호여야 합니다.")
@@ -19,27 +19,4 @@ public record CreateMemberRequest(
         @NotBlank String phoneNumber,
         @NotNull Role role
 ) {
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getCheckPassword() {
-        return checkPassword;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-    public Role getRole() {
-        return role;
-    }
 }
