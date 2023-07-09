@@ -2,18 +2,16 @@ package io.wisoft.wasabi.domain.auth;
 
 import io.wisoft.wasabi.domain.auth.dto.CreateMemberRequest;
 import io.wisoft.wasabi.domain.auth.dto.LoginRequest;
-import io.wisoft.wasabi.domain.auth.dto.LoginResponse;
+import io.wisoft.wasabi.domain.auth.dto.MemberSignupResponseDto;
+import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
 import io.wisoft.wasabi.global.bcrypt.EncryptHelper;
-import io.wisoft.wasabi.global.exception.NotFoundException;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import static io.wisoft.wasabi.domain.member.persistence.Member.*;
 
@@ -36,20 +34,21 @@ public class AuthService {
     }
 
     @Transactional
-    public Long signupMember(final CreateMemberRequest request) {
+    public MemberSignupResponseDto signupMember(final CreateMemberRequest request) {
         String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
 
         final Member member = createMember(request);
         member.setPassword(hashedPassword);
-        memberRepository.save(member);
+        Member saveMember = memberRepository.save(member);
+        MemberSignupResponseDto dataResponseDto = new MemberSignupResponseDto(saveMember);
 
-        return member.getId();
+        return dataResponseDto;
     }
 
     @Transactional
     public String login(final LoginRequest request) {
         final Member member = memberRepository.findMemberByEmail(request.email())
-                .orElseThrow(() -> new NotFoundException("가입된 이메일이 없습니다."));
+                .orElseThrow(MemberExceptionExecutor.MemberNotFound());
 
         validatePassword(request, member.getPassword());
 
@@ -64,7 +63,7 @@ public class AuthService {
      */
     private void validatePassword(final LoginRequest request, final String member) {
         if (!encryptHelper.isMatch(request.password(), member)) {
-            throw new NotFoundException("비밀번호가 일치하지 않습니다.");
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
     }
 }
