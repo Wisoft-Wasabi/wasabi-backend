@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.domain.board.persistence;
+package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.like.persistence.Like;
 import io.wisoft.wasabi.domain.member.persistence.Member;

@@ -2,7 +2,7 @@ package io.wisoft.wasabi.domain.member.persistence;
 
 import io.wisoft.wasabi.domain.auth.Role;
 import io.wisoft.wasabi.domain.auth.dto.MemberSignupRequestDto;
-import io.wisoft.wasabi.domain.board.persistence.Board;
+import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.like.persistence.Like;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
