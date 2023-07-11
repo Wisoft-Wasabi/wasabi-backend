@@ -64,4 +64,28 @@ public class Board extends BaseTimeEntity {
 
         return board;
     }
+
+    public Long getId() { return id; }
+
+    public String getTitle() { return title; }
+
+    public String getContent() { return content; }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public Set<Like> getLikes() {
+        return likes;
+    }
+
+    public Set<Usage> getUsages() {
+        return usages;
+    }
+
+    public Set<BoardImage> getBoardImages() {
+        return boardImages;
+    }
+
+    public int getViews() { return views; }
 }

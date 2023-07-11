@@ -5,28 +5,25 @@ import io.wisoft.wasabi.global.response.dto.DataResponse;
 
 import java.time.Instant;
 
-public class CommonResponse {
-        private DataResponse dataResponse;
-        private Long timestamp;
+public class CommonResponse<T> {
+        private T dataResponse;
+        private Instant timestamp;
 
-    // TODO private? protected? 어떤걸 쓰는게 좋나?
     protected CommonResponse() {
     }
 
-    public DataResponse getDataResponse() {
+    public T getDataResponse() {
         return dataResponse;
     }
 
-    public Long getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
     public static CommonResponse newInstance(DataResponse dataResponse) {
         CommonResponse response = new CommonResponse();
         response.dataResponse = dataResponse;
-        response.timestamp = Instant.now().getEpochSecond();
+        response.timestamp = Instant.now();
         return response;
     }
-
-
 }
