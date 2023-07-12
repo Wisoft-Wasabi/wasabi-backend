@@ -51,20 +51,25 @@ public class Board extends BaseTimeEntity {
     public static Board createBoard(
             final String title,
             final String content,
-            final Member member,
-            final Set<BoardImage> boardImages) {
+            final Member member) {
 
         final Board board = new Board();
         board.title = title;
         board.content = content;
         board.views = 0;
         board.setMember(member);
-        board.boardImages = boardImages;
         board.create();
 
         return board;
     }
 
+    /* 비즈니스 로직 */
+    public void increaseView() {
+        this.views++;
+    }
+
+
+    /* getter */
     public Long getId() { return id; }
 
     public String getTitle() { return title; }
@@ -89,7 +94,4 @@ public class Board extends BaseTimeEntity {
 
     public int getViews() { return views; }
 
-    public void increaseView() {
-        this.views++;
-    }
 }

@@ -7,7 +7,7 @@ public class SigninFailException extends RuntimeException{
     private final ErrorType errorType;
 
     public SigninFailException() {
-        errorType = ErrorType.SIGNIN_FAIL;
+        errorType = ErrorType.LOGIN_FAIL;
     }
 
     public ErrorType getErrorType() {
