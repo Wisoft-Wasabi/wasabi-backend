@@ -20,6 +20,8 @@ public class BoardService {
         final Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
+        board.increaseView();
+
         return ReadBoardResponse.newInstance(board);
     }
 }

@@ -88,4 +88,8 @@ public class Board extends BaseTimeEntity {
     }
 
     public int getViews() { return views; }
+
+    public void increaseView() {
+        this.views++;
+    }
 }
