@@ -38,7 +38,7 @@ public class Board extends BaseTimeEntity {
     @OneToMany(mappedBy = "board")
     private Set<Usage> usages = new HashSet<>();
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
     private Set<BoardImage> boardImages = new HashSet<>();
 
     private void setMember(final Member member) {
@@ -51,15 +51,13 @@ public class Board extends BaseTimeEntity {
     public static Board createBoard(
             final String title,
             final String content,
-            final Member member,
-            final Set<BoardImage> boardImages) {
+            final Member member) {
 
         final Board board = new Board();
         board.title = title;
         board.content = content;
         board.views = 0;
         board.setMember(member);
-        board.boardImages = boardImages;
         board.create();
 
         return board;

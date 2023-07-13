@@ -1,10 +1,13 @@
 package io.wisoft.wasabi.domain.board;
 
+import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
+import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
+import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.global.response.CommonResponse;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class BoardController {
@@ -15,6 +18,17 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+    @PostMapping("/api/boards")
+    public ResponseEntity<CommonResponse> writeBoard(@RequestBody @Valid final WriteBoardRequest request,
+                                                     @RequestHeader(value = HttpHeaders.AUTHORIZATION) final String accessToken) {
+
+        if (accessToken == null || accessToken.isBlank()) {
+            throw AuthExceptionExecutor.UnAuthorized();
+        }
+
+        WriteBoardResponse response = boardService.writeBoard(request);
+        return ResponseEntity.ok(CommonResponse.newInstance(response));
+    }
 
     //TODO: prefix 지정시 /api 제외하기
     @GetMapping("/api/boards/{boardId}")

@@ -2,12 +2,12 @@ package io.wisoft.wasabi.domain.auth.exception;
 
 import io.wisoft.wasabi.global.exception.ErrorType;
 
-public class SigninFailException extends RuntimeException{
+public class TokenNotExistException extends RuntimeException {
 
     private final ErrorType errorType;
 
-    public SigninFailException() {
-        errorType = ErrorType.LOGIN_FAIL;
+    public TokenNotExistException() {
+        this.errorType = ErrorType.UNAUTHORIZED;
     }
 
     public ErrorType getErrorType() {

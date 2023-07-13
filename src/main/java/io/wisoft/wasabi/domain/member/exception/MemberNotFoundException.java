@@ -6,8 +6,7 @@ public class MemberNotFoundException extends RuntimeException {
     private final ErrorType errorType;
 
     public MemberNotFoundException() {
-        super();
-        errorType = ErrorType.MEMBER_NOT_FOUND;
+        this.errorType = ErrorType.MEMBER_NOT_FOUND;
     }
 
     public ErrorType getErrorType() {

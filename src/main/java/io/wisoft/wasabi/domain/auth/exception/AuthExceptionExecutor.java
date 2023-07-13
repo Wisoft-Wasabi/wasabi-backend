@@ -8,4 +8,8 @@ public class AuthExceptionExecutor {
     public static SigninFailException SigninFail() {
         return new SigninFailException();
     }
+
+    public static TokenNotExistException UnAuthorized() {
+        return new TokenNotExistException();
+    }
 }
