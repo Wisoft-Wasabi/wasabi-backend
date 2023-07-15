@@ -6,9 +6,10 @@ import io.wisoft.wasabi.global.response.CommonResponse;
 import io.wisoft.wasabi.global.response.dto.error.ErrorDataResponse;
 import org.springframework.http.ResponseEntity;
 
-public class PasswordInvalidException extends BusinessException {
-    public PasswordInvalidException() {
-        super(ErrorType.DTO_INVALID.getErrorMessage());
+public class LoginFailException extends BusinessException{
+
+    public LoginFailException() {
+        super(ErrorType.LOGIN_FAIL.getErrorMessage());
     }
 
     @Override
@@ -20,6 +21,6 @@ public class PasswordInvalidException extends BusinessException {
 
     @Override
     public ErrorType getErrorType() {
-        return ErrorType.DTO_INVALID;
+        return ErrorType.LOGIN_FAIL;
     }
 }

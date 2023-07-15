@@ -1,16 +1,25 @@
 package io.wisoft.wasabi.domain.member.exception;
 
+import io.wisoft.wasabi.global.exception.BusinessException;
 import io.wisoft.wasabi.global.exception.ErrorType;
+import io.wisoft.wasabi.global.response.CommonResponse;
+import io.wisoft.wasabi.global.response.dto.error.ErrorDataResponse;
+import org.springframework.http.ResponseEntity;
 
-public class MemberNotFoundException extends RuntimeException {
-    private final ErrorType errorType;
-
+public class MemberNotFoundException extends BusinessException {
     public MemberNotFoundException() {
-        super();
-        errorType = ErrorType.MEMBER_NOT_FOUND;
+        super(ErrorType.MEMBER_NOT_FOUND.getErrorMessage());
     }
 
+    @Override
+    protected ResponseEntity<CommonResponse> buildResponse(ErrorType errorType) {
+        final ErrorDataResponse errorDataResponse = ErrorDataResponse.newInstance(errorType);
+        final CommonResponse response = CommonResponse.newInstance(errorDataResponse);
+        return ResponseEntity.status(errorType.getHttpStatusCode()).body(response);
+    }
+
+    @Override
     public ErrorType getErrorType() {
-        return errorType;
+        return ErrorType.MEMBER_NOT_FOUND;
     }
 }

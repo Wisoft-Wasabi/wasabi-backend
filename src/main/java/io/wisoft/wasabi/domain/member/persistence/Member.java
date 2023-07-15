@@ -1,13 +1,16 @@
 package io.wisoft.wasabi.domain.member.persistence;
 
-import io.wisoft.wasabi.domain.auth.Role;
-import io.wisoft.wasabi.domain.auth.dto.MemberSignupRequestDto;
+import io.wisoft.wasabi.domain.auth.dto.request.MemberSignupRequest;
 import io.wisoft.wasabi.domain.board.persistence.Board;
 import io.wisoft.wasabi.domain.like.persistence.Like;
+import io.wisoft.wasabi.global.enumeration.Role;
 import jakarta.persistence.*;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,12 +36,13 @@ public class Member {
     @Column(nullable = false)
     private LocalDateTime createAt;
 
+
+
     @Column(nullable = false)
     private boolean activation;
 
     @Column(nullable = false)
     private Role role;
-
 
     @OneToMany(mappedBy = "member")
     private Set<Like> likes = new HashSet<>();
@@ -49,7 +53,7 @@ public class Member {
 
 
     public static Member createMember(
-            MemberSignupRequestDto request
+            MemberSignupRequest request
     ) {
 
         final Member member = new Member();
@@ -58,19 +62,18 @@ public class Member {
         // 3. 생성 중 예외 발생 시 예외 처리.
 
         member.email = request.email();
-        member.password = BCrypt.hashpw(request.password(), BCrypt.gensalt());
+        member.password = BCrypt.hashpw(request.password(), BCrypt.gensalt(10));
         member.name = request.name();
         member.phoneNumber = request.phoneNumber();
         member.activation = false;
-        member.role = request.role();
-        member.createAt = LocalDateTime.now();
+        member.role=request.role();
+        member.createAt = LocalDateTime.now().withNano(0);
 
         return member;
     }
 
     protected Member() {
     }
-
 
     public Long getId() {
         return id;
@@ -92,27 +95,16 @@ public class Member {
         return name;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public LocalDateTime getCreateAt() {
-        return createAt;
+    public Role getRole() {
+        return role;
     }
 
     public boolean isActivation() {
         return activation;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
     public boolean checkPassword(String expectedPassword) {
         return BCrypt.checkpw(expectedPassword, this.password);
     }
+
 }

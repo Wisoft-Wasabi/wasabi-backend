@@ -6,7 +6,7 @@ public class MemberExceptionExecutor {
         return new MemberNotFoundException();
     }
 
-    public static MemberEmailOverlapException MemberEmailOverlap() {
-        return new MemberEmailOverlapException();
+    public static AuthException MemberEmailOverlap() {
+        return new AuthException();
     }
 }
