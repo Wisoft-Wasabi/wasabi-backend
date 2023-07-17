@@ -63,6 +63,13 @@ public class Board extends BaseTimeEntity {
         return board;
     }
 
+    /* 비즈니스 로직 */
+    public void increaseView() {
+        this.views++;
+    }
+
+
+    /* getter */
     public Long getId() { return id; }
 
     public String getTitle() { return title; }
@@ -86,4 +93,5 @@ public class Board extends BaseTimeEntity {
     }
 
     public int getViews() { return views; }
+
 }

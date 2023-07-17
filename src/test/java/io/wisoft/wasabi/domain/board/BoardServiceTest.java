@@ -6,6 +6,7 @@ import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
@@ -51,6 +53,13 @@ class BoardServiceTest {
                             Role.GENERAL));
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
+            final WriteBoardRequest request = new WriteBoardRequest(
+                    member.getId(),
+                    "title",
+                    "content",
+                    new String[]{"tags"},
+                    new String[]{"imageUrls"});
+
             final Board board = Board.createBoard(
                     "title",
                     "content",
@@ -58,18 +67,47 @@ class BoardServiceTest {
             );
             given(boardRepository.save(any())).willReturn(board);
 
-            final WriteBoardRequest request = new WriteBoardRequest(
-                    member.getId(),
-                    "title",
-                    "content",
-                    new String[]{"imageUrls"});
-
             // when
             final WriteBoardResponse response = boardService.writeBoard(request);
 
             // then
             assertEquals("title", response.title());
             assertEquals("name", response.writer());
+        }
+    }
+
+    @Nested
+    @DisplayName("게시글 조회")
+    class ReadBoard {
+
+        @Test
+        @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
+        public void 성공() throws Exception {
+
+            //given
+            final Member member = Member.createMember(
+                    new MemberSignupRequestDto(
+                            "게시글조회성공@email.com",
+                            "pass12",
+                            "pass12",
+                            "name",
+                            "phoneNumber",
+                            Role.GENERAL
+                    )
+            );
+
+            final Board board = Board.createBoard(
+                    "title",
+                    "content",
+                    member
+            );
+            when(boardRepository.findById(any())).thenReturn(Optional.of(board));
+
+            //when
+            final var response = boardService.readBoard(board.getId());
+
+            //then
+            Assertions.assertThat(response.views()).isEqualTo(1L);
         }
     }
 }

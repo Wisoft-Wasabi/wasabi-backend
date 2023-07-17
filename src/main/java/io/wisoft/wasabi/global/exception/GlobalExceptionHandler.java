@@ -4,6 +4,7 @@ import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
 import io.wisoft.wasabi.domain.auth.exception.PasswordInvalidException;
 import io.wisoft.wasabi.domain.auth.exception.SigninFailException;
 import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
+import io.wisoft.wasabi.domain.board.exception.BoardNotFoundException;
 import io.wisoft.wasabi.domain.member.exception.MemberEmailOverlapException;
 import io.wisoft.wasabi.domain.member.exception.MemberNotFoundException;
 import io.wisoft.wasabi.global.response.CommonResponse;
@@ -19,6 +20,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MemberNotFoundException.class)
     public ResponseEntity<CommonResponse> memberNotFound(MemberNotFoundException ex) {
+        ErrorType errorType = ex.getErrorType();
+        ErrorDataResponse errorDataResponse = ErrorDataResponse.newInstance(errorType);
+        CommonResponse response = CommonResponse.newInstance(errorDataResponse);
+
+        return ResponseEntity.status(errorType.getHttpStatusCode()).body(response);
+    }
+
+
+    @ExceptionHandler(BoardNotFoundException.class)
+    public ResponseEntity<CommonResponse> boardNotFound(BoardNotFoundException ex) {
         ErrorType errorType = ex.getErrorType();
         ErrorDataResponse errorDataResponse = ErrorDataResponse.newInstance(errorType);
         CommonResponse response = CommonResponse.newInstance(errorDataResponse);
