@@ -5,7 +5,7 @@ spring:
     password:
     driver-class-name: org.h2.Driver
   profiles:
-    include: jwt
+    include: jwt, bcrypt
 
   sql:
     init:

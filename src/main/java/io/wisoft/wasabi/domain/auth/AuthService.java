@@ -5,32 +5,38 @@ import io.wisoft.wasabi.domain.auth.dto.request.MemberSignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.request.MemberLoginRequest;
 import io.wisoft.wasabi.domain.auth.dto.response.MemberSignupResponse;
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
-import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
-import io.wisoft.wasabi.domain.auth.exception.LoginFailException;
+import io.wisoft.wasabi.global.bcrypt.BcryptEncoder;
 import io.wisoft.wasabi.global.enumeration.Role;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static io.wisoft.wasabi.domain.member.persistence.Member.*;
+import java.time.LocalDateTime;
 
 @Service
 @Transactional(readOnly = true)
 public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final BcryptEncoder bcryptEncoder;
 
     @Autowired
     public AuthService(
             final MemberRepository memberRepository,
-            final JwtTokenProvider jwtTokenProvider
+            final JwtTokenProvider jwtTokenProvider,
+            final BcryptEncoder bcryptEncoder
     ) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.bcryptEncoder = bcryptEncoder;
     }
+
+    @Value("${bcrypt.secret.salt}")
+    private String salt;
 
     @Transactional
     public MemberSignupResponse signup(final MemberSignupRequest request) {
@@ -42,12 +48,11 @@ public class AuthService {
         }
 
         // 2. 중복된 회원이 있는지 조회
-        if (memberRepository.findMemberByEmail(request.email()).isPresent()) {
-            throw MemberExceptionExecutor.MemberEmailOverlap();
+        if (memberRepository.existsByEmail(request.email())) {
+            throw AuthExceptionExecutor.emailOverlap();
         }
-
         // 3. 회원가입 DTO 값을 기반으로 Member 생성
-        final Member member = createMember(request);
+        Member member = createMemberFromRequest(request);
         memberRepository.save(member);
 
         // 4. 생성한 member 기반으로 dataResponse 반환
@@ -55,11 +60,12 @@ public class AuthService {
     }
 
 
-    public MemberLoginResponse login(final MemberLoginRequest requestDto) {
+    public MemberLoginResponse login(final MemberLoginRequest request) {
 
-        final Member member = memberRepository.findMemberByEmail(requestDto.email())
+        final Member member = memberRepository.findMemberByEmail(request.email())
                 .orElseThrow(AuthExceptionExecutor::loginFail);
-        if (!member.checkPassword(requestDto.password())) {
+
+        if (!bcryptEncoder.isMatch(request.password(), member.getPassword())) {
             throw AuthExceptionExecutor.loginFail();
         }
 
@@ -73,4 +79,15 @@ public class AuthService {
 
     }
 
+    private Member createMemberFromRequest(MemberSignupRequest request) {
+        return new Member(
+                request.email(),
+                bcryptEncoder.encrypt(request.password(), salt),
+                request.name(),
+                request.phoneNumber(),
+                false,
+                Role.GENERAL,
+                LocalDateTime.now().withNano(0)
+        );
+    }
 }

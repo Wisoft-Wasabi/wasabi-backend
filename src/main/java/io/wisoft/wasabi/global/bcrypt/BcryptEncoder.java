@@ -1,11 +1,13 @@
 package io.wisoft.wasabi.global.bcrypt;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BcryptEncoder implements EncryptHelper {
     @Override
-    public String encrypt(final String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
+    public String encrypt(final String password, String salt) {
+        return BCrypt.hashpw(password, salt);
     }
 
     @Override

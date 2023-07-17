@@ -8,4 +8,8 @@ public class AuthExceptionExecutor {
     public static LoginFailException loginFail() {
         return new LoginFailException();
     }
+
+    public static MemberEmailOverlapException emailOverlap(){
+        return new MemberEmailOverlapException();
+    }
 }
