@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.domain.board.persistence;
+package io.wisoft.wasabi.domain.board;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

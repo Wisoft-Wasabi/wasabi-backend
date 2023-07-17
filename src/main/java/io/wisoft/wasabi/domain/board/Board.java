@@ -1,23 +1,19 @@
-package io.wisoft.wasabi.domain.board.persistence;
+package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.like.persistence.Like;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.usage.persistence.Usage;
+import io.wisoft.wasabi.global.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
 
-@Getter
 @Entity
-@NoArgsConstructor(access = PROTECTED)
-public class Board {
+public class Board extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -29,6 +25,7 @@ public class Board {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private int views;
 
     @JoinColumn(name = "member_id")
@@ -41,27 +38,60 @@ public class Board {
     @OneToMany(mappedBy = "board")
     private Set<Usage> usages = new HashSet<>();
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
     private Set<BoardImage> boardImages = new HashSet<>();
 
-    public void setMember(final Member member) {
+    private void setMember(final Member member) {
         this.member = member;
         member.getBoards().add(this);
     }
 
+    protected Board() {}
+
     public static Board createBoard(
             final String title,
             final String content,
-            final Member member,
-            final Set<BoardImage> boardImages) {
+            final Member member) {
 
         final Board board = new Board();
         board.title = title;
         board.content = content;
         board.views = 0;
         board.setMember(member);
-        board.boardImages = boardImages;
+        board.create();
 
         return board;
     }
+
+    /* 비즈니스 로직 */
+    public void increaseView() {
+        this.views++;
+    }
+
+
+    /* getter */
+    public Long getId() { return id; }
+
+    public String getTitle() { return title; }
+
+    public String getContent() { return content; }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public Set<Like> getLikes() {
+        return likes;
+    }
+
+    public Set<Usage> getUsages() {
+        return usages;
+    }
+
+    public Set<BoardImage> getBoardImages() {
+        return boardImages;
+    }
+
+    public int getViews() { return views; }
+
 }
