@@ -7,8 +7,7 @@ import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
-import io.wisoft.wasabi.setting.ControllerTest;
-import org.junit.jupiter.api.BeforeEach;
+import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class BoardControllerTest extends ControllerTest {
+class BoardIntegrationTest extends IntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
