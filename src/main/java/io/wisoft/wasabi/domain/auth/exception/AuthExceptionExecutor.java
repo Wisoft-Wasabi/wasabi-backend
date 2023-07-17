@@ -1,5 +1,7 @@
 package io.wisoft.wasabi.domain.auth.exception;
 
+import io.wisoft.wasabi.domain.member.exception.EmailOverlapException;
+
 public class AuthExceptionExecutor {
 
     public static PasswordInvalidException passwordInvalid() {
@@ -9,7 +11,5 @@ public class AuthExceptionExecutor {
         return new LoginFailException();
     }
 
-    public static MemberEmailOverlapException emailOverlap(){
-        return new MemberEmailOverlapException();
-    }
+
 }

@@ -19,15 +19,15 @@ public class AuthController {
     private final AuthService authService;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(final AuthService authService) {
         this.authService = authService;
     }
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<CommonResponse> signupMember(@RequestBody @Valid final MemberSignupRequest request) {
+    public ResponseEntity<CommonResponse> signup(@RequestBody @Valid final MemberSignupRequest request) {
         final MemberSignupResponse dataResponse = authService.signup(request);
 
-        CommonResponse response = CommonResponse.newInstance(dataResponse);
+        final CommonResponse response = CommonResponse.newInstance(dataResponse);
 
         return ResponseEntity.ok().body(response);
     }
@@ -35,11 +35,9 @@ public class AuthController {
     @PostMapping("/auth/login")
     public ResponseEntity<CommonResponse> login(@RequestBody @Valid final MemberLoginRequest request
     ){
-        MemberLoginResponse dataResponse = authService.login(request);
-        CommonResponse response = CommonResponse.newInstance(dataResponse);
+        final MemberLoginResponse dataResponse = authService.login(request);
+        final CommonResponse response = CommonResponse.newInstance(dataResponse);
         return ResponseEntity.ok(response);
     }
-
-
 
 }

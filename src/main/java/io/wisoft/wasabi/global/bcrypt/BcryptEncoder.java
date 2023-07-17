@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BcryptEncoder implements EncryptHelper {
     @Override
-    public String encrypt(final String password, String salt) {
+    public String encrypt(final String password, final String salt) {
         return BCrypt.hashpw(password, salt);
     }
 

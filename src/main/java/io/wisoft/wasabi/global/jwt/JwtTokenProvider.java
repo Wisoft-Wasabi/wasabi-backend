@@ -20,25 +20,9 @@ public class JwtTokenProvider {
     @Value("${jwt.issuer}")
     private String issuer;
 
-    public String createAccessToken(final String payload) {
-        return createToken(payload, accessTokenValidityInMilliseconds);
-    }
-
-    public String createToken(final String payload, final long expireLength) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + expireLength);
-
-        return Jwts.builder()
-                .setSubject(payload)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
-                .compact();
-    }
-
-    public String createMemberToken(final Member member) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
+    public String createAccessToken(final Member member) {
+        final Date now = new Date();
+        final Date validity = new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
 
         return Jwts.builder()
                 .setIssuer(this.issuer)

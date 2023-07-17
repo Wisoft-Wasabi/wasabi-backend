@@ -43,8 +43,13 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private Set<Board> boards = new HashSet<>();
 
-    public Member(String email, String password, String name, String phoneNumber,
-                  boolean activation, Role role, LocalDateTime createAt) {
+    public Member(final String email,
+                  final String password,
+                  final String name,
+                  final String phoneNumber,
+                  final boolean activation,
+                  final Role role,
+                  final LocalDateTime createAt) {
         this.email = email;
         this.password = password;
         this.name = name;
