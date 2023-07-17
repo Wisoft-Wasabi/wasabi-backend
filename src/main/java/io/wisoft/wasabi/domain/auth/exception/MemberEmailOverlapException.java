@@ -6,8 +6,8 @@ import io.wisoft.wasabi.global.response.CommonResponse;
 import io.wisoft.wasabi.global.response.dto.error.ErrorDataResponse;
 import org.springframework.http.ResponseEntity;
 
-public class AuthException extends BusinessException {
-    public AuthException() {
+public class MemberEmailOverlapException extends BusinessException {
+    public MemberEmailOverlapException() {
         super(ErrorType.MEMBER_EMAIL_OVERLAP.getErrorMessage());
     }
 
