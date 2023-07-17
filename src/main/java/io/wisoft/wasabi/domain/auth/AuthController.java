@@ -26,7 +26,6 @@ public class AuthController {
     @PostMapping("/auth/signup")
     public ResponseEntity<CommonResponse> signup(@RequestBody @Valid final MemberSignupRequest request) {
         final MemberSignupResponse dataResponse = authService.signup(request);
-
         final CommonResponse response = CommonResponse.newInstance(dataResponse);
 
         return ResponseEntity.ok().body(response);

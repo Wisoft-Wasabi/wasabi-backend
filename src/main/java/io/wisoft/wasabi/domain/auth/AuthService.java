@@ -44,12 +44,12 @@ public class AuthService {
         // 1. signup DTO 중, password, checkPassword가 동일한지 check
         if (!request.password().equals(request.checkPassword())) {
             // TODO: PasswordInvalidException은 DTO Validate 과정에 문제가 발생한 것. 해당 권한으로 옮겨야함.
-            throw AuthExceptionExecutor.passwordInvalid();
+            throw AuthExceptionExecutor.PasswordInvalid();
         }
 
         // 2. 중복된 회원이 있는지 조회
         if (memberRepository.existsByEmail(request.email())) {
-            throw MemberExceptionExecutor.emailOverlap();
+            throw MemberExceptionExecutor.EmailOverlap();
         }
 
         // 3. 회원가입 DTO 값을 기반으로 Member 생성
@@ -62,10 +62,10 @@ public class AuthService {
 
     public MemberLoginResponse login(final MemberLoginRequest request) {
         final Member member = memberRepository.findMemberByEmail(request.email())
-                .orElseThrow(AuthExceptionExecutor::loginFail);
+                .orElseThrow(AuthExceptionExecutor::LoginFail);
 
         if (!encryptHelper.isMatch(request.password(), member.getPassword())) {
-            throw AuthExceptionExecutor.loginFail();
+            throw AuthExceptionExecutor.LoginFail();
         }
 
         final String accessToken = jwtTokenProvider.createAccessToken(member);

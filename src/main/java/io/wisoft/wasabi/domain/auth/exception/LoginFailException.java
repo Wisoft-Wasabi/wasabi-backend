@@ -5,9 +5,7 @@ import io.wisoft.wasabi.global.exception.ErrorType;
 
 public class LoginFailException extends BusinessException{
 
-    public LoginFailException() {
-        super(ErrorType.LOGIN_FAIL.getErrorMessage());
-    }
+    public LoginFailException() { super(ErrorType.LOGIN_FAIL);}
 
     @Override
     public ErrorType getErrorType() {

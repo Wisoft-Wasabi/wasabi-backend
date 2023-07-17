@@ -17,7 +17,7 @@ public class ErrorDataResponse {
         return errorMessage;
     }
 
-    public static ErrorDataResponse newInstance(ErrorType errorType) {
+    public static ErrorDataResponse newInstance(final ErrorType errorType) {
         ErrorDataResponse dataResponse = new ErrorDataResponse();
         dataResponse.errorCode = errorType.getErrorCode();
         dataResponse.errorMessage = errorType.getErrorMessage();

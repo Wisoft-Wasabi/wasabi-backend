@@ -2,14 +2,15 @@ package io.wisoft.wasabi.global.exception;
 
 public abstract class BusinessException extends RuntimeException {
 
-    private final String message;
+    private final ErrorType errorType;
 
-    public BusinessException(final String message) {
-        super(message);
-        this.message = message;
+    protected BusinessException(final ErrorType errorType) {
+        this.errorType = errorType;
     }
 
-    public abstract ErrorType getErrorType();
+    public ErrorType getErrorType(){
+        return errorType;
+    }
 
 }
 

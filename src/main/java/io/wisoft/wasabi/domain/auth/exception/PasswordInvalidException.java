@@ -5,7 +5,7 @@ import io.wisoft.wasabi.global.exception.ErrorType;
 
 public class PasswordInvalidException extends BusinessException {
     public PasswordInvalidException() {
-        super(ErrorType.DTO_INVALID.getErrorMessage());
+        super(ErrorType.DTO_INVALID);
     }
 
     @Override

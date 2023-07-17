@@ -1,11 +1,9 @@
 package io.wisoft.wasabi.domain.member.exception;
 
 public class MemberExceptionExecutor {
-    public static MemberNotFoundException memberNotFound() {
+    public static MemberNotFoundException MemberNotFound() {
         return new MemberNotFoundException();
     }
 
-    public static EmailOverlapException emailOverlap(){
-        return new EmailOverlapException();
-    }
+    public static EmailOverlapException EmailOverlap() { return new EmailOverlapException(); }
 }

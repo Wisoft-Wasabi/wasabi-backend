@@ -6,10 +6,9 @@ import io.wisoft.wasabi.global.exception.ErrorType;
 
 public class MemberNotFoundException extends BusinessException {
     public MemberNotFoundException() {
-        super(ErrorType.MEMBER_NOT_FOUND.getErrorMessage());
+        super(ErrorType.MEMBER_NOT_FOUND);
     }
 
-    @Override
     public ErrorType getErrorType() {
         return ErrorType.MEMBER_NOT_FOUND;
     }

@@ -1,13 +1,11 @@
 package io.wisoft.wasabi.domain.auth.exception;
 
-import io.wisoft.wasabi.domain.member.exception.EmailOverlapException;
-
 public class AuthExceptionExecutor {
 
-    public static PasswordInvalidException passwordInvalid() {
+    public static PasswordInvalidException PasswordInvalid() {
         return new PasswordInvalidException();
     }
-    public static LoginFailException loginFail() {
+    public static LoginFailException LoginFail() {
         return new LoginFailException();
     }
 

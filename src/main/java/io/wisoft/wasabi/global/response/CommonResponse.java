@@ -3,24 +3,24 @@ package io.wisoft.wasabi.global.response;
 import java.time.LocalDateTime;
 
 public class CommonResponse<T> {
-    private T dataResponse;
+    private T data;
     private LocalDateTime timestamp;
 
-    protected CommonResponse() {
+    private CommonResponse() {
     }
 
-    public T getDataResponse() {
-        return dataResponse;
+    public static <T> CommonResponse<T> newInstance(final T data) {
+        final CommonResponse response = new CommonResponse();
+        response.data = data;
+        response.timestamp = LocalDateTime.now().withNano(0);
+        return response;
+    }
+
+    public T getData() {
+        return data;
     }
 
     public LocalDateTime getTimestamp() {
         return timestamp;
-    }
-
-    public static <T> CommonResponse<T> newInstance(T dataResponse) {
-        CommonResponse response = new CommonResponse();
-        response.dataResponse = dataResponse;
-        response.timestamp = LocalDateTime.now().withNano(0);
-        return response;
     }
 }

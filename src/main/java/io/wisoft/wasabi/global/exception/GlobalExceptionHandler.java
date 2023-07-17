@@ -12,17 +12,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<CommonResponse> handleBusinessException(final BusinessException ex) {
         // 예외 처리 로직
-        final ErrorType errorType = ex.getErrorType();
-        final ErrorDataResponse errorDataResponse = ErrorDataResponse.newInstance(errorType);
-        final CommonResponse response = CommonResponse.newInstance(errorDataResponse);
-
-        return ResponseEntity.status(errorType.getHttpStatusCode()).body(response);
+        final ResponseEntity response = buildResponse(ex.getErrorType());
+        return response;
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<CommonResponse> handleRuntimeException(final RuntimeException ex) {
         // 예외 처리 로직
-        final ErrorType errorType = ErrorType.UNCAUGHT_ERROR;
+        final ResponseEntity response = buildResponse(ErrorType.UNCAUGHT_ERROR);
+        return response;
+    }
+
+    private ResponseEntity buildResponse(final ErrorType errorType) {
         final ErrorDataResponse errorDataResponse = ErrorDataResponse.newInstance(errorType);
         final CommonResponse response = CommonResponse.newInstance(errorDataResponse);
 
