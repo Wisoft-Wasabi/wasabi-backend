@@ -12,14 +12,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
-import org.springframework.http.MediaType;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -156,7 +154,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
         @Test
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
-        public void 성공() throws Exception {
+        void read_board_success() throws Exception {
 
             //given
             final Member member = memberRepository.save(
@@ -191,7 +189,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
         @Test
         @DisplayName("존재하지 않는 게시글을 조회하려 할 경우, 조회에 실패한다.")
-        public void 실패1() throws Exception {
+        void read_not_found_board() throws Exception {
 
             //given
 

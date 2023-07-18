@@ -20,7 +20,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
@@ -101,7 +100,7 @@ class BoardServiceTest {
                     "content",
                     member
             );
-            when(boardRepository.findById(any())).thenReturn(Optional.of(board));
+            given(boardRepository.findById(any())).willReturn(Optional.of(board));
 
             //when
             final var response = boardServiceImpl.readBoard(board.getId());
