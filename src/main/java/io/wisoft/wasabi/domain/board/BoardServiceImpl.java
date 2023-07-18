@@ -18,11 +18,14 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final BoardMapper boardMapper;
 
     public BoardServiceImpl(final BoardRepository boardRepository,
-                            final MemberRepository memberRepository) {
+                            final MemberRepository memberRepository,
+                            final BoardMapper boardMapper) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
+        this.boardMapper = boardMapper;
     }
 
     @Transactional
@@ -39,7 +42,7 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.save(board);
         saveImages(board, request);
 
-        return WriteBoardResponse.newInstance(board);
+        return boardMapper.entityToWriteBoardResponse(board);
     }
 
     private void saveImages(final Board board, final WriteBoardRequest request) {
@@ -61,6 +64,6 @@ public class BoardServiceImpl implements BoardService {
 
         board.increaseView();
 
-        return ReadBoardResponse.newInstance(board);
+        return boardMapper.entityToReadBoardResponse(board);
     }
 }

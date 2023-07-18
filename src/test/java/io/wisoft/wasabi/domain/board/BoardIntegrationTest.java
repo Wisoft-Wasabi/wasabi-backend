@@ -178,8 +178,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/boards/{boardId}", board.getId())
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andDo(print());
+                            .contentType(MediaType.APPLICATION_JSON));
 
             //then
             result.andExpect(status().isOk())
@@ -195,8 +194,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/boards/{boardId}", 10000L)
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andDo(print());
+                            .contentType(MediaType.APPLICATION_JSON));
 
             //then
             result.andExpect(status().isNotFound());
