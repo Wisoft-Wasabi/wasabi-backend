@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,10 +57,9 @@ class BoardIntegrationTest extends IntegrationTest {
                             Role.GENERAL));
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createMemberToken(savedMember);
+            final String accessToken = jwtTokenProvider.createMemberToken(savedMember.getId(), member.getName(), member.getRole());
 
             final WriteBoardRequest request = new WriteBoardRequest(
-                    savedMember.getId(),
                     "title",
                     "content",
                     new String[]{"tags"},
@@ -69,14 +67,15 @@ class BoardIntegrationTest extends IntegrationTest {
 
             final String json = objectMapper.writeValueAsString(request);
 
-            // expected
-            mockMvc.perform(post("/boards")
-                            .contentType(APPLICATION_JSON)
-                            .header("Authorization", "bearer " + accessToken)
-                            .content(json))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.dataResponse.id").exists())
-                    .andDo(print());
+            // when
+            final var perform = mockMvc.perform(post("/boards")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "bearer " + accessToken)
+                    .content(json));
+
+            // then
+            perform.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.dataResponse.id").exists());
         }
 
         @Test
@@ -95,7 +94,6 @@ class BoardIntegrationTest extends IntegrationTest {
             final Member savedMember = memberRepository.save(member);
 
             final WriteBoardRequest request = new WriteBoardRequest(
-                    savedMember.getId(),
                     "title",
                     "content",
                     new String[]{"tags"},
@@ -103,12 +101,13 @@ class BoardIntegrationTest extends IntegrationTest {
 
             final String json = objectMapper.writeValueAsString(request);
 
-            // expected
-            mockMvc.perform(post("/boards")
-                            .contentType(APPLICATION_JSON)
-                            .content(json))
-                    .andExpect(status().isUnauthorized())
-                    .andDo(print());
+            // when
+            final var perform = mockMvc.perform(post("/boards")
+                    .contentType(APPLICATION_JSON)
+                    .content(json));
+
+            // then
+            perform.andExpect(status().isUnauthorized());
         }
 
         @Test
@@ -126,10 +125,9 @@ class BoardIntegrationTest extends IntegrationTest {
                             Role.GENERAL));
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createMemberToken(savedMember);
+            final String accessToken = jwtTokenProvider.createMemberToken(savedMember.getId(), savedMember.getName(), savedMember.getRole());
 
             final WriteBoardRequest request = new WriteBoardRequest(
-                    savedMember.getId(),
                     "    ",
                     null,
                     new String[]{"tags"},
@@ -137,14 +135,14 @@ class BoardIntegrationTest extends IntegrationTest {
 
             final String json = objectMapper.writeValueAsString(request);
 
-            // expected
-            mockMvc.perform(post("/boards")
-                            .contentType(APPLICATION_JSON)
-                            .header("Authorization", "bearer " + accessToken)
-                            .content(json))
-                    .andExpect(status().isBadRequest())
-                    .andDo(print());
+            // when
+            final var perform = mockMvc.perform(post("/boards")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "bearer " + accessToken)
+                    .content(json));
 
+            // then
+            perform.andExpect(status().isBadRequest());
         }
     }
 

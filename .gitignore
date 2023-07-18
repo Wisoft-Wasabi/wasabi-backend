@@ -345,3 +345,5 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+all,intellij+iml,intellij,java,gradle
 /src/main/resources/application-jwt.yml
+/src/main/resources/application-bcrypt.yml
+/src/test/resources

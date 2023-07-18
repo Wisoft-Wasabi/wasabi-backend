@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
@@ -57,25 +58,21 @@ class BoardServiceTest {
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
             final WriteBoardRequest request = new WriteBoardRequest(
-                    member.getId(),
                     "title",
                     "content",
                     new String[]{"tags"},
                     new String[]{"imageUrls"});
 
-            final Board board = Board.createBoard(
-                    "title",
-                    "content",
-                    member
-            );
+            final Board board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
 
             // when
-            final WriteBoardResponse response = boardServiceImpl.writeBoard(request);
+            final WriteBoardResponse response = boardServiceImpl.writeBoard(request, 1L);
 
             // then
             assertEquals("title", response.title());
             assertEquals("name", response.writer());
+            assertNotNull(response);
         }
     }
 
@@ -99,11 +96,13 @@ class BoardServiceTest {
                     )
             );
 
-            final Board board = Board.createBoard(
+            final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
                     "content",
-                    member
-            );
+                    new String[]{"tags"},
+                    new String[]{"imageUrls"});
+
+            final Board board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
 
             //when
