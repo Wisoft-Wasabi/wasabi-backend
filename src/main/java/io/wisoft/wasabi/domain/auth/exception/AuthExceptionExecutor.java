@@ -12,4 +12,8 @@ public class AuthExceptionExecutor {
     public static TokenNotExistException UnAuthorized() {
         return new TokenNotExistException();
     }
+
+    public static NotActivatedException Forbidden() {
+        return new NotActivatedException();
+    }
 }
