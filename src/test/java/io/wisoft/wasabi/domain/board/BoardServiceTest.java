@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 class BoardServiceTest {
 
     @InjectMocks
-    private BoardService boardService;
+    private BoardServiceImpl boardServiceImpl;
 
     @Mock
     private MemberRepository memberRepository;
@@ -68,7 +68,7 @@ class BoardServiceTest {
             given(boardRepository.save(any())).willReturn(board);
 
             // when
-            final WriteBoardResponse response = boardService.writeBoard(request);
+            final WriteBoardResponse response = boardServiceImpl.writeBoard(request);
 
             // then
             assertEquals("title", response.title());
@@ -104,7 +104,7 @@ class BoardServiceTest {
             when(boardRepository.findById(any())).thenReturn(Optional.of(board));
 
             //when
-            final var response = boardService.readBoard(board.getId());
+            final var response = boardServiceImpl.readBoard(board.getId());
 
             //then
             Assertions.assertThat(response.views()).isEqualTo(1L);

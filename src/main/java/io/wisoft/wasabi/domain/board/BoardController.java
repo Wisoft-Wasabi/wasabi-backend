@@ -18,6 +18,7 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+
     @PostMapping("/boards")
     public ResponseEntity<CommonResponse> writeBoard(@RequestBody @Valid final WriteBoardRequest request,
                                                      @RequestHeader(value = HttpHeaders.AUTHORIZATION) final String accessToken) {
@@ -26,7 +27,7 @@ public class BoardController {
             throw AuthExceptionExecutor.UnAuthorized();
         }
 
-        WriteBoardResponse response = boardService.writeBoard(request);
+        final WriteBoardResponse response = boardService.writeBoard(request);
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 
@@ -34,7 +35,6 @@ public class BoardController {
     public ResponseEntity<CommonResponse> readBoard(@PathVariable final Long boardId) {
 
         final var response = boardService.readBoard(boardId);
-
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 }
