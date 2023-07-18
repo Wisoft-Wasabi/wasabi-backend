@@ -1,9 +1,8 @@
 package io.wisoft.wasabi.global.response.dto.error;
 
 import io.wisoft.wasabi.global.exception.ErrorType;
-import io.wisoft.wasabi.global.response.dto.DataResponse;
 
-public class ErrorDataResponse implements DataResponse {
+public class ErrorDataResponse {
     private String errorCode;
     private String errorMessage;
 
@@ -18,7 +17,7 @@ public class ErrorDataResponse implements DataResponse {
         return errorMessage;
     }
 
-    public static ErrorDataResponse newInstance(ErrorType errorType) {
+    public static ErrorDataResponse newInstance(final ErrorType errorType) {
         ErrorDataResponse dataResponse = new ErrorDataResponse();
         dataResponse.errorCode = errorType.getErrorCode();
         dataResponse.errorMessage = errorType.getErrorMessage();
