@@ -4,6 +4,7 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+
   profiles:
     include: jwt, bcrypt
 
@@ -17,6 +18,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  h2:
+    console:
+      enabled: true
+
   h2:
     console:
       enabled: true

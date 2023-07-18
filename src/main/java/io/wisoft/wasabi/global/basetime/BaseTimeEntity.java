@@ -22,15 +22,6 @@ public class BaseTimeEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public void create() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    public void update() {
-        updatedAt = LocalDateTime.now();
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

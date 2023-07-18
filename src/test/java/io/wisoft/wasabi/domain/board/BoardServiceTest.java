@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -20,13 +21,15 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
 
     @InjectMocks
-    private BoardService boardService;
+    private BoardServiceImpl boardServiceImpl;
+
+    @Spy
+    private BoardMapper boardMapper;
 
     @Mock
     private MemberRepository memberRepository;
@@ -40,7 +43,7 @@ class BoardServiceTest {
 
         @Test
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
-        void writeBoard() {
+        void write_board() {
 
             // given
             final Member member = Member.createMember(
@@ -68,7 +71,7 @@ class BoardServiceTest {
             given(boardRepository.save(any())).willReturn(board);
 
             // when
-            final WriteBoardResponse response = boardService.writeBoard(request);
+            final WriteBoardResponse response = boardServiceImpl.writeBoard(request);
 
             // then
             assertEquals("title", response.title());
@@ -82,7 +85,7 @@ class BoardServiceTest {
 
         @Test
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
-        public void 성공() throws Exception {
+        void read_board_success() throws Exception {
 
             //given
             final Member member = Member.createMember(
@@ -101,10 +104,10 @@ class BoardServiceTest {
                     "content",
                     member
             );
-            when(boardRepository.findById(any())).thenReturn(Optional.of(board));
+            given(boardRepository.findById(any())).willReturn(Optional.of(board));
 
             //when
-            final var response = boardService.readBoard(board.getId());
+            final var response = boardServiceImpl.readBoard(board.getId());
 
             //then
             Assertions.assertThat(response.views()).isEqualTo(1L);

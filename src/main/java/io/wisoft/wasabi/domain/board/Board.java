@@ -58,7 +58,6 @@ public class Board extends BaseTimeEntity {
         board.content = content;
         board.views = 0;
         board.setMember(member);
-        board.create();
 
         return board;
     }
