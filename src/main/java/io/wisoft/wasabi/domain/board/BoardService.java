@@ -6,7 +6,7 @@ import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 
 public interface BoardService {
 
-    WriteBoardResponse writeBoard(final WriteBoardRequest request);
+    WriteBoardResponse writeBoard(final WriteBoardRequest request, Long memberId);
 
     ReadBoardResponse readBoard(final Long boardId);
 }

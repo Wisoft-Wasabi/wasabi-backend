@@ -65,7 +65,7 @@ public class AuthService {
             throw AuthExceptionExecutor.SigninFail();
         }
 
-        final String accessToken = jwtTokenProvider.createMemberToken(member);
+        final String accessToken = jwtTokenProvider.createMemberToken(member.getId(), member.getName(), member.getRole());
         final String tokenType = "bearer";
 
         return new MemberSigninResponseDto(accessToken, tokenType);
