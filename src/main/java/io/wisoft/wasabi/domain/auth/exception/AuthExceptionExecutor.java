@@ -9,5 +9,7 @@ public class AuthExceptionExecutor {
         return new LoginFailException();
     }
 
-
+    public static TokenNotExistException UnAuthorized() {
+        return new TokenNotExistException();
+    }
 }

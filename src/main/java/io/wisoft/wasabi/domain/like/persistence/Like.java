@@ -1,6 +1,6 @@
 package io.wisoft.wasabi.domain.like.persistence;
 
-import io.wisoft.wasabi.domain.board.persistence.Board;
+import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
