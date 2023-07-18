@@ -17,7 +17,7 @@ class BoardTest {
 
         @Test
         @DisplayName("게시글 조회시 조회수가 1 증가해야 한다.")
-        public void 성공() throws Exception {
+        public void increase_view_success() {
 
             //given -- 조건
             final Board board = Board.createBoard(

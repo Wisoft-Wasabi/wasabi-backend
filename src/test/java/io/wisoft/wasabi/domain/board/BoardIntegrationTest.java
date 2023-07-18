@@ -70,7 +70,7 @@ class BoardIntegrationTest extends IntegrationTest {
             final String json = objectMapper.writeValueAsString(request);
 
             // expected
-            mockMvc.perform(post("/api/boards")
+            mockMvc.perform(post("/boards")
                             .contentType(APPLICATION_JSON)
                             .header("Authorization", "bearer " + accessToken)
                             .content(json))
@@ -104,7 +104,7 @@ class BoardIntegrationTest extends IntegrationTest {
             final String json = objectMapper.writeValueAsString(request);
 
             // expected
-            mockMvc.perform(post("/api/boards")
+            mockMvc.perform(post("/boards")
                             .contentType(APPLICATION_JSON)
                             .content(json))
                     .andExpect(status().isUnauthorized())
@@ -138,7 +138,7 @@ class BoardIntegrationTest extends IntegrationTest {
             final String json = objectMapper.writeValueAsString(request);
 
             // expected
-            mockMvc.perform(post("/api/boards")
+            mockMvc.perform(post("/boards")
                             .contentType(APPLICATION_JSON)
                             .header("Authorization", "bearer " + accessToken)
                             .content(json))
@@ -177,7 +177,7 @@ class BoardIntegrationTest extends IntegrationTest {
                     ));
 
             //when
-            final var result = mockMvc.perform(get("/api/boards/{boardId}", board.getId())
+            final var result = mockMvc.perform(get("/boards/{boardId}", board.getId())
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print());
 
@@ -194,7 +194,7 @@ class BoardIntegrationTest extends IntegrationTest {
             //given
 
             //when
-            final var result = mockMvc.perform(get("/api/boards/{boardId}", 125L)
+            final var result = mockMvc.perform(get("/boards/{boardId}", 10000L)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andDo(print());
 

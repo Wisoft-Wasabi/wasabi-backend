@@ -49,7 +49,7 @@ public class BoardServiceImpl implements BoardService {
         if (images != null) {
             Arrays.stream(images)
                     .map(image -> BoardImage.createBoardImage(image, board))
-                    .forEach(boardImage -> board.getBoardImages().add(boardImage));
+                    .toList();
         }
     }
 

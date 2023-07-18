@@ -39,7 +39,7 @@ class BoardServiceTest {
 
         @Test
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
-        void writeBoard() {
+        void write_board() {
 
             // given
             final Member member = Member.createMember(
@@ -81,7 +81,7 @@ class BoardServiceTest {
 
         @Test
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
-        public void 성공() throws Exception {
+        void read_board_success() throws Exception {
 
             //given
             final Member member = Member.createMember(
