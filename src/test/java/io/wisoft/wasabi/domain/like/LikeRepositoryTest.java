@@ -60,8 +60,10 @@ class LikeRepositoryTest {
 
             //given
             final Member member = em.find(Member.class, 1L);
+
             final Board board = em.find(Board.class, 1L);
-            final Like like = Like.createLike(board, member);
+
+            final Like like = Like.createLike(member, board);
 
             //when
             final Like savedLike = likeRepository.save(like);

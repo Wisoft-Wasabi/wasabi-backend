@@ -17,13 +17,16 @@ public class LikeServiceImpl implements LikeService {
     private final LikeRepository likeRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
+    private final LikeMapper likeMapper;
 
     public LikeServiceImpl(final LikeRepository likeRepository,
                            final MemberRepository memberRepository,
-                           final BoardRepository boardRepository) {
+                           final BoardRepository boardRepository,
+                           final LikeMapper likeMapper) {
         this.likeRepository = likeRepository;
         this.memberRepository = memberRepository;
         this.boardRepository = boardRepository;
+        this.likeMapper = likeMapper;
     }
 
     @Transactional
@@ -35,9 +38,10 @@ public class LikeServiceImpl implements LikeService {
         final Board board = boardRepository.findById(request.boardId())
                 .orElseThrow(BoardNotFoundException::new);
 
-        final Like like = Like.createLike(board, member);
+        final Like like = likeMapper.registerLikeRequestToEntity(member, board);
+
         likeRepository.save(like);
 
-        return new RegisterLikeResponse(like.getId());
+        return likeMapper.entityToRegisterLikeResponse(like);
     }
 }

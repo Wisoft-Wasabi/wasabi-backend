@@ -14,11 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -27,6 +29,9 @@ class LikeServiceTest {
 
     @InjectMocks
     private LikeServiceImpl likeService;
+
+    @Spy
+    private LikeMapper likeMapper;
 
     @Mock
     private MemberRepository memberRepository;
@@ -66,13 +71,14 @@ class LikeServiceTest {
 
             final RegisterLikeRequest request = new RegisterLikeRequest(board.getId());
 
-            final Like like = Like.createLike(board, member);
+            final Like like = likeMapper.registerLikeRequestToEntity(member, board);
             given(likeRepository.save(any())).willReturn(like);
 
             //when
             final RegisterLikeResponse response = likeService.registerLike(member.getId(), request);
 
             //then
+            assertNotNull(response);
             Assertions.assertThat(response.likeId()).isEqualTo(like.getId());
         }
 

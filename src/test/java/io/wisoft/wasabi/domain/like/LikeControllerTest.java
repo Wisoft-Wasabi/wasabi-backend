@@ -49,23 +49,20 @@ class LikeControllerTest {
             //given
             final String token = jwtTokenProvider.createMemberToken(1L, "wasabi", Role.GENERAL);
 
-            final Long memberId = jwtTokenProvider.decodeAccessToken(token);
-
-            final Long boardId = 1L;
-
-            final var request = new RegisterLikeRequest(boardId);
+            final var request = new RegisterLikeRequest(1L);
 
             final var response = new RegisterLikeResponse(1L);
             given(likeService.registerLike(any(), any())).willReturn(response);
 
+
             //when
-            final var perform = mockMvc.perform(post("/likes")
+            final var result = mockMvc.perform(post("/likes")
                     .contentType(APPLICATION_JSON)
                     .header("Authorization", "Bearer" + token)
                     .content(objectMapper.writeValueAsString(request)));
 
             //then
-            perform.andExpect(status().isOk());
+            result.andExpect(status().isOk());
         }
     }
 }
