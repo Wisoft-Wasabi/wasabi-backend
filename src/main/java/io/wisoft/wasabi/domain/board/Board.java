@@ -1,8 +1,8 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.like.persistence.Like;
+import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.member.persistence.Member;
-import io.wisoft.wasabi.domain.usage.persistence.Usage;
+import io.wisoft.wasabi.domain.usage.persistence.Used;
 import io.wisoft.wasabi.global.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
 
@@ -36,7 +36,7 @@ public class Board extends BaseTimeEntity {
     private Set<Like> likes = new HashSet<>();
 
     @OneToMany(mappedBy = "board")
-    private Set<Usage> usages = new HashSet<>();
+    private Set<Used> useds = new HashSet<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
     private Set<BoardImage> boardImages = new HashSet<>();
@@ -83,8 +83,8 @@ public class Board extends BaseTimeEntity {
         return likes;
     }
 
-    public Set<Usage> getUsages() {
-        return usages;
+    public Set<Used> getUsages() {
+        return useds;
     }
 
     public Set<BoardImage> getBoardImages() {

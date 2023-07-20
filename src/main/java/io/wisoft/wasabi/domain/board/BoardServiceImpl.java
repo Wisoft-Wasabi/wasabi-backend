@@ -29,15 +29,12 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Transactional
-    public WriteBoardResponse writeBoard(final WriteBoardRequest request) {
+    public WriteBoardResponse writeBoard(final WriteBoardRequest request, final Long memberId) {
 
-        final Member member = memberRepository.findById(request.memberId())
+        final Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberExceptionExecutor::MemberNotFound);
 
-        final Board board = Board.createBoard(
-                request.title(),
-                request.content(),
-                member);
+        final Board board = boardMapper.writeBoardRequestToEntity(request, member);
 
         boardRepository.save(board);
         saveImages(board, request);
