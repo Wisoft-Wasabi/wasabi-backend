@@ -3,7 +3,6 @@ package io.wisoft.wasabi.global.exception;
 import io.wisoft.wasabi.global.response.CommonResponse;
 import io.wisoft.wasabi.global.response.dto.error.ErrorDataResponse;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

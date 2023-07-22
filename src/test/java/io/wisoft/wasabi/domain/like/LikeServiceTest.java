@@ -4,8 +4,8 @@ import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
-import io.wisoft.wasabi.domain.member.persistence.Member;
-import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
+import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -51,15 +50,14 @@ class LikeServiceTest {
         void register_like() throws Exception {
 
             //given
-            final Member member = new Member(
-                    "test@gmail.com",
+            final Member member = Member.createMember(
+                    "게시글작성성공@gmail.com",
                     "test1234",
-                    "wasabi",
-                    "01012345678",
+                    "test1234",
+                    "01000000000",
                     false,
-                    Role.GENERAL,
-                    LocalDateTime.now()
-            );
+                    Role.GENERAL);
+
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
             final Board board = Board.createBoard(

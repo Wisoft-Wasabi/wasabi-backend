@@ -75,7 +75,7 @@ class BoardControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            perform.andExpect(status().isOk());
+            perform.andExpect(status().isCreated());
         }
     }
 

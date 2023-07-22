@@ -1,11 +1,10 @@
 package io.wisoft.wasabi.domain.board;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.domain.auth.Role;
-import io.wisoft.wasabi.domain.auth.dto.MemberSignupRequestDto;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.member.persistence.Member;
-import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
+import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.global.enumeration.Role;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -48,13 +47,12 @@ class BoardIntegrationTest extends IntegrationTest {
 
             // given
             final Member member = Member.createMember(
-                    new MemberSignupRequestDto(
-                            "게시글작성성공@gmail.com",
-                            "test1234",
-                            "test1234",
-                            "name",
-                            "01000000000",
-                            Role.GENERAL));
+                    "게시글작성성공@gmail.com",
+                    "test1234",
+                    "test1234",
+                    "01000000000",
+                    false,
+                    Role.GENERAL);
             final Member savedMember = memberRepository.save(member);
 
             final String accessToken = jwtTokenProvider.createMemberToken(savedMember.getId(), member.getName(), member.getRole());
@@ -74,8 +72,8 @@ class BoardIntegrationTest extends IntegrationTest {
                     .content(json));
 
             // then
-            perform.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.dataResponse.id").exists());
+            perform.andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.data.id").exists());
         }
 
         @Test
@@ -84,13 +82,12 @@ class BoardIntegrationTest extends IntegrationTest {
 
             // given
             final Member member = Member.createMember(
-                    new MemberSignupRequestDto(
-                            "게시글작성실패1@gmail.com",
-                            "test1234",
-                            "test1234",
-                            "name",
-                            "01000000000",
-                            Role.GENERAL));
+                    "게시글작성성공@gmail.com",
+                    "test1234",
+                    "test1234",
+                    "01000000000",
+                    false,
+                    Role.GENERAL);
             final Member savedMember = memberRepository.save(member);
 
             final WriteBoardRequest request = new WriteBoardRequest(
@@ -116,13 +113,12 @@ class BoardIntegrationTest extends IntegrationTest {
 
             // given
             final Member member = Member.createMember(
-                    new MemberSignupRequestDto(
-                            "게시글작성실패2@gmail.com",
-                            "test1234",
-                            "test1234",
-                            "name",
-                            "01000000000",
-                            Role.GENERAL));
+                    "게시글작성성공@gmail.com",
+                    "test1234",
+                    "test1234",
+                    "01000000000",
+                    false,
+                    Role.GENERAL);
             final Member savedMember = memberRepository.save(member);
 
             final String accessToken = jwtTokenProvider.createMemberToken(savedMember.getId(), savedMember.getName(), savedMember.getRole());
@@ -157,14 +153,12 @@ class BoardIntegrationTest extends IntegrationTest {
             //given
             final Member member = memberRepository.save(
                     Member.createMember(
-                            new MemberSignupRequestDto(
-                                    "게시글조회성공@email.com",
-                                    "pass12",
-                                    "pass12",
-                                    "name",
-                                    "phoneNumber",
-                                    Role.GENERAL
-                            )));
+                            "게시글작성성공@gmail.com",
+                            "test1234",
+                            "test1234",
+                            "01000000000",
+                            false,
+                            Role.GENERAL));
 
 
             final Board board = boardRepository.save(
@@ -176,11 +170,11 @@ class BoardIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/boards/{boardId}", board.getId())
-                            .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON));
 
             //then
             result.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.dataResponse.views").value(1));
+                    .andExpect(jsonPath("$.data.views").value(1));
         }
 
 
@@ -192,7 +186,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/boards/{boardId}", 10000L)
-                            .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(MediaType.APPLICATION_JSON));
 
             //then
             result.andExpect(status().isNotFound());

@@ -1,8 +1,7 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.auth.Role;
-import io.wisoft.wasabi.domain.auth.dto.MemberSignupRequestDto;
-import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,14 +22,13 @@ class BoardTest {
             final Board board = Board.createBoard(
                     "title",
                     "content",
-                    Member.createMember(new MemberSignupRequestDto(
-                            "email@email.com",
-                            "pass1234",
-                            "pass1234",
-                            "name",
-                            "phoneNumber",
-                            Role.GENERAL
-                    ))
+                    Member.createMember(
+                            "게시글작성성공@gmail.com",
+                            "test1234",
+                            "test1234",
+                            "01000000000",
+                            false,
+                            Role.GENERAL)
             );
 
             //when -- 동작

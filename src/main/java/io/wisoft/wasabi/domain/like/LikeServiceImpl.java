@@ -5,9 +5,9 @@ import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.board.exception.BoardNotFoundException;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
+import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberNotFoundException;
-import io.wisoft.wasabi.domain.member.persistence.Member;
-import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

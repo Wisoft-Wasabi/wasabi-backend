@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.domain.member.persistence;
+package io.wisoft.wasabi.domain.member;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,7 +1,7 @@
 package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.board.Board;
-import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.time.LocalDateTime;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
@@ -30,15 +28,13 @@ class LikeRepositoryTest {
     @BeforeEach
     void init() {
         // Member 초기화
-        final Member member = new Member(
-                "test@gmail.com",
+        final Member member = Member.createMember(
+                "게시글작성성공@gmail.com",
                 "test1234",
-                "wasabi",
-                "01012345678",
+                "test1234",
+                "01000000000",
                 false,
-                Role.GENERAL,
-                LocalDateTime.now()
-        );
+                Role.GENERAL);
         em.persist(member);
 
         // Board 초기화
