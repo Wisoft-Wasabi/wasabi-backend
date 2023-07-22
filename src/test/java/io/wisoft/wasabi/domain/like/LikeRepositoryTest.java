@@ -4,7 +4,10 @@ import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -24,10 +27,14 @@ class LikeRepositoryTest {
     @Autowired
     private TestEntityManager em;
 
+    private Member member;
+
+    private Board board;
+
     @BeforeEach
     void init() {
         // Member 초기화
-        final Member member = Member.createMember(
+        member = Member.createMember(
                 "게시글작성성공@gmail.com",
                 "test1234",
                 "test1234",
@@ -37,7 +44,7 @@ class LikeRepositoryTest {
         em.persist(member);
 
         // Board 초기화
-        final Board board = Board.createBoard(
+        board = Board.createBoard(
                 "title",
                 "content",
                 member
@@ -54,10 +61,6 @@ class LikeRepositoryTest {
         void register_like() throws Exception {
 
             //given
-            final Member member = em.find(Member.class, 1L);
-
-            final Board board = em.find(Board.class, 1L);
-
             final Like like = Like.createLike(member, board);
 
             //when
@@ -79,10 +82,6 @@ class LikeRepositoryTest {
         void cancel_like() {
 
             // given
-            final Member member = em.find(Member.class, 1L);
-
-            final Board board = em.find(Board.class, 1L);
-
             final Like like = Like.createLike(member, board);
             likeRepository.save(like);
 
@@ -106,5 +105,39 @@ class LikeRepositoryTest {
             // then
             Assertions.assertThat(result).isEqualTo(0);
         }
+    }
+
+    @Nested
+    @DisplayName("좋아요 조회")
+    class FindLike {
+
+        @Test
+        @DisplayName("Member Id와 Board Id 조회 시 정상적으로 조회된다.")
+        void find_like_by_member_id_and_board_id() {
+
+            // given
+            final Like like = Like.createLike(member, board);
+            likeRepository.save(like);
+
+            // when
+            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
+
+            // then
+            Assertions.assertThat(result).isNotEmpty();
+        }
+
+        @Test
+        @DisplayName("Member Id와 Board Id 조회 시 데이터가 없다면 빈값이 조회된다.")
+        void find_like_by_member_id_and_board_id_fail() {
+
+            // given
+
+            // when
+            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
+
+            // then
+            Assertions.assertThat(result).isEmpty();
+        }
+
     }
 }
