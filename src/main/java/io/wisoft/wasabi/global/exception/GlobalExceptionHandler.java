@@ -3,6 +3,7 @@ package io.wisoft.wasabi.global.exception;
 import io.wisoft.wasabi.global.response.CommonResponse;
 import io.wisoft.wasabi.global.response.dto.error.ErrorDataResponse;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -22,7 +23,7 @@ public class GlobalExceptionHandler {
         final ResponseEntity response = buildResponse(ErrorType.UNCAUGHT_ERROR);
         return response;
     }
-
+  
     private ResponseEntity buildResponse(final ErrorType errorType) {
         final ErrorDataResponse errorDataResponse = ErrorDataResponse.newInstance(errorType);
         final CommonResponse response = CommonResponse.newInstance(errorDataResponse);
