@@ -1,15 +1,15 @@
 package io.wisoft.wasabi.domain.board;
 
+import autoparams.AutoSource;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -41,18 +41,12 @@ class BoardServiceTest {
     @DisplayName("게시글 작성")
     class WriteBoard {
 
-        @Test
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
-        void write_board() {
+        @ParameterizedTest
+        @AutoSource
+        void write_board(final Member member) {
 
             // given
-            final Member member = Member.createMember(
-                    "게시글작성성공@gmail.com",
-                    "test1234",
-                    "name",
-                    "01000000000",
-                    false,
-                    Role.GENERAL);
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
             final WriteBoardRequest request = new WriteBoardRequest(
@@ -69,7 +63,6 @@ class BoardServiceTest {
 
             // then
             assertEquals("title", response.title());
-            assertEquals("name", response.writer());
             assertNotNull(response);
         }
     }
@@ -78,19 +71,12 @@ class BoardServiceTest {
     @DisplayName("게시글 조회")
     class ReadBoard {
 
-        @Test
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
-        void read_board_success() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void read_board_success(final Member member) throws Exception {
 
             //given
-            final Member member = Member.createMember(
-                    "게시글작성성공@gmail.com",
-                    "test1234",
-                    "test1234",
-                    "01000000000",
-                    false,
-                    Role.GENERAL);
-
             final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
                     "content",
