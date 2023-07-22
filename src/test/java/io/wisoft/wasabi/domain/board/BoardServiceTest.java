@@ -13,20 +13,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
 
     @InjectMocks
-    private BoardService boardService;
+    private BoardServiceImpl boardServiceImpl;
+
+    @Spy
+    private BoardMapper boardMapper;
 
     @Mock
     private MemberRepository memberRepository;
@@ -40,7 +44,7 @@ class BoardServiceTest {
 
         @Test
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
-        void writeBoard() {
+        void write_board() {
 
             // given
             final Member member = Member.createMember(
@@ -54,25 +58,21 @@ class BoardServiceTest {
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
             final WriteBoardRequest request = new WriteBoardRequest(
-                    member.getId(),
                     "title",
                     "content",
                     new String[]{"tags"},
                     new String[]{"imageUrls"});
 
-            final Board board = Board.createBoard(
-                    "title",
-                    "content",
-                    member
-            );
+            final Board board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
 
             // when
-            final WriteBoardResponse response = boardService.writeBoard(request);
+            final WriteBoardResponse response = boardServiceImpl.writeBoard(request, 1L);
 
             // then
             assertEquals("title", response.title());
             assertEquals("name", response.writer());
+            assertNotNull(response);
         }
     }
 
@@ -82,7 +82,7 @@ class BoardServiceTest {
 
         @Test
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
-        public void 성공() throws Exception {
+        void read_board_success() throws Exception {
 
             //given
             final Member member = Member.createMember(
@@ -96,15 +96,17 @@ class BoardServiceTest {
                     )
             );
 
-            final Board board = Board.createBoard(
+            final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
                     "content",
-                    member
-            );
-            when(boardRepository.findById(any())).thenReturn(Optional.of(board));
+                    new String[]{"tags"},
+                    new String[]{"imageUrls"});
+
+            final Board board = boardMapper.writeBoardRequestToEntity(request, member);
+            given(boardRepository.findById(any())).willReturn(Optional.of(board));
 
             //when
-            final var response = boardService.readBoard(board.getId());
+            final var response = boardServiceImpl.readBoard(board.getId());
 
             //then
             Assertions.assertThat(response.views()).isEqualTo(1L);

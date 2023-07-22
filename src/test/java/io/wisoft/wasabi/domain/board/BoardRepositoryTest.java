@@ -28,7 +28,7 @@ class BoardRepositoryTest {
 
         @Test
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
-        void writeBoard() throws Exception {
+        void write_board() throws Exception {
 
             // given
             final Member member = Member.createMember(
@@ -65,7 +65,7 @@ class BoardRepositoryTest {
 
         @Test
         @DisplayName("요청이 성공적으로 수행되어, 게시글 조회에 성공한다.")
-        public void 게시글_조회() throws Exception {
+        void read_board_success() throws Exception {
 
             //given
             final Member member = Member.createMember(

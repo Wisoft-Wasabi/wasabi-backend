@@ -2,7 +2,7 @@ package io.wisoft.wasabi.global.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.auth.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,21 +19,45 @@ public class JwtTokenProvider {
 
     @Value("${jwt.issuer}")
     private String issuer;
+  
+    public String createAccessToken(final String payload) {
+        return createToken(payload, accessTokenValidityInMilliseconds);
+    }
 
-    public String createAccessToken(final Member member) {
-        final Date now = new Date();
-        final Date validity = new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
+    public String createToken(final String payload, final long expireLength) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + expireLength);
 
         return Jwts.builder()
-                .setIssuer(this.issuer)
-                .setSubject(this.issuer + "/members/" + member.getId())
-                .claim("memberId", member.getId())
-                .claim("memberName", member.getName())
-                .claim("memberRole", member.getRole())
+                .setSubject(payload)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
                 .compact();
     }
 
+    public String createMemberToken(final Long memberId, final String name, final Role role) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
+
+        return Jwts.builder()
+                .setIssuer(this.issuer)
+                .setSubject(this.issuer + "/members/" + memberId)
+                .claim("memberId", memberId)
+                .claim("memberName", name)
+                .claim("memberRole", role)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
+                .compact();
+    }
+
+    public Long decodeAccessToken(final String accessToken) {
+
+        return Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(accessToken)
+                .getBody()
+                .get("memberId", Long.class);
+    }
 }
