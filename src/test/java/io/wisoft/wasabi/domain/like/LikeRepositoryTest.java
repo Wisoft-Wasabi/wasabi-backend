@@ -4,14 +4,13 @@ import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
@@ -68,6 +67,44 @@ class LikeRepositoryTest {
             assertNotNull(savedLike);
             Assertions.assertThat(savedLike.getId()).isEqualTo(like.getId());
             Assertions.assertThat(savedLike.getBoard()).isEqualTo(board);
+        }
+    }
+
+    @Nested
+    @DisplayName("좋아요 취소")
+    class CancelLike {
+
+        @Test
+        @DisplayName("요청 시 정상적으로 삭제되어야 한다.")
+        void cancel_like() {
+
+            // given
+            final Member member = em.find(Member.class, 1L);
+
+            final Board board = em.find(Board.class, 1L);
+
+            final Like like = Like.createLike(member, board);
+            likeRepository.save(like);
+
+            // when
+            final int result = likeRepository.deleteByMemberIdAndBoardId(member.getId(), board.getId());
+
+            // then
+            Assertions.assertThat(result).isEqualTo(1);
+
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 데이터 삭제시 아무것도 삭제되지 않는다.")
+        void cancel_like_fail() {
+
+            // given
+
+            // when
+            final int result = likeRepository.deleteByMemberIdAndBoardId(10L, 10L);
+
+            // then
+            Assertions.assertThat(result).isEqualTo(0);
         }
     }
 }
