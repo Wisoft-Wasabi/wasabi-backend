@@ -1,16 +1,16 @@
-package io.wisoft.wasabi.domain.member.persistence;
+package io.wisoft.wasabi.domain.member;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.like.Like;
+import io.wisoft.wasabi.global.basetime.BaseTimeEntity;
 import io.wisoft.wasabi.global.enumeration.Role;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,9 +29,6 @@ public class Member {
     private String phoneNumber;
 
     @Column(nullable = false)
-    private LocalDateTime createAt;
-
-    @Column(nullable = false)
     private boolean activation;
 
     @Column(nullable = false)
@@ -48,18 +45,33 @@ public class Member {
                   final String name,
                   final String phoneNumber,
                   final boolean activation,
-                  final Role role,
-                  final LocalDateTime createAt) {
+                  final Role role) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.activation = activation;
         this.role = role;
-        this.createAt = createAt;
     }
 
-    public Member() {
+    protected Member() {
+    }
+
+    public static Member createMember(
+            final String email,
+            final String password,
+            final String name,
+            final String phoneNumber,
+            final boolean activation,
+            final Role role) {
+        return new Member(
+                email,
+                password,
+                name,
+                phoneNumber,
+                activation,
+                role
+        );
     }
 
     public Long getId() {

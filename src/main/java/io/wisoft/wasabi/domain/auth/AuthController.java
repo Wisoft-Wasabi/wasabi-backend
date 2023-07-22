@@ -1,11 +1,11 @@
 package io.wisoft.wasabi.domain.auth;
 
 
-import io.wisoft.wasabi.global.response.CommonResponse;
-import io.wisoft.wasabi.domain.auth.dto.request.MemberSignupRequest;
-import io.wisoft.wasabi.domain.auth.dto.response.MemberSignupResponse;
+import io.wisoft.wasabi.domain.auth.dto.request.LoginRequest;
+import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.response.MemberLoginResponse;
-import io.wisoft.wasabi.domain.auth.dto.request.MemberLoginRequest;
+import io.wisoft.wasabi.domain.auth.dto.response.MemberSignupResponse;
+import io.wisoft.wasabi.global.response.CommonResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/signup")
-    public ResponseEntity<CommonResponse> signup(@RequestBody @Valid final MemberSignupRequest request) {
+    public ResponseEntity<CommonResponse> signup(@RequestBody @Valid final SignupRequest request) {
         final MemberSignupResponse dataResponse = authService.signup(request);
         final CommonResponse response = CommonResponse.newInstance(dataResponse);
 
@@ -32,8 +32,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<CommonResponse> login(@RequestBody @Valid final MemberLoginRequest request
-    ){
+    public ResponseEntity<CommonResponse> login(@RequestBody @Valid final LoginRequest request) {
         final MemberLoginResponse dataResponse = authService.login(request);
         final CommonResponse response = CommonResponse.newInstance(dataResponse);
         return ResponseEntity.ok(response);

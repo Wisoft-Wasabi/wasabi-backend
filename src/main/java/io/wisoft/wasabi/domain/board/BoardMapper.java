@@ -3,7 +3,7 @@ package io.wisoft.wasabi.domain.board;
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
-import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.Member;
 import org.springframework.stereotype.Component;
 
 @Component

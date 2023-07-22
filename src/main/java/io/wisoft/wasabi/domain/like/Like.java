@@ -1,7 +1,7 @@
 package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.board.Board;
-import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

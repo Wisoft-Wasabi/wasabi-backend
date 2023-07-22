@@ -2,7 +2,7 @@ package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
-import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.Member;
 import org.springframework.stereotype.Component;
 
 @Component

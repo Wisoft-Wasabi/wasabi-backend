@@ -1,13 +1,13 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.auth.Role;
-import io.wisoft.wasabi.domain.auth.dto.MemberSignupRequestDto;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
-import io.wisoft.wasabi.domain.member.persistence.Member;
-import io.wisoft.wasabi.domain.member.persistence.MemberRepository;
+import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,13 +47,12 @@ class BoardServiceTest {
 
             // given
             final Member member = Member.createMember(
-                    new MemberSignupRequestDto(
-                            "test@gmail.com",
-                            "test1234",
-                            "test1234",
-                            "name",
-                            "01000000000",
-                            Role.GENERAL));
+                    "게시글작성성공@gmail.com",
+                    "test1234",
+                    "name",
+                    "01000000000",
+                    false,
+                    Role.GENERAL);
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
             final WriteBoardRequest request = new WriteBoardRequest(
@@ -85,15 +84,12 @@ class BoardServiceTest {
 
             //given
             final Member member = Member.createMember(
-                    new MemberSignupRequestDto(
-                            "게시글조회성공@email.com",
-                            "pass12",
-                            "pass12",
-                            "name",
-                            "phoneNumber",
-                            Role.GENERAL
-                    )
-            );
+                    "게시글작성성공@gmail.com",
+                    "test1234",
+                    "test1234",
+                    "01000000000",
+                    false,
+                    Role.GENERAL);
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
