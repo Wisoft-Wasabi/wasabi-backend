@@ -1,15 +1,16 @@
 package io.wisoft.wasabi.domain.board;
 
+import autoparams.AutoSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.global.enumeration.Role;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,18 +42,12 @@ class BoardIntegrationTest extends IntegrationTest {
     @DisplayName("게시글 작성")
     class WriteBoard {
 
-        @Test
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
-        void write_board() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void write_board(final Member member) throws Exception {
 
             // given
-            final Member member = Member.createMember(
-                    "게시글작성성공@gmail.com",
-                    "test1234",
-                    "test1234",
-                    "01000000000",
-                    false,
-                    Role.GENERAL);
             final Member savedMember = memberRepository.save(member);
 
             final String accessToken = jwtTokenProvider.createMemberToken(savedMember.getId(), member.getName(), member.getRole());
@@ -76,19 +71,13 @@ class BoardIntegrationTest extends IntegrationTest {
                     .andExpect(jsonPath("$.data.id").exists());
         }
 
-        @Test
         @DisplayName("요청시 로그인 상태여야 한다.")
-        void write_board_fail1() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void write_board_fail1(final Member member) throws Exception {
 
             // given
-            final Member member = Member.createMember(
-                    "게시글작성성공@gmail.com",
-                    "test1234",
-                    "test1234",
-                    "01000000000",
-                    false,
-                    Role.GENERAL);
-            final Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
@@ -107,18 +96,12 @@ class BoardIntegrationTest extends IntegrationTest {
             perform.andExpect(status().isUnauthorized());
         }
 
-        @Test
         @DisplayName("요청시 제목과 본문은 필수다.")
-        void write_post_fail2() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void write_post_fail2(final Member member) throws Exception {
 
             // given
-            final Member member = Member.createMember(
-                    "게시글작성성공@gmail.com",
-                    "test1234",
-                    "test1234",
-                    "01000000000",
-                    false,
-                    Role.GENERAL);
             final Member savedMember = memberRepository.save(member);
 
             final String accessToken = jwtTokenProvider.createMemberToken(savedMember.getId(), savedMember.getName(), savedMember.getRole());
@@ -146,20 +129,13 @@ class BoardIntegrationTest extends IntegrationTest {
     @DisplayName("게시글 조회")
     class ReadBoard {
 
-        @Test
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
-        void read_board_success() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void read_board_success(final Member member) throws Exception {
 
             //given
-            final Member member = memberRepository.save(
-                    Member.createMember(
-                            "게시글작성성공@gmail.com",
-                            "test1234",
-                            "test1234",
-                            "01000000000",
-                            false,
-                            Role.GENERAL));
-
+            memberRepository.save(member);
 
             final Board board = boardRepository.save(
                     Board.createBoard(
