@@ -13,7 +13,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class Usage {
+public class Used {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -34,14 +34,14 @@ public class Usage {
 
     public void setTag(final Tag tag) {
         this.tag = tag;
-        tag.getUsages().add(this);
+        tag.getUseds().add(this);
     }
 
-    public static Usage create(final Board board, final Tag tag) {
-        final Usage usage = new Usage();
-        usage.setBoard(board);
-        usage.setTag(tag);
+    public static Used create(final Board board, final Tag tag) {
+        final Used used = new Used();
+        used.setBoard(board);
+        used.setTag(tag);
 
-        return usage;
+        return used;
     }
 }

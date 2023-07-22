@@ -1,30 +1,28 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
   profiles:
+    active: dev
     include: jwt, bcrypt
 
-  sql:
-    init:
-      mode: always
+#  sql:
+#    init:
+#      mode: always
 
   jpa:
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
+#  jpa:
+#    database: mysql
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
-  h2:
-    console:
-      enabled: true
 
-  h2:
-    console:
-      enabled: true
+#  h2:
+#    console:
+#      enabled: true
 
 logging.level:
   org.hibernate.SQL: debug

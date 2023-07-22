@@ -1,6 +1,6 @@
 package io.wisoft.wasabi.domain.tag.persistence;
 
-import io.wisoft.wasabi.domain.usage.persistence.Usage;
+import io.wisoft.wasabi.domain.usage.persistence.Used;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +23,7 @@ public class Tag {
     private String name;
 
     @OneToMany(mappedBy = "tag")
-    private Set<Usage> usages = new HashSet<>();
+    private Set<Used> useds = new HashSet<>();
 
     public static Tag createTag(final String name) {
         final Tag tag = new Tag();
