@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.h2.Driver
 
   profiles:
-    include: jwt
+    include: jwt, bcrypt
 
   sql:
     init:
@@ -17,8 +17,10 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
-        #  show_sql: true
         format_sql: true
+  h2:
+    console:
+      enabled: true
 
   h2:
     console:
@@ -26,4 +28,7 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
-  #org.hibernate.type: trace
+
+server:
+  servlet:
+    context-path: /api

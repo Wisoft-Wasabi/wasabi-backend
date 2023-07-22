@@ -19,7 +19,7 @@ public class JwtTokenProvider {
 
     @Value("${jwt.issuer}")
     private String issuer;
-
+  
     public String createAccessToken(final String payload) {
         return createToken(payload, accessTokenValidityInMilliseconds);
     }

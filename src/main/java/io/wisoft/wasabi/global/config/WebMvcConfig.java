@@ -18,5 +18,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(memberIdResolver);
+    
+    @Override
+    public void addCorsMappings(final CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }

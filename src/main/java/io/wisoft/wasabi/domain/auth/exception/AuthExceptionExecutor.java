@@ -5,8 +5,8 @@ public class AuthExceptionExecutor {
     public static PasswordInvalidException PasswordInvalid() {
         return new PasswordInvalidException();
     }
-    public static SigninFailException SigninFail() {
-        return new SigninFailException();
+    public static LoginFailException LoginFail() {
+        return new LoginFailException();
     }
 
     public static TokenNotExistException UnAuthorized() {
