@@ -1,7 +1,5 @@
 package io.wisoft.wasabi.domain.board.dto;
 
-import io.wisoft.wasabi.global.response.dto.DataResponse;
-
 import java.time.LocalDateTime;
 
 public record ReadBoardResponse (
@@ -11,4 +9,4 @@ public record ReadBoardResponse (
         String writer,
         LocalDateTime createdDate,
         int likeCount,
-        int views) implements DataResponse { }
+        int views) { }
