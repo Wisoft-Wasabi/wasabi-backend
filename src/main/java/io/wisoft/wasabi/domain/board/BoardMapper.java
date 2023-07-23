@@ -4,6 +4,7 @@ import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.domain.usage.persistence.Used;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,7 +38,10 @@ public class BoardMapper {
                 board.getMember().getName(),
                 board.getCreatedAt(),
                 board.getLikes().size(),
-                board.getViews()
+                board.getViews(),
+                board.getUsages().stream()
+                        .map(Used::getTag)
+                        .toList()
         );
     }
 }
