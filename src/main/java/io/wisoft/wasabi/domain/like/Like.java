@@ -28,12 +28,12 @@ public class Like {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void setBoard(final Board board) {
+    private void setBoard(final Board board) {
         this.board = board;
         board.getLikes().add(this);
     }
 
-    public void setMember(final Member member) {
+    private void setMember(final Member member) {
         this.member = member;
         member.getLikes().add(this);
     }
