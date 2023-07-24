@@ -1,12 +1,16 @@
 package io.wisoft.wasabi.domain.auth.exception;
 
-import io.wisoft.wasabi.global.exception.BusinessException;
 import io.wisoft.wasabi.global.exception.ErrorType;
 
-public class TokenNotExistException extends BusinessException {
+public class TokenNotExistException extends RuntimeException {
+
+    private final ErrorType errorType;
 
     public TokenNotExistException() {
-        super(ErrorType.UNAUTHORIZED);
+        this.errorType = ErrorType.UNAUTHORIZED;
     }
 
+    public ErrorType getErrorType() {
+        return errorType;
+    }
 }

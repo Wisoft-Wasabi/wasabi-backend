@@ -1,9 +1,9 @@
 package io.wisoft.wasabi.domain.auth;
 
-import io.wisoft.wasabi.domain.auth.dto.LoginRequest;
-import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
-import io.wisoft.wasabi.domain.auth.dto.MemberLoginResponse;
-import io.wisoft.wasabi.domain.auth.dto.MemberSignupResponse;
+import io.wisoft.wasabi.domain.auth.dto.request.LoginRequest;
+import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
+import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
+import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberMapper;
@@ -38,31 +38,19 @@ public class AuthService {
         this.memberMapper = memberMapper;
     }
 
-    @Value("${bcrypt.secret.salt}")
-    private String salt;
-
     @Transactional
-    public MemberSignupResponse signup(final SignupRequest request) {
-        // 1. signup DTO 중, password, checkPassword가 동일한지 check
-        if (!request.password().equals(request.checkPassword())) {
-            // TODO: PasswordInvalidException은 DTO Validate 과정에 문제가 발생한 것. 해당 권한으로 옮겨야함.
-            throw AuthExceptionExecutor.PasswordInvalid();
-        }
-
-        // 2. 중복된 회원이 있는지 조회
+    public SignupResponse signup(final SignupRequest request) {
         if (memberRepository.existsByEmail(request.email())) {
             throw MemberExceptionExecutor.EmailOverlap();
         }
 
-        // 3. 회원가입 DTO 값을 기반으로 Member 생성
-        final Member member = memberMapper.signupRequestToEntity(request);
+        final Member member = memberMapper.createMemberFromRequest(request);
         memberRepository.save(member);
 
-        // 4. 생성한 member 기반으로 dataResponse 반환
-        return new MemberSignupResponse(member);
+        return memberMapper.entityToMemberSignupResponse(member);
     }
 
-    public MemberLoginResponse login(final LoginRequest request) {
+    public LoginResponse login(final LoginRequest request) {
         final Member member = memberRepository.findMemberByEmail(request.email())
                 .orElseThrow(AuthExceptionExecutor::LoginFail);
 
@@ -70,12 +58,7 @@ public class AuthService {
             throw AuthExceptionExecutor.LoginFail();
         }
 
-        final String accessToken = jwtTokenProvider.createMemberToken(member.getId(), member.getName(), member.getRole());
-        final String tokenType = "bearer";
-        final String name = member.getName();
-        final Role role = member.getRole();
-        final boolean activation = member.isActivation();
-
-        return new MemberLoginResponse(name, role, activation, accessToken, tokenType);
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole());
+        return memberMapper.mapToLoginResponse(member, accessToken);
     }
 }

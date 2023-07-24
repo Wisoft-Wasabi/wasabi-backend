@@ -352,3 +352,4 @@ gradle-app.setting
 
 # docker
 docker/
+/src/main/resources/schema.sql
