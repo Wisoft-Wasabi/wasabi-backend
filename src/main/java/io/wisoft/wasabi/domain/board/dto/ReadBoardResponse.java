@@ -13,4 +13,5 @@ public record ReadBoardResponse (
         LocalDateTime createdDate,
         int likeCount,
         int views,
+        boolean isLike,
         List<Tag> tags) { }

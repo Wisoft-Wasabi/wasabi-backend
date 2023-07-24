@@ -39,6 +39,7 @@ public class BoardMapper {
                 board.getCreatedAt(),
                 board.getLikes().size(),
                 board.getViews(),
+                false,
                 board.getUsages().stream()
                         .map(Used::getTag)
                         .toList()
