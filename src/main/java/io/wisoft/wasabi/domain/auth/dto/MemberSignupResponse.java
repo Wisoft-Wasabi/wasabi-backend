@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.domain.auth.dto.response;
+package io.wisoft.wasabi.domain.auth.dto;
 
 import io.wisoft.wasabi.domain.member.Member;
 

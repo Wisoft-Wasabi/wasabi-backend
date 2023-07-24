@@ -1,9 +1,9 @@
 package io.wisoft.wasabi.domain.auth;
 
-import io.wisoft.wasabi.domain.auth.dto.request.LoginRequest;
-import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
-import io.wisoft.wasabi.domain.auth.dto.response.MemberLoginResponse;
-import io.wisoft.wasabi.domain.auth.dto.response.MemberSignupResponse;
+import io.wisoft.wasabi.domain.auth.dto.LoginRequest;
+import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
+import io.wisoft.wasabi.domain.auth.dto.MemberLoginResponse;
+import io.wisoft.wasabi.domain.auth.dto.MemberSignupResponse;
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberMapper;

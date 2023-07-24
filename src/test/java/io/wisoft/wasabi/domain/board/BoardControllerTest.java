@@ -98,7 +98,9 @@ class BoardControllerTest {
                     "test-member-name",
                     LocalDateTime.now(),
                     0,
-                    1
+                    1,
+                    false,
+                    null
             );
 
             given(boardService.readBoard(boardId)).willReturn(response);

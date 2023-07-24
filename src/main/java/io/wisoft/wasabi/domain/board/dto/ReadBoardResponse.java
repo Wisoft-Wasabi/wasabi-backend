@@ -1,8 +1,9 @@
 package io.wisoft.wasabi.domain.board.dto;
 
-import io.wisoft.wasabi.global.response.dto.DataResponse;
+import io.wisoft.wasabi.domain.tag.persistence.Tag;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record ReadBoardResponse (
         Long id,
@@ -11,4 +12,6 @@ public record ReadBoardResponse (
         String writer,
         LocalDateTime createdDate,
         int likeCount,
-        int views) implements DataResponse { }
+        int views,
+        boolean isLike,
+        List<Tag> tags) { }
