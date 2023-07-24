@@ -1,8 +1,12 @@
 package io.wisoft.wasabi.domain.like;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
+import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
+import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
+import io.wisoft.wasabi.domain.like.exception.LikeNotFoundException;
 import io.wisoft.wasabi.global.config.MemberIdResolver;
 import io.wisoft.wasabi.global.enumeration.Role;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
@@ -17,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,6 +68,55 @@ class LikeControllerTest {
 
             //then
             result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("좋아요 취소")
+    class CancelLike {
+
+        @Test
+        @DisplayName("요청 시 정상적으로 응답된다.")
+        void cancel_like() throws Exception {
+
+            // given
+            final String token = jwtTokenProvider.createMemberToken(1L, "wasabi", Role.GENERAL);
+
+            final var request = new CancelLikeRequest(1L);
+
+            final var response = new CancelLikeResponse(1L);
+            given(likeService.cancelLike(any(), any())).willReturn(response);
+
+            // when
+            final var result = mockMvc.perform(delete("/likes")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            result.andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 데이터 요청 시 404 에러를 반환한다.")
+        void cancel_like_fail() throws Exception {
+
+            // given
+            final String token = jwtTokenProvider.createMemberToken(1L, "wasabi", Role.GENERAL);
+
+            final var request = new CancelLikeRequest(1L);
+
+            final var response = new CancelLikeResponse(1L);
+            given(likeService.cancelLike(any(), any())).willThrow(new LikeNotFoundException());
+
+            // when
+            final var result = mockMvc.perform(delete("/likes")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            result.andExpect(status().isNotFound());
         }
     }
 }

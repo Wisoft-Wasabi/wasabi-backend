@@ -13,6 +13,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Optional;
+
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
 @ActiveProfiles("test")
@@ -25,10 +27,14 @@ class LikeRepositoryTest {
     @Autowired
     private TestEntityManager em;
 
+    private Member member;
+
+    private Board board;
+
     @BeforeEach
     void init() {
         // Member 초기화
-        final Member member = Member.createMember(
+        member = Member.createMember(
                 "게시글작성성공@gmail.com",
                 "test1234",
                 "test1234",
@@ -38,7 +44,7 @@ class LikeRepositoryTest {
         em.persist(member);
 
         // Board 초기화
-        final Board board = Board.createBoard(
+        board = Board.createBoard(
                 "title",
                 "content",
                 member
@@ -55,10 +61,6 @@ class LikeRepositoryTest {
         void register_like() throws Exception {
 
             //given
-            final Member member = em.find(Member.class, 1L);
-
-            final Board board = em.find(Board.class, 1L);
-
             final Like like = Like.createLike(member, board);
 
             //when
@@ -69,5 +71,73 @@ class LikeRepositoryTest {
             Assertions.assertThat(savedLike.getId()).isEqualTo(like.getId());
             Assertions.assertThat(savedLike.getBoard()).isEqualTo(board);
         }
+    }
+
+    @Nested
+    @DisplayName("좋아요 취소")
+    class CancelLike {
+
+        @Test
+        @DisplayName("요청 시 정상적으로 삭제되어야 한다.")
+        void cancel_like() {
+
+            // given
+            final Like like = Like.createLike(member, board);
+            likeRepository.save(like);
+
+            // when
+            final int result = likeRepository.deleteByMemberIdAndBoardId(member.getId(), board.getId());
+
+            // then
+            Assertions.assertThat(result).isEqualTo(1);
+
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 데이터 삭제시 아무것도 삭제되지 않는다.")
+        void cancel_like_fail() {
+
+            // given
+
+            // when
+            final int result = likeRepository.deleteByMemberIdAndBoardId(10L, 10L);
+
+            // then
+            Assertions.assertThat(result).isEqualTo(0);
+        }
+    }
+
+    @Nested
+    @DisplayName("좋아요 조회")
+    class FindLike {
+
+        @Test
+        @DisplayName("Member Id와 Board Id 조회 시 정상적으로 조회된다.")
+        void find_like_by_member_id_and_board_id() {
+
+            // given
+            final Like like = Like.createLike(member, board);
+            likeRepository.save(like);
+
+            // when
+            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
+
+            // then
+            Assertions.assertThat(result).isNotEmpty();
+        }
+
+        @Test
+        @DisplayName("Member Id와 Board Id 조회 시 데이터가 없다면 빈값이 조회된다.")
+        void find_like_by_member_id_and_board_id_fail() {
+
+            // given
+
+            // when
+            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
+
+            // then
+            Assertions.assertThat(result).isEmpty();
+        }
+
     }
 }
