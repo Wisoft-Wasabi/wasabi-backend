@@ -1,16 +1,9 @@
 package io.wisoft.wasabi.domain.auth.exception;
 
+import io.wisoft.wasabi.global.exception.BusinessException;
 import io.wisoft.wasabi.global.exception.ErrorType;
 
-public class NotActivatedException extends RuntimeException {
+public class NotActivatedException extends BusinessException {
+    public NotActivatedException() { super(ErrorType.FORBIDDEN); }
 
-    public final ErrorType errorType;
-
-    public NotActivatedException() {
-        this.errorType = ErrorType.FORBIDDEN;
-    }
-
-    public ErrorType getErrorType() {
-        return errorType;
-    }
 }
