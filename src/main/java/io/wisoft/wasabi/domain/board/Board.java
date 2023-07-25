@@ -5,10 +5,8 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.usage.persistence.Used;
 import io.wisoft.wasabi.global.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
-
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -19,13 +17,13 @@ public class Board extends BaseTimeEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String content;
 
-    @Column(nullable = false)
+    @Column
     private int views;
 
     @JoinColumn(name = "member_id")

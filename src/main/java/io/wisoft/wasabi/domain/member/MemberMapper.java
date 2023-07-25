@@ -39,7 +39,6 @@ public class MemberMapper {
         );
     }
 
-
     public LoginResponse mapToLoginResponse(final Member member, final String accessToken) {
         final String tokenType = "bearer";
         final String name = member.getName();

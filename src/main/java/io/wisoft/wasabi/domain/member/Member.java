@@ -5,33 +5,33 @@ import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.global.basetime.BaseTimeEntity;
 import io.wisoft.wasabi.global.enumeration.Role;
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 public class Member extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column
     private boolean activation;
 
-    @Column(nullable = false)
+    @Column
     private Role role;
 
     @OneToMany(mappedBy = "member")

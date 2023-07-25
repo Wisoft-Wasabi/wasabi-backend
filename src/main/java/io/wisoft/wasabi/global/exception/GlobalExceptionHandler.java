@@ -47,8 +47,8 @@ public class GlobalExceptionHandler {
         final ResponseEntity response = buildResponse(ErrorType.UNCAUGHT_ERROR);
         return response;
     }
-  
-    private ResponseEntity buildResponse(final ErrorType errorType) {
+
+    private ResponseEntity<CommonResponse> buildResponse(final ErrorType errorType) {
         final ErrorDataResponse errorDataResponse = ErrorDataResponse.newInstance(errorType);
         final CommonResponse response = CommonResponse.newInstance(errorDataResponse);
 

@@ -41,6 +41,8 @@ class LikeRepositoryTest {
                 "01000000000",
                 false,
                 Role.GENERAL);
+
+        System.out.println("여기서 null"+member.getCreatedAt());
         em.persist(member);
 
         // Board 초기화

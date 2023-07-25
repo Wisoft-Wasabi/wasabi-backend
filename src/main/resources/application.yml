@@ -3,9 +3,9 @@ spring:
     active: dev
     include: jwt, bcrypt
 
-#  sql:
-#    init:
-#      mode: always
+  sql:
+    init:
+      mode: always
 
   jpa:
     database: h2
@@ -15,14 +15,14 @@ spring:
 #    database-platform: org.hibernate.dialect.MySQL8Dialect
 
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
 
-#  h2:
-#    console:
-#      enabled: true
+  h2:
+    console:
+      enabled: true
 
 logging.level:
   org.hibernate.SQL: debug
