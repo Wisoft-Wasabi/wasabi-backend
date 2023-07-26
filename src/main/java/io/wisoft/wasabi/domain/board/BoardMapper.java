@@ -7,6 +7,9 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.usage.persistence.Used;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
 public class BoardMapper {
 
@@ -45,4 +48,23 @@ public class BoardMapper {
                         .toList()
         );
     }
+
+    public List<ReadBoardResponse> entityToReadBoardResponse(final List<Board> boards) {
+        return boards.stream()
+                .map(board -> new ReadBoardResponse(
+                        board.getId(),
+                        board.getTitle(),
+                        board.getContent(),
+                        board.getMember().getName(),
+                        board.getCreatedAt(),
+                        board.getLikes().size(),
+                        board.getViews(),
+                        false,
+                        board.getUsages().stream()
+                                .map(Used::getTag)
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+    }
+
 }
