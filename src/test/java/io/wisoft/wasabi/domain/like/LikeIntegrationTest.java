@@ -74,7 +74,7 @@ public class LikeIntegrationTest extends IntegrationTest {
         void cancel_like() throws Exception {
 
             // given
-            final Like like = Like.createLike(member, board);
+            final Like like = new Like(member, board);
             likeRepository.save(like);
 
             final String token = jwtTokenProvider.createMemberToken(
