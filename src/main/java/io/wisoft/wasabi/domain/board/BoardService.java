@@ -1,8 +1,10 @@
 package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
+import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
@@ -12,5 +14,5 @@ public interface BoardService {
 
     ReadBoardResponse readBoard(final Long boardId);
 
-    List<ReadBoardResponse> getSortedBoards(final String sortBy);
+    Slice<SortBoardResponse> getSortedBoards(final String sortBy, final int page, final int size);
 }

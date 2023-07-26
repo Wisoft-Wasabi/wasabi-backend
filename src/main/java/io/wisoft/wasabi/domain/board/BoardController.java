@@ -1,16 +1,15 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
+import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.global.annotation.MemberId;
 import io.wisoft.wasabi.global.response.CommonResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -40,9 +39,13 @@ public class BoardController {
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 
-    @GetMapping("/sorted")
-    public ResponseEntity<CommonResponse> getSortedBoards(@RequestParam(name = "sortBy", defaultValue = "createdAt") final String sortBy) {
-        final List<ReadBoardResponse> sortedBoards = boardService.getSortedBoards(sortBy);
+    @GetMapping
+    public ResponseEntity<CommonResponse> sortedBoards(
+            @RequestParam(name = "sort-by", defaultValue = "default") final String sortBy,
+            @Valid @RequestParam(name = "page", defaultValue = "0") final int page,
+            @Valid @RequestParam(name = "size", defaultValue = "2") final int size) {
+
+        final Slice<SortBoardResponse> sortedBoards = boardService.getSortedBoards(sortBy, page, size);
 
         return ResponseEntity.ok(CommonResponse.newInstance(sortedBoards));
     }

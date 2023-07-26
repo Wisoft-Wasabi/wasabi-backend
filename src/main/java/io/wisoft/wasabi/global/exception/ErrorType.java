@@ -12,8 +12,10 @@ public enum ErrorType {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-0002", "Token Not Exist"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "AUTH-0003", "Member Not Activated"),
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-0001", "Board Not Found"),
+    SORT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOARD-0002", "Sort Type Invalid"),
     UNCAUGHT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER-0000", "Uncaught Error Occur"),
     LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "LIKE-0001", "Like Not Found");
+
 
     private HttpStatus httpStatusCode;
     private String errorCode;

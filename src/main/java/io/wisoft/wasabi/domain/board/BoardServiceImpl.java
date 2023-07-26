@@ -1,21 +1,17 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
-import org.springframework.data.domain.Sort;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,7 +20,6 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final BoardMapper boardMapper;
-    private final Map<String, Function<Sort, List<Board>>> sortMap;
 
     public BoardServiceImpl(final BoardRepository boardRepository,
                             final MemberRepository memberRepository,
@@ -32,9 +27,7 @@ public class BoardServiceImpl implements BoardService {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
         this.boardMapper = boardMapper;
-        this.sortMap = createSortingMap();
     }
-
 
 
     @Transactional
@@ -74,25 +67,40 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<ReadBoardResponse> getSortedBoards(final String sortBy) {
-        final Function<Sort, List<Board>> sortFunction = sortMap.get(sortBy);
-        // 방식이 확정된다면 BusinessException로 처리예정
-        if (sortFunction == null) {
-            throw new IllegalArgumentException("잘못된 sortBy 값: " + sortBy);
+    public Slice<SortBoardResponse> getSortedBoards(final String sortBy, @Valid final int page, @Valid final int size) {
+        // 음수일 경우를 방지
+        final int validatedPage = Math.max(0, page);
+        final int validatedSize = Math.max(2, size);
+
+        final BoardSortType sortType = validateSortType(sortBy.toUpperCase());
+        final Slice<Board> boardSlice = sort(sortType, validatedPage, validatedSize);
+
+        return boardMapper.entityToSortBoardResponse(boardSlice);
+    }
+
+    private Slice<Board> sort(final BoardSortType sortType, final int page, final int size) {
+
+        switch (sortType) {
+            case CREATED_AT:
+                return boardRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, size));
+            case VIEWS:
+                return boardRepository.findAllByOrderByViewsDesc(PageRequest.of(page, size));
+            case LIKES:
+                return boardRepository.findAllByOrderByLikesDesc(PageRequest.of(page, size));
+            case DEFAULT:
+                return boardRepository.findDefaultBoards(PageRequest.of(page, size));
+            default:
+                throw BoardExceptionExecutor.boardSortTypeInvalidException();
         }
-
-
-        final List<Board> sortedBoards = sortFunction.apply(Sort.unsorted());
-
-        return boardMapper.entityToReadBoardResponse(sortedBoards);
     }
 
-    private Map<String, Function<Sort, List<Board>>> createSortingMap() {
-        final Map<String, Function<Sort, List<Board>>> sortMap = new HashMap<>();
-        sortMap.put("createdAt", sort -> boardRepository.findAllByOrderByCreatedAtDesc());
-        sortMap.put("views", sort -> boardRepository.findAllByOrderByViewsDesc());
-        sortMap.put("likes", sort -> boardRepository.findAllByOrderByLikesDesc());
-
-        return sortMap;
+    private BoardSortType validateSortType(final String sortBy) {
+        for (BoardSortType value : BoardSortType.values()) {
+            if (value.getSortType().equalsIgnoreCase(sortBy.toUpperCase())) {
+                return value;
+            }
+        }
+        throw BoardExceptionExecutor.boardSortTypeInvalidException();
     }
+
 }
