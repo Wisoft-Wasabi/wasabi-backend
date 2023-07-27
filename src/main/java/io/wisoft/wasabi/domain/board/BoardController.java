@@ -41,7 +41,7 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<CommonResponse> sortedBoards(
-            @RequestParam(name = "sort-by", defaultValue = "default") final String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
             @Valid @RequestParam(name = "page", defaultValue = "0") final int page,
             @Valid @RequestParam(name = "size", defaultValue = "2") final int size) {
 
