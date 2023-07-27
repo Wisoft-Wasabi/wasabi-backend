@@ -2,6 +2,7 @@ package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.global.enumeration.Part;
 import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,11 @@ class LikeRepositoryTest {
                 "test1234",
                 "01000000000",
                 false,
-                Role.GENERAL);
+                Role.GENERAL,
+                "www.naver.com",
+                Part.BACKEND,
+                "wisoft",
+                "공부는 동엽이처럼");
 
         System.out.println("여기서 null"+member.getCreatedAt());
         em.persist(member);

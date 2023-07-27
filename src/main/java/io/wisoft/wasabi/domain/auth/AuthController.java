@@ -18,7 +18,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Autowired
     public AuthController(final AuthService authService) {
         this.authService = authService;
     }

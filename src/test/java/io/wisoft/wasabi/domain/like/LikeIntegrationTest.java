@@ -6,6 +6,7 @@ import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.global.enumeration.Part;
 import io.wisoft.wasabi.global.enumeration.Role;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
@@ -55,7 +56,11 @@ public class LikeIntegrationTest extends IntegrationTest {
                 "test1234",
                 "01000000000",
                 false,
-                Role.GENERAL);
+                Role.GENERAL,
+                "www.naver.com",
+                Part.BACKEND,
+                "wisoft",
+                "공부는 동엽이처럼");
         memberRepository.save(member);
 
         board = Board.createBoard(
