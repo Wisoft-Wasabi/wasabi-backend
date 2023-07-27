@@ -53,7 +53,7 @@ class BoardControllerTest {
         void write_board() throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createMemberToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
 
             final var request = new WriteBoardRequest(
                     "title",

@@ -50,7 +50,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // given
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createMemberToken(savedMember.getId(), member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), member.getName(), member.getRole());
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
@@ -104,7 +104,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // given
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createMemberToken(savedMember.getId(), savedMember.getName(), savedMember.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), savedMember.getName(), savedMember.getRole());
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "    ",

@@ -5,7 +5,6 @@ import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
-import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.like.exception.LikeNotFoundException;
 import io.wisoft.wasabi.global.config.MemberIdResolver;
 import io.wisoft.wasabi.global.enumeration.Role;
@@ -52,7 +51,7 @@ class LikeControllerTest {
         void register_like() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createMemberToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
 
             final var request = new RegisterLikeRequest(1L);
 
@@ -80,7 +79,7 @@ class LikeControllerTest {
         void cancel_like() throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createMemberToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
 
             final var request = new CancelLikeRequest(1L);
 
@@ -102,7 +101,7 @@ class LikeControllerTest {
         void cancel_like_fail() throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createMemberToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
 
             final var request = new CancelLikeRequest(1L);
 

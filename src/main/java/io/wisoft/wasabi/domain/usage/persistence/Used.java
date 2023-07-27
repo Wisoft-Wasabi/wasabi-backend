@@ -5,7 +5,6 @@ import io.wisoft.wasabi.domain.tag.persistence.Tag;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -19,11 +18,11 @@ public class Used {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "board_id")
     @ManyToOne(fetch = LAZY)
     private Board board;
 
-    @JoinColumn(name = "tag_id", nullable = false)
+    @JoinColumn(name = "tag_id")
     @ManyToOne(fetch = LAZY)
     private Tag tag;
 
