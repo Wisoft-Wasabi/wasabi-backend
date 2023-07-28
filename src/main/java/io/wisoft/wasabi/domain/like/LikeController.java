@@ -37,7 +37,7 @@ public class LikeController {
     public ResponseEntity<CommonResponse> getLikeStatus(@LoginRequired final Long memberId,
                                                         @RequestParam("boardId") final Long boardId) {
 
-        final GetLikeResponse response = likeService.getLikeStatus(memberId, request);
+        final GetLikeResponse response = likeService.getLikeStatus(memberId, boardId);
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 }

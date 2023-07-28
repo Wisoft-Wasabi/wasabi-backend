@@ -2,15 +2,12 @@ package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
-import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
-import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
+import io.wisoft.wasabi.domain.like.dto.*;
 import io.wisoft.wasabi.domain.like.exception.LikeNotFoundException;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.global.enumeration.Role;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,7 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -60,7 +59,6 @@ class LikeServiceTest {
                     "01000000000",
                     false,
                     Role.GENERAL);
-
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
             final Board board = Board.createBoard(
@@ -80,9 +78,8 @@ class LikeServiceTest {
 
             //then
             assertNotNull(response);
-            assertEquals(response.likeId(), like.getId());
+            assertThat(response.likeId()).isEqualTo(like.getId());
         }
-
     }
 
     @Nested
@@ -118,7 +115,7 @@ class LikeServiceTest {
             final CancelLikeResponse result = likeService.cancelLike(memberId, request);
 
             // then
-            Assertions.assertThat(result).isNotNull();
+            assertThat(result).isNotNull();
         }
 
         @Test
@@ -137,6 +134,46 @@ class LikeServiceTest {
                     LikeNotFoundException.class,
                     () -> likeService.cancelLike(null, request)
             );
+        }
+    }
+
+    @Nested
+    @DisplayName("좋아요 상태 조회")
+    class GetLikeStatus {
+        
+        @Test
+        @DisplayName("요청이 성공적으로 수행되어 정상적으로 조회되어야 한다.")
+        public void get_like_status() throws Exception {
+            
+            //given
+            final Long memberId = 1L;
+            final Long boardId = 1L;
+
+            given(likeRepository.countByBoardId(any())).willReturn(1);
+
+            //when
+            final GetLikeResponse response = likeService.getLikeStatus(memberId, boardId);
+
+            //then
+            assertThat(response).isNotNull();
+        }
+        
+        @Test
+        @DisplayName("존재하지 않는 좋아요를 조회하면 에러가 발생한다.")
+        public void get_like_status_fail() throws Exception {
+            
+            //given
+            final Long memberId = 10L;
+            final Long boardId = 10L;
+
+            given(likeRepository.findByMemberIdAndBoardId(any(), any())).willReturn(Optional.empty());
+            given(likeRepository.countByBoardId(any())).willReturn(0);
+
+            //when
+            final GetLikeResponse response = likeService.getLikeStatus(memberId, boardId);
+
+            //then
+            assertThat(response.isLike()).isFalse();
         }
     }
 }

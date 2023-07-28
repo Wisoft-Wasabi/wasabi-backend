@@ -11,6 +11,8 @@ import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 public class LikeServiceImpl implements LikeService {
@@ -57,9 +59,16 @@ public class LikeServiceImpl implements LikeService {
     }
 
     public GetLikeResponse getLikeStatus(final Long memberId, final Long boardId) {
-        final Like like =  likeRepository.findByMemberIdAndBoardId(memberId, boardId)
-                .orElseThrow(LikeExceptionExecutor::LikeNotFound);
+        final boolean isLike = generateIsLike(memberId, boardId);
 
-        return new GetLikeResponse();
+        final int likeCount = likeRepository.countByBoardId(boardId);
+
+        return new GetLikeResponse(isLike, likeCount);
+    }
+
+    private boolean generateIsLike(final Long memberId, final Long boardId) {
+        final Optional<Like> like = likeRepository.findByMemberIdAndBoardId(memberId, boardId);
+
+        return like.isPresent();
     }
 }
