@@ -15,7 +15,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ActiveProfiles("test")
 @DataJpaTest
@@ -63,15 +65,15 @@ class LikeRepositoryTest {
         void register_like() throws Exception {
 
             //given
-            final Like like = Like.createLike(member, board);
+            final Like like = new Like(member, board);
 
             //when
             final Like savedLike = likeRepository.save(like);
 
             //then
             assertNotNull(savedLike);
-            Assertions.assertThat(savedLike.getId()).isEqualTo(like.getId());
-            Assertions.assertThat(savedLike.getBoard()).isEqualTo(board);
+            assertEquals(savedLike.getId(), like.getId());
+            assertEquals(savedLike.getBoard(), board);
         }
     }
 
@@ -84,7 +86,7 @@ class LikeRepositoryTest {
         void cancel_like() {
 
             // given
-            final Like like = Like.createLike(member, board);
+            final Like like = new Like(member, board);
             likeRepository.save(like);
 
             // when
@@ -118,7 +120,7 @@ class LikeRepositoryTest {
         void find_like_by_member_id_and_board_id() {
 
             // given
-            final Like like = Like.createLike(member, board);
+            final Like like = new Like(member, board);
             likeRepository.save(like);
 
             // when

@@ -22,8 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -81,7 +80,7 @@ class LikeServiceTest {
 
             //then
             assertNotNull(response);
-            Assertions.assertThat(response.likeId()).isEqualTo(like.getId());
+            assertEquals(response.likeId(), like.getId());
         }
 
     }
@@ -111,7 +110,7 @@ class LikeServiceTest {
                     member
             );
 
-            final Like like = Like.createLike(member, board);
+            final Like like = new Like(member, board);
 
             given(likeRepository.findByMemberIdAndBoardId(any(), any())).willReturn(Optional.of(like));
 

@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.like.dto.*;
+import io.wisoft.wasabi.global.annotation.LoginRequired;
 import io.wisoft.wasabi.global.response.CommonResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,9 @@ public class LikeController {
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 
-    @GetMapping("/{boardId}")
+    @GetMapping
     public ResponseEntity<CommonResponse> getLikeStatus(@LoginRequired final Long memberId,
-                                                        @PathVariable final GetLikeRequest request) {
+                                                        @RequestParam("boardId") final Long boardId) {
 
         final GetLikeResponse response = likeService.getLikeStatus(memberId, request);
         return ResponseEntity.ok(CommonResponse.newInstance(response));

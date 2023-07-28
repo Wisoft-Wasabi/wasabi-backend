@@ -2,14 +2,10 @@ package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
-import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
-import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
+import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
 import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
 import io.wisoft.wasabi.domain.like.dto.*;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.springframework.stereotype.Service;
@@ -60,10 +56,10 @@ public class LikeServiceImpl implements LikeService {
         return new CancelLikeResponse(like.getId());
     }
 
-    public GetLikeResponse getLikeStatus(final Long memberId, final GetLikeRequest request) {
-        final Like like =  likeRepository.findByMemberIdAndBoardId(memberId, request.boardId())
+    public GetLikeResponse getLikeStatus(final Long memberId, final Long boardId) {
+        final Like like =  likeRepository.findByMemberIdAndBoardId(memberId, boardId)
                 .orElseThrow(LikeExceptionExecutor::LikeNotFound);
 
-        return new GetLikeResponse(request.isLike(), request.likeCount());
+        return new GetLikeResponse();
     }
 }
