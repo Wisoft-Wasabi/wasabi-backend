@@ -1,13 +1,8 @@
 package io.wisoft.wasabi.domain.like;
 
-import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
-import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
-import io.wisoft.wasabi.global.annotation.MemberId;
+import io.wisoft.wasabi.domain.like.dto.*;
 import io.wisoft.wasabi.global.response.CommonResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +17,7 @@ public class LikeController {
     }
 
     @PostMapping
-    public ResponseEntity<CommonResponse> registerLike(@MemberId @Valid @NotNull final Long memberId,
+    public ResponseEntity<CommonResponse> registerLike(@LoginRequired final Long memberId,
                                                        @RequestBody @Valid final RegisterLikeRequest request) {
 
         final RegisterLikeResponse response = likeService.registerLike(memberId, request);
@@ -30,10 +25,18 @@ public class LikeController {
     }
 
     @DeleteMapping
-    public ResponseEntity<CommonResponse> cancelLike(@MemberId @Valid @NotNull final Long memberId,
+    public ResponseEntity<CommonResponse> cancelLike(@LoginRequired final Long memberId,
                                                      @RequestBody @Valid final CancelLikeRequest request) {
 
         final CancelLikeResponse response = likeService.cancelLike(memberId, request);
+        return ResponseEntity.ok(CommonResponse.newInstance(response));
+    }
+
+    @GetMapping("/{boardId}")
+    public ResponseEntity<CommonResponse> getLikeStatus(@LoginRequired final Long memberId,
+                                                        @PathVariable final GetLikeRequest request) {
+
+        final GetLikeResponse response = likeService.getLikeStatus(memberId, request);
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 }

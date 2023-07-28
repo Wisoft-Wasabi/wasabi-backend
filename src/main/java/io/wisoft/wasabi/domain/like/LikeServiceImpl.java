@@ -2,7 +2,6 @@ package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
-import io.wisoft.wasabi.domain.board.exception.BoardNotFoundException;
 import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
@@ -10,7 +9,9 @@ import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
 import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.domain.member.exception.MemberNotFoundException;
+import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.domain.like.dto.*;
+import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +37,10 @@ public class LikeServiceImpl implements LikeService {
     public RegisterLikeResponse registerLike(final Long memberId, final RegisterLikeRequest request) {
 
         final Member member = memberRepository.findById(memberId)
-                .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(MemberExceptionExecutor::MemberNotFound);
 
         final Board board = boardRepository.findById(request.boardId())
-                .orElseThrow(BoardNotFoundException::new);
+                .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
         final Like like = likeMapper.registerLikeRequestToEntity(member, board);
 
@@ -57,5 +58,12 @@ public class LikeServiceImpl implements LikeService {
         likeRepository.deleteById(like.getId());
 
         return new CancelLikeResponse(like.getId());
+    }
+
+    public GetLikeResponse getLikeStatus(final Long memberId, final GetLikeRequest request) {
+        final Like like =  likeRepository.findByMemberIdAndBoardId(memberId, request.boardId())
+                .orElseThrow(LikeExceptionExecutor::LikeNotFound);
+
+        return new GetLikeResponse(request.isLike(), request.likeCount());
     }
 }
