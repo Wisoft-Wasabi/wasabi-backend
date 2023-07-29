@@ -67,7 +67,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Slice<SortBoardResponse> getSortedBoards(final String sortBy, @Valid final int page, @Valid final int size) {
+    public Slice<SortBoardResponse> getSortedBoards(final String sortBy, final int page, final int size) {
         // 음수일 경우를 방지
         final int validatedPage = Math.max(0, page);
         final int validatedSize = Math.max(2, size);

@@ -6,6 +6,8 @@ import io.wisoft.wasabi.global.basetime.BaseTimeEntity;
 import io.wisoft.wasabi.global.enumeration.Part;
 import io.wisoft.wasabi.global.enumeration.Role;
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +15,7 @@ import java.util.Set;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
+@DynamicInsert
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -80,32 +83,6 @@ public class Member extends BaseTimeEntity {
     }
 
     protected Member() {
-    }
-
-    public static Member createMember(
-            final String email,
-            final String password,
-            final String name,
-            final String phoneNumber,
-            final boolean activation,
-            final Role role,
-            final String referenceUrl,
-            final Part part,
-            final String organization,
-            final String motto) {
-        return new Member(
-                email,
-                password,
-                name,
-                phoneNumber,
-                activation,
-                role,
-                referenceUrl,
-                part,
-                organization,
-                motto
-
-        );
     }
 
     public Long getId() {

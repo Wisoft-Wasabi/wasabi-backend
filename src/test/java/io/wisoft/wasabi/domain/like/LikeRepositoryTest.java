@@ -35,7 +35,7 @@ class LikeRepositoryTest {
     @BeforeEach
     void init() {
         // Member 초기화
-        member = Member.createMember(
+        member = new Member(
                 "게시글작성성공@gmail.com",
                 "test1234",
                 "test1234",

@@ -50,7 +50,7 @@ public class LikeIntegrationTest extends IntegrationTest {
     @BeforeEach
     void init() {
         final int random = new Random().nextInt(100_000);
-        member = Member.createMember(
+        member = new Member(
                 "게시글작성성공" + random + "@gmail.com",
                 "test1234",
                 "test1234",

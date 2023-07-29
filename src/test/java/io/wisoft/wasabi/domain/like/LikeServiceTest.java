@@ -55,7 +55,7 @@ class LikeServiceTest {
         void register_like() throws Exception {
 
             //given
-            final Member member = Member.createMember(
+            final Member member = new Member(
                     "게시글작성성공@gmail.com",
                     "test1234",
                     "test1234",
@@ -103,7 +103,7 @@ class LikeServiceTest {
             final Long memberId = 1L;
             final CancelLikeRequest request = new CancelLikeRequest(1L);
 
-            final Member member = Member.createMember(
+            final Member member = new Member(
                     "게시글작성성공@gmail.com",
                     "test1234",
                     "test1234",
