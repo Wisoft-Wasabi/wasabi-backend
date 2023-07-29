@@ -15,6 +15,7 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -103,7 +104,7 @@ class LikeServiceTest {
         })
         void cancel_like(
                 final Long memberId,
-                final CancelLikeRequest request,
+                final Long boardId,
                 final Member member,
                 final Board board
         ) {
@@ -114,17 +115,21 @@ class LikeServiceTest {
             given(likeRepository.findByMemberIdAndBoardId(any(), any())).willReturn(Optional.of(like));
 
             // when
-            final CancelLikeResponse result = likeService.cancelLike(memberId, request);
+            final CancelLikeResponse result = likeService.cancelLike(memberId, boardId);
 
             // then
-            Assertions.assertThat(result).isNotNull();
+            SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(result).isNotNull();
+                softly.assertThat(like.getMember().getLikes().contains(like)).isFalse();
+                softly.assertThat(like.getBoard().getLikes().contains(like)).isFalse();
+            });
         }
 
         @DisplayName("존재하지 않는 좋아요를 조회하여 에러를 던진다.")
         @ParameterizedTest
         @AutoSource
         void cancel_like_fail(
-                final CancelLikeRequest request
+                final Long boardId
         ) {
 
             // given
@@ -134,7 +139,7 @@ class LikeServiceTest {
 
             // then
             Assertions.assertThatThrownBy(
-                    () -> likeService.cancelLike(null, request)
+                    () -> likeService.cancelLike(null, boardId)
             ).isInstanceOf(LikeNotFoundException.class);
         }
     }

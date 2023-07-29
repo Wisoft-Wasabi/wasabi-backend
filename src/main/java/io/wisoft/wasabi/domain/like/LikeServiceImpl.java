@@ -50,10 +50,11 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public CancelLikeResponse cancelLike(final Long memberId, final CancelLikeRequest request) {
-        final Like like = likeRepository.findByMemberIdAndBoardId(memberId, request.boardId())
+    public CancelLikeResponse cancelLike(final Long memberId, final Long boardId) {
+        final Like like = likeRepository.findByMemberIdAndBoardId(memberId, boardId)
                 .orElseThrow(LikeExceptionExecutor::LikeNotFound);
 
+        like.delete();
         likeRepository.deleteById(like.getId());
 
         return new CancelLikeResponse(like.getId());
