@@ -5,7 +5,6 @@ import io.wisoft.wasabi.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -47,5 +46,10 @@ public class Like {
         like.setBoard(board);
 
         return like;
+    }
+
+    public void delete() {
+        this.member.getLikes().remove(this);
+        this.board.getLikes().remove(this);
     }
 }

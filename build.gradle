@@ -37,6 +37,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
+	//autoparams
+	testImplementation 'io.github.autoparams:autoparams:1.1.1'
+
 	// mysql
 	runtimeOnly 'com.mysql:mysql-connector-j'
 }

@@ -20,9 +20,9 @@ public class JwtTokenProvider {
     @Value("${jwt.issuer}")
     private String issuer;
 
-    public String createMemberToken(final Long memberId, final String name, final Role role) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
+    public String createAccessToken(final Long memberId, final String name, final Role role) {
+        final Date now = new Date();
+        final Date validity = new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
 
         return Jwts.builder()
                 .setIssuer(this.issuer)

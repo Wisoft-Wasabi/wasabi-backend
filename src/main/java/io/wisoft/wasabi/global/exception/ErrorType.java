@@ -36,4 +36,14 @@ public enum ErrorType {
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
     }
+
+    private void setErrorMessage(final String message) {
+        this.errorMessage = message;
+    }
+
+    static ErrorType dtoInvalid(final String message) {
+        final ErrorType errorType = DTO_INVALID;
+        errorType.setErrorMessage(message);
+        return errorType;
+    }
 }

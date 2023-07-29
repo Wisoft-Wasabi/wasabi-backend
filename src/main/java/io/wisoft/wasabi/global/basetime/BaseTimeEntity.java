@@ -1,6 +1,5 @@
 package io.wisoft.wasabi.global.basetime;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

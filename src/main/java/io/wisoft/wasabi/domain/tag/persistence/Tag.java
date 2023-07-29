@@ -4,7 +4,6 @@ import io.wisoft.wasabi.domain.usage.persistence.Used;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,10 +15,11 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 public class Tag {
 
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column
     private String name;
 
     @OneToMany(mappedBy = "tag")
