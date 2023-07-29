@@ -81,7 +81,7 @@ class LikeControllerTest {
         @ParameterizedTest
         @AutoSource
         void cancel_like(
-                final CancelLikeRequest request,
+                final Long boardId,
                 final CancelLikeResponse response
         ) throws Exception {
 
@@ -92,20 +92,18 @@ class LikeControllerTest {
 
             // when
             final var result = mockMvc.perform(delete("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .content(objectMapper.writeValueAsString(request)));
+                            .param("boardId", String.valueOf(boardId))
+                    .header("Authorization", "Bearer " + token));
 
             // then
             result.andExpect(status().isOk());
         }
 
-//        @Test
         @DisplayName("존재하지 않는 데이터 요청 시 404 에러를 반환한다.")
         @ParameterizedTest
         @AutoSource
         void cancel_like_fail(
-                final CancelLikeRequest request,
+                final Long boardId,
                 final LikeNotFoundException exception
         ) throws Exception {
 
@@ -116,9 +114,8 @@ class LikeControllerTest {
 
             // when
             final var result = mockMvc.perform(delete("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .content(objectMapper.writeValueAsString(request)));
+                    .param("boardId", String.valueOf(boardId))
+                    .header("Authorization", "Bearer " + token));
 
             // then
             result.andExpect(status().isNotFound());

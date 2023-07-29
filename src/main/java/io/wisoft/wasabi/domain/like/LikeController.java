@@ -31,9 +31,9 @@ public class LikeController {
 
     @DeleteMapping
     public ResponseEntity<CommonResponse> cancelLike(@MemberId @Valid @NotNull final Long memberId,
-                                                     @RequestBody @Valid final CancelLikeRequest request) {
+                                                     @RequestParam("boardId") @Valid final Long boardId) {
 
-        final CancelLikeResponse response = likeService.cancelLike(memberId, request);
+        final CancelLikeResponse response = likeService.cancelLike(memberId, boardId);
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 }

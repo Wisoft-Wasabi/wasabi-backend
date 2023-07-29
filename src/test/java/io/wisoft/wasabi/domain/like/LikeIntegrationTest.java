@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
+import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.global.enumeration.Role;
 import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -83,13 +85,9 @@ public class LikeIntegrationTest extends IntegrationTest {
                     member.getRole()
             );
 
-            final var request = new CancelLikeRequest(board.getId());
-            final String content = objectMapper.writeValueAsString(request);
-
             // when
             final var result = mockMvc.perform(delete("/likes")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(content)
+                    .param("boardId", String.valueOf(board.getId()))
                     .header("Authorization", "Bearer " + token));
 
             // then
@@ -107,13 +105,9 @@ public class LikeIntegrationTest extends IntegrationTest {
                     member.getRole()
             );
 
-            final var request = new CancelLikeRequest(10L);
-            final String content = objectMapper.writeValueAsString(request);
-
             // when
             final var result = mockMvc.perform(delete("/likes")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(content)
+                    .param("boardId", String.valueOf(10L))
                     .header("Authorization", "Bearer " + token));
 
             // then
