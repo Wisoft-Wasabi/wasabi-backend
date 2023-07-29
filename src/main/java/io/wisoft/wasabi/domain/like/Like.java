@@ -47,4 +47,9 @@ public class Like {
 
         return like;
     }
+
+    public void delete() {
+        this.member.getLikes().remove(this);
+        this.board.getLikes().remove(this);
+    }
 }

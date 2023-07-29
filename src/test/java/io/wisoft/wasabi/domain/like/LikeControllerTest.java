@@ -1,5 +1,6 @@
 package io.wisoft.wasabi.domain.like;
 
+import autoparams.AutoSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
@@ -12,6 +13,7 @@ import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -74,16 +76,18 @@ class LikeControllerTest {
     @DisplayName("좋아요 취소")
     class CancelLike {
 
-        @Test
+//        @Test
         @DisplayName("요청 시 정상적으로 응답된다.")
-        void cancel_like() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void cancel_like(
+                final CancelLikeRequest request,
+                final CancelLikeResponse response
+        ) throws Exception {
 
             // given
             final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
 
-            final var request = new CancelLikeRequest(1L);
-
-            final var response = new CancelLikeResponse(1L);
             given(likeService.cancelLike(any(), any())).willReturn(response);
 
             // when
@@ -96,17 +100,19 @@ class LikeControllerTest {
             result.andExpect(status().isOk());
         }
 
-        @Test
+//        @Test
         @DisplayName("존재하지 않는 데이터 요청 시 404 에러를 반환한다.")
-        void cancel_like_fail() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void cancel_like_fail(
+                final CancelLikeRequest request,
+                final LikeNotFoundException exception
+        ) throws Exception {
 
             // given
             final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
 
-            final var request = new CancelLikeRequest(1L);
-
-            final var response = new CancelLikeResponse(1L);
-            given(likeService.cancelLike(any(), any())).willThrow(new LikeNotFoundException());
+            given(likeService.cancelLike(any(), any())).willThrow(exception);
 
             // when
             final var result = mockMvc.perform(delete("/likes")
