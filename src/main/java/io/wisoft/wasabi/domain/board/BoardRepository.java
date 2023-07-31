@@ -20,5 +20,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Slice<Board> findAllByOrderByViewsDesc(Pageable pageable);
 
     // 좋아요 순
+    @Query("SELECT board FROM Board board ORDER BY SIZE(board.likes) DESC")
     Slice<Board> findAllByOrderByLikesDesc(Pageable pageable);
 }

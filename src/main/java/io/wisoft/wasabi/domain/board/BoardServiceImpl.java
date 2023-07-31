@@ -5,7 +5,6 @@ import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -79,19 +78,13 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private Slice<Board> sort(final BoardSortType sortType, final int page, final int size) {
-
-        switch (sortType) {
-            case CREATED_AT:
-                return boardRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, size));
-            case VIEWS:
-                return boardRepository.findAllByOrderByViewsDesc(PageRequest.of(page, size));
-            case LIKES:
-                return boardRepository.findAllByOrderByLikesDesc(PageRequest.of(page, size));
-            case DEFAULT:
-                return boardRepository.findDefaultBoards(PageRequest.of(page, size));
-            default:
-                throw BoardExceptionExecutor.boardSortTypeInvalidException();
-        }
+        return switch (sortType) {
+            case LATEST -> boardRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, size));
+            case VIEWS -> boardRepository.findAllByOrderByViewsDesc(PageRequest.of(page, size));
+            case LIKES -> boardRepository.findAllByOrderByLikesDesc(PageRequest.of(page, size));
+            case DEFAULT -> boardRepository.findDefaultBoards(PageRequest.of(page, size));
+            default -> throw BoardExceptionExecutor.BoardSortTypeInvalidException();
+        };
     }
 
     private BoardSortType validateSortType(final String sortBy) {
@@ -100,7 +93,7 @@ public class BoardServiceImpl implements BoardService {
                 return value;
             }
         }
-        throw BoardExceptionExecutor.boardSortTypeInvalidException();
+        throw BoardExceptionExecutor.BoardSortTypeInvalidException();
     }
 
 }

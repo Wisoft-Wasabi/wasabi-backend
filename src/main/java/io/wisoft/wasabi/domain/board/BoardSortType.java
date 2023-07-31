@@ -1,7 +1,7 @@
 package io.wisoft.wasabi.domain.board;
 
 public enum BoardSortType {
-    CREATED_AT("createdAt"),
+    LATEST("latest"),
     VIEWS("views"),
     LIKES("likes"),
     DEFAULT("default");

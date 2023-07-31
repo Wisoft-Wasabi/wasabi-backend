@@ -6,5 +6,5 @@ public class BoardExceptionExecutor {
         return new BoardNotFoundException();
     }
 
-    public static BoardSortTypeInvalidException boardSortTypeInvalidException() { return new BoardSortTypeInvalidException(); }
+    public static BoardSortTypeInvalidException BoardSortTypeInvalidException() { return new BoardSortTypeInvalidException(); }
 }
