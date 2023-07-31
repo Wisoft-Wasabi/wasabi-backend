@@ -73,6 +73,19 @@ class LikeRepositoryTest {
             assertThat(savedLike.getId()).isEqualTo(like.getId());
             assertThat(savedLike.getBoard()).isEqualTo(board);
         }
+
+        @Test
+        @DisplayName("존재하지 않는 데이터 요청 시 등록되지 않는다.")
+        void register_like_fail() throws Exception {
+
+            //given
+
+            //when
+            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
+
+            //then
+            assertThat(result).isEmpty();
+        }
     }
 
     @Nested

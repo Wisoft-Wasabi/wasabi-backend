@@ -62,7 +62,29 @@ class LikeControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             //then
-            result.andExpect(status().isOk());
+            result.andExpect(status().isCreated());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 데이터 요청 시 404 에러를 반환한다.")
+        void register_like_fail() throws Exception {
+
+            // given
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+
+            final var request = new RegisterLikeRequest(1L);
+
+            final var response = new RegisterLikeResponse(1L);
+            given(likeService.registerLike(any(), any())).willThrow(new LikeNotFoundException());
+
+            // when
+            final var result = mockMvc.perform(post("/likes")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            // then
+            result.andExpect(status().isNotFound());
         }
     }
 
@@ -121,7 +143,7 @@ class LikeControllerTest {
 
         @Test
         @DisplayName("요청 시 정상적으로 조회되어야 한다.")
-        public void get_like_status() throws Exception {
+        void get_like_status() throws Exception {
 
             //given
             final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
@@ -142,7 +164,7 @@ class LikeControllerTest {
 
         @Test
         @DisplayName("존재하지 않는 데이터 요청 시 404 에러를 반환한다.")
-        public void get_like_status_fail() throws Exception {
+        void get_like_status_fail() throws Exception {
 
             //given
             final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
