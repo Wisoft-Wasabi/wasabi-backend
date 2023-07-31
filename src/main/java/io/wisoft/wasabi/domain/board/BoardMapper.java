@@ -5,12 +5,9 @@ import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.usage.persistence.Used;
+import io.wisoft.wasabi.domain.used.persistence.Used;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class BoardMapper {

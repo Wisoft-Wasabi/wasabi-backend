@@ -1,9 +1,9 @@
-package io.wisoft.wasabi.global.config;
+package io.wisoft.wasabi.global.config.common.annotation;
 
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
-import io.wisoft.wasabi.global.annotation.MemberId;
-import io.wisoft.wasabi.global.jwt.AuthorizationExtractor;
-import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.common.annotation.MemberId;
+import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
+import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;

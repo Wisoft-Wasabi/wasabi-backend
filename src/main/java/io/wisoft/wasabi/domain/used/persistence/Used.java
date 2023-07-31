@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.domain.usage.persistence;
+package io.wisoft.wasabi.domain.used.persistence;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.tag.persistence.Tag;

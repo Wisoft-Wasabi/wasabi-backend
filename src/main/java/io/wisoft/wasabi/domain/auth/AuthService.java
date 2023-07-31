@@ -9,11 +9,9 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberMapper;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
-import io.wisoft.wasabi.global.bcrypt.EncryptHelper;
-import io.wisoft.wasabi.global.enumeration.Role;
-import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
+import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +56,7 @@ public class AuthService {
             throw AuthExceptionExecutor.LoginFail();
         }
 
-        String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole());
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole());
         return memberMapper.mapToLoginResponse(member, accessToken);
     }
 }

@@ -2,8 +2,8 @@ package io.wisoft.wasabi.domain.like;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.global.enumeration.Part;
-import io.wisoft.wasabi.global.enumeration.Role;
+import io.wisoft.wasabi.domain.member.Part;
+import io.wisoft.wasabi.domain.member.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

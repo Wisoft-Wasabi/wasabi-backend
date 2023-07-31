@@ -1,6 +1,6 @@
 package io.wisoft.wasabi.domain.tag.persistence;
 
-import io.wisoft.wasabi.domain.usage.persistence.Used;
+import io.wisoft.wasabi.domain.used.persistence.Used;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

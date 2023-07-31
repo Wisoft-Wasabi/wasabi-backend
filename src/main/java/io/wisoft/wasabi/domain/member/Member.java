@@ -2,11 +2,8 @@ package io.wisoft.wasabi.domain.member;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.like.Like;
-import io.wisoft.wasabi.global.basetime.BaseTimeEntity;
-import io.wisoft.wasabi.global.enumeration.Part;
-import io.wisoft.wasabi.global.enumeration.Role;
+import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.HashSet;
@@ -111,5 +108,9 @@ public class Member extends BaseTimeEntity {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getReferenceUrl() {
+        return referenceUrl;
     }
 }

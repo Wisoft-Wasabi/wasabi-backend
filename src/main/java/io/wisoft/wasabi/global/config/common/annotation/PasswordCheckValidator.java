@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.annotation;
+package io.wisoft.wasabi.global.config.common.annotation;
 
 import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
 import jakarta.validation.ConstraintValidator;
@@ -9,7 +9,7 @@ public class PasswordCheckValidator implements ConstraintValidator<PasswordCheck
     private String field;
     private String fieldMatch;
 
-    public void initialize(PasswordCheck constraintAnnotation) {
+    public void initialize(final PasswordCheck  constraintAnnotation) {
         this.field = constraintAnnotation.field();
         this.fieldMatch = constraintAnnotation.fieldMatch();
     }
