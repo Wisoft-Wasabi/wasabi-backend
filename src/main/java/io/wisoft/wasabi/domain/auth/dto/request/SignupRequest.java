@@ -6,10 +6,7 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.springframework.beans.factory.annotation.Value;
-@DynamicInsert
+
 @PasswordCheck(field = "password", fieldMatch = "checkPassword")
 public record SignupRequest(
         @NotBlank(message = "이메일을 입력해주세요.") @Email String email,
