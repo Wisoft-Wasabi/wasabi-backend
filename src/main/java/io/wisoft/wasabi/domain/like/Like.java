@@ -42,6 +42,11 @@ public class Like {
         setBoard(board);
     }
 
+    public void delete() {
+        this.member.getLikes().remove(this);
+        this.board.getLikes().remove(this);
+    }
+
     /* getter */
     public Long getId() { return id; }
 

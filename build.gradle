@@ -2,7 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.0'
 	id 'io.spring.dependency-management' version '1.1.0'
-//	id 'com.palantir.docker-compose' version '0.33.0'
 }
 
 group = 'io.wisoft'
@@ -47,7 +46,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-//dockerCompose {
-//	dockerComposeFile 'docker-compose.yml'
-//}

@@ -3,7 +3,6 @@ package io.wisoft.wasabi.domain.like;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
-import io.wisoft.wasabi.domain.like.dto.CancelLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
@@ -111,7 +110,7 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String content = objectMapper.writeValueAsString(request);
 
             // when
-            final var result = mockMvc.perform(delete("/likes")
+            final var result = mockMvc.perform(post("/likes")
                     .contentType(APPLICATION_JSON)
                     .content(content)
                     .header("Authorization", "Bearer " + token));
@@ -122,7 +121,7 @@ public class LikeIntegrationTest extends IntegrationTest {
     }
 
     @Nested
-    @DisplayName("게시글 취소")
+    @DisplayName("좋아요 취소")
     class CancelLike {
 
         @Test
@@ -139,13 +138,9 @@ public class LikeIntegrationTest extends IntegrationTest {
                     member.getRole()
             );
 
-            final var request = new CancelLikeRequest(board.getId());
-            final String content = objectMapper.writeValueAsString(request);
-
             // when
             final var result = mockMvc.perform(delete("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .content(content)
+                    .param("boardId", String.valueOf(board.getId()))
                     .header("Authorization", "Bearer " + token));
 
             // then
@@ -163,13 +158,9 @@ public class LikeIntegrationTest extends IntegrationTest {
                     member.getRole()
             );
 
-            final var request = new CancelLikeRequest(10L);
-            final String content = objectMapper.writeValueAsString(request);
-
             // when
             final var result = mockMvc.perform(delete("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .content(content)
+                    .param("boardId", String.valueOf(10L))
                     .header("Authorization", "Bearer " + token));
 
             // then

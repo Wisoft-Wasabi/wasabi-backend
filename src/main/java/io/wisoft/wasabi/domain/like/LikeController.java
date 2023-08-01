@@ -1,6 +1,9 @@
 package io.wisoft.wasabi.domain.like;
 
-import io.wisoft.wasabi.domain.like.dto.*;
+import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
+import io.wisoft.wasabi.domain.like.dto.GetLikeResponse;
+import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
+import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
 import io.wisoft.wasabi.global.annotation.LoginRequired;
 import io.wisoft.wasabi.global.annotation.MemberId;
 import io.wisoft.wasabi.global.response.CommonResponse;
@@ -30,9 +33,9 @@ public class LikeController {
 
     @DeleteMapping
     public ResponseEntity<CommonResponse> cancelLike(@MemberId final Long memberId,
-                                                     @RequestBody @Valid final CancelLikeRequest request) {
+                                                     @RequestParam("boardId") @Valid final Long boardId) {
 
-        final CancelLikeResponse response = likeService.cancelLike(memberId, request);
+        final CancelLikeResponse response = likeService.cancelLike(memberId, boardId);
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 
