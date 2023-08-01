@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class LikeMapper {
     Like registerLikeRequestToEntity(final Member member, final Board board) {
 
-        return Like.createLike(member, board);
+        return new Like(member, board);
     }
 
     RegisterLikeResponse entityToRegisterLikeResponse(final Like like) {

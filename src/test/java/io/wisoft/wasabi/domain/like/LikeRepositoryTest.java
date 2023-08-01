@@ -3,7 +3,6 @@ package io.wisoft.wasabi.domain.like;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.global.enumeration.Role;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,7 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ActiveProfiles("test")
 @DataJpaTest
@@ -63,15 +63,28 @@ class LikeRepositoryTest {
         void register_like() throws Exception {
 
             //given
-            final Like like = Like.createLike(member, board);
+            final Like like = new Like(member, board);
 
             //when
             final Like savedLike = likeRepository.save(like);
 
             //then
             assertNotNull(savedLike);
-            Assertions.assertThat(savedLike.getId()).isEqualTo(like.getId());
-            Assertions.assertThat(savedLike.getBoard()).isEqualTo(board);
+            assertThat(savedLike.getId()).isEqualTo(like.getId());
+            assertThat(savedLike.getBoard()).isEqualTo(board);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 데이터 요청 시 등록되지 않는다.")
+        void register_like_fail() throws Exception {
+
+            //given
+
+            //when
+            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
+
+            //then
+            assertThat(result).isEmpty();
         }
     }
 
@@ -84,14 +97,14 @@ class LikeRepositoryTest {
         void cancel_like() {
 
             // given
-            final Like like = Like.createLike(member, board);
+            final Like like = new Like(member, board);
             likeRepository.save(like);
 
             // when
             final int result = likeRepository.deleteByMemberIdAndBoardId(member.getId(), board.getId());
 
             // then
-            Assertions.assertThat(result).isEqualTo(1);
+            assertThat(result).isEqualTo(1);
 
         }
 
@@ -105,7 +118,7 @@ class LikeRepositoryTest {
             final int result = likeRepository.deleteByMemberIdAndBoardId(10L, 10L);
 
             // then
-            Assertions.assertThat(result).isEqualTo(0);
+            assertThat(result).isEqualTo(0);
         }
     }
 
@@ -118,14 +131,14 @@ class LikeRepositoryTest {
         void find_like_by_member_id_and_board_id() {
 
             // given
-            final Like like = Like.createLike(member, board);
+            final Like like = new Like(member, board);
             likeRepository.save(like);
 
             // when
             final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
 
             // then
-            Assertions.assertThat(result).isNotEmpty();
+            assertThat(result).isNotEmpty();
         }
 
         @Test
@@ -138,8 +151,40 @@ class LikeRepositoryTest {
             final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
 
             // then
-            Assertions.assertThat(result).isEmpty();
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("좋아요 상태 조회")
+    class GetLikeStatus {
+
+        @Test
+        @DisplayName("BoardId 조회 시 정상적으로 좋아요수가 조회되어야 한다.")
+        void count_like_by_board_id() throws Exception {
+
+            //given
+            final Like like = new Like(member, board);
+            likeRepository.save(like);
+
+            //when
+            int result = likeRepository.countByBoardId(board.getId());
+
+            //then
+            assertThat(result).isEqualTo(1);
         }
 
+        @Test
+        @DisplayName("BoardId 조회 시 데이터가 없다면 빈값이 조회되어야 한다.")
+        void count_like_by_board_id_fail() throws Exception {
+
+            //given
+
+            //when
+            int result = likeRepository.countByBoardId(board.getId());
+
+            //then
+            assertThat(result).isZero();
+        }
     }
 }
