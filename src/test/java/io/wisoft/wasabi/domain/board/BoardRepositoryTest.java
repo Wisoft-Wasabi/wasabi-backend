@@ -31,6 +31,8 @@ class BoardRepositoryTest {
         void write_board(final Member member) throws Exception {
 
             // given
+            memberRepository.save(member);
+
             final Board board = Board.createBoard(
                     "title",
                     "content",

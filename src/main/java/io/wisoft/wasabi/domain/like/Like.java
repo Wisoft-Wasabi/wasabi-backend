@@ -3,16 +3,11 @@ package io.wisoft.wasabi.domain.like;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.PROTECTED;
 
 @Entity
-@Getter
 @Table(name = "likes")
-@NoArgsConstructor(access = PROTECTED)
 public class Like {
 
     @Id
@@ -37,14 +32,25 @@ public class Like {
         member.getLikes().add(this);
     }
 
-    public static Like createLike(
+    protected Like() {}
+
+    public Like(
             final Member member,
-            final Board board) {
-
-        final Like like = new Like();
-        like.setMember(member);
-        like.setBoard(board);
-
-        return like;
+            final Board board
+    ) {
+        setMember(member);
+        setBoard(board);
     }
+
+    public void delete() {
+        this.member.getLikes().remove(this);
+        this.board.getLikes().remove(this);
+    }
+
+    /* getter */
+    public Long getId() { return id; }
+
+    public Board getBoard() { return board; }
+
+    public Member getMember() { return member; }
 }
