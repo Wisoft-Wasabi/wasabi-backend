@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.board;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.global.config.common.annotation.Anyone;
 import io.wisoft.wasabi.global.config.common.annotation.MemberId;
 import io.wisoft.wasabi.global.config.web.response.CommonResponse;
 import jakarta.validation.Valid;
@@ -15,11 +16,11 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/boards")
-public class BoardController {
+public class BoardController<T> {
 
-    private final BoardService boardService;
+    private final BoardService<T> boardService;
 
-    public BoardController(final BoardService boardService) {
+    public BoardController(final BoardService<T> boardService) {
         this.boardService = boardService;
     }
 
@@ -33,9 +34,10 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<CommonResponse> readBoard(@PathVariable final Long boardId) {
+    public ResponseEntity<CommonResponse> readBoard(@PathVariable final Long boardId,
+                                                    @Anyone final T accessId) {
 
-        final var response = boardService.readBoard(boardId);
+        final var response = boardService.readBoard(boardId, accessId);
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 

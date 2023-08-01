@@ -31,7 +31,7 @@ public class BoardMapper {
     }
 
 
-    ReadBoardResponse entityToReadBoardResponse(final Board board) {
+    ReadBoardResponse entityToReadBoardResponse(final Board board, final boolean isLike) {
 
         return new ReadBoardResponse(
                 board.getId(),
@@ -41,7 +41,7 @@ public class BoardMapper {
                 board.getCreatedAt(),
                 board.getLikes().size(),
                 board.getViews(),
-                false,
+                isLike,
                 board.getUsages().stream()
                         .map(Used::getTag)
                         .toList()
