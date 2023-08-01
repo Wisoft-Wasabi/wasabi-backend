@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.basetime;
+package io.wisoft.wasabi.domain.basetime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 public class BaseTimeEntity {
 
     @CreatedDate
-    @Column(updatable = false, name = "created_at")
+    @Column(updatable = false, name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     public LocalDateTime getCreatedAt() {
@@ -27,5 +27,10 @@ public class BaseTimeEntity {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public BaseTimeEntity() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }

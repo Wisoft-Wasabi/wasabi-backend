@@ -2,14 +2,17 @@ package io.wisoft.wasabi.domain.member;
 
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.like.Like;
-import io.wisoft.wasabi.global.basetime.BaseTimeEntity;
-import io.wisoft.wasabi.global.enumeration.Role;
+import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+
 import java.util.HashSet;
 import java.util.Set;
+
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
+@DynamicInsert
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -32,7 +35,21 @@ public class Member extends BaseTimeEntity {
     private boolean activation;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "reference_url")
+    private String referenceUrl;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Part part;
+
+    @Column
+    private String organization;
+
+    @Column
+    private String motto;
 
     @OneToMany(mappedBy = "member")
     private Set<Like> likes = new HashSet<>();
@@ -45,33 +62,24 @@ public class Member extends BaseTimeEntity {
                   final String name,
                   final String phoneNumber,
                   final boolean activation,
-                  final Role role) {
+                  final Role role,
+                  final String referenceUrl,
+                  final Part part,
+                  final String organization,
+                  final String motto) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.activation = activation;
         this.role = role;
+        this.referenceUrl = referenceUrl;
+        this.part = part;
+        this.organization = organization;
+        this.motto = motto;
     }
 
     protected Member() {
-    }
-
-    public static Member createMember(
-            final String email,
-            final String password,
-            final String name,
-            final String phoneNumber,
-            final boolean activation,
-            final Role role) {
-        return new Member(
-                email,
-                password,
-                name,
-                phoneNumber,
-                activation,
-                role
-        );
     }
 
     public Long getId() {
@@ -100,5 +108,9 @@ public class Member extends BaseTimeEntity {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getReferenceUrl() {
+        return referenceUrl;
     }
 }

@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.response.dto.error;
+package io.wisoft.wasabi.global.config.web.response.dto.error;
 
 import io.wisoft.wasabi.global.exception.ErrorType;
 

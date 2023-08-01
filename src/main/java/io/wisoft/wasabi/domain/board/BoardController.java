@@ -1,11 +1,13 @@
 package io.wisoft.wasabi.domain.board;
 
+import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
-import io.wisoft.wasabi.global.annotation.MemberId;
-import io.wisoft.wasabi.global.response.CommonResponse;
+import io.wisoft.wasabi.global.config.common.annotation.MemberId;
+import io.wisoft.wasabi.global.config.web.response.CommonResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,5 +37,16 @@ public class BoardController {
 
         final var response = boardService.readBoard(boardId);
         return ResponseEntity.ok(CommonResponse.newInstance(response));
+    }
+
+    @GetMapping
+    public ResponseEntity<CommonResponse> sortedBoards(
+            @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
+            @Valid @RequestParam(name = "page", defaultValue = "0") final int page,
+            @Valid @RequestParam(name = "size", defaultValue = "2") final int size) {
+
+        final Slice<SortBoardResponse> sortedBoards = boardService.getSortedBoards(sortBy, page, size);
+
+        return ResponseEntity.ok(CommonResponse.newInstance(sortedBoards));
     }
 }

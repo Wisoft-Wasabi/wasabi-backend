@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.bcrypt;
+package io.wisoft.wasabi.global.config.common.bcrypt;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Component;

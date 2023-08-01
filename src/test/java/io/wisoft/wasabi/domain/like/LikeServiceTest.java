@@ -11,8 +11,9 @@ import io.wisoft.wasabi.domain.like.dto.*;
 import io.wisoft.wasabi.domain.like.exception.LikeNotFoundException;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.member.Part;
+import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.member.exception.MemberNotFoundException;
-import io.wisoft.wasabi.global.enumeration.Role;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
@@ -61,13 +62,17 @@ class LikeServiceTest {
         void register_like() throws Exception {
 
             //given
-            final Member member = Member.createMember(
+            final Member member = new Member(
                     "게시글작성성공@gmail.com",
                     "test1234",
                     "test1234",
                     "01000000000",
                     false,
-                    Role.GENERAL);
+                    Role.GENERAL,
+                    "www.naver.com",
+                    Part.BACKEND,
+                    "wisoft",
+                    "공부는 동엽이처럼");
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
             final Board board = Board.createBoard(
@@ -174,13 +179,17 @@ class LikeServiceTest {
             final Long memberId = 1L;
             final Long boardId = 1L;
 
-            final Member member = Member.createMember(
+            final Member member = new Member(
                     "게시글작성성공@gmail.com",
                     "test1234",
                     "test1234",
                     "01000000000",
                     false,
-                    Role.GENERAL);
+                    Role.GENERAL,
+                    "www.naver.com",
+                    Part.BACKEND,
+                    "wisoft",
+                    "공부는 동엽이처럼");
             final Board board = Board.createBoard(
                     "title",
                     "content",

@@ -1,6 +1,8 @@
 package io.wisoft.wasabi.domain.auth.dto.request;
 
-import io.wisoft.wasabi.global.annotation.PasswordCheck;
+import io.wisoft.wasabi.global.config.common.annotation.PasswordCheck;
+import io.wisoft.wasabi.domain.member.Part;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -17,7 +19,16 @@ public record SignupRequest(
 
         String checkPassword,
         @NotBlank(message = "이름을 입력하세요.") String name,
-        @NotBlank(message = "전화번호를 입력하세요.") String phoneNumber
+        @NotBlank(message = "전화번호를 입력하세요.") String phoneNumber,
+
+        @Nullable
+        String referenceUrl,
+        @Nullable
+        Part part,
+        @Nullable
+        String organization,
+        @Nullable
+        String motto
 ) {
 }
 

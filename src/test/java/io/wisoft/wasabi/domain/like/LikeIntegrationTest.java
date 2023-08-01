@@ -6,8 +6,9 @@ import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.global.enumeration.Role;
-import io.wisoft.wasabi.global.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.domain.member.Part;
+import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,13 +50,17 @@ public class LikeIntegrationTest extends IntegrationTest {
     @BeforeEach
     void init() {
         final int random = new Random().nextInt(100_000);
-        member = Member.createMember(
+        member = new Member(
                 "게시글작성성공" + random + "@gmail.com",
                 "test1234",
                 "test1234",
                 "01000000000",
                 false,
-                Role.GENERAL);
+                Role.GENERAL,
+                "www.naver.com",
+                Part.BACKEND,
+                "wisoft",
+                "공부는 동엽이처럼");
         memberRepository.save(member);
 
         board = Board.createBoard(
@@ -198,10 +203,16 @@ public class LikeIntegrationTest extends IntegrationTest {
         void get_like_status_fail() throws Exception {
 
             //given
+            final var token = jwtTokenProvider.createAccessToken(
+                    member.getId(),
+                    member.getName(),
+                    member.getRole()
+            );
 
             //when
             final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(10L)));
+                    .param("boardId", String.valueOf(10L))
+                    .header("Authorization", "Bearer" + token));
 
             //then
             result.andExpect(status().isNotFound());

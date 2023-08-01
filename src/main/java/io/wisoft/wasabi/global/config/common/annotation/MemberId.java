@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.annotation;
+package io.wisoft.wasabi.global.config.common.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

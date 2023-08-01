@@ -5,7 +5,8 @@ import autoparams.generator.ObjectContainer;
 import autoparams.generator.ObjectGenerationContext;
 import autoparams.generator.ObjectGenerator;
 import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.global.enumeration.Role;
+import io.wisoft.wasabi.domain.member.Part;
+import io.wisoft.wasabi.domain.member.Role;
 
 import java.util.Random;
 
@@ -30,7 +31,11 @@ public class NotSaveMemberCustomization implements Customizer {
                 "test",
                 "010-1111-1111",
                 false,
-                Role.GENERAL
+                Role.GENERAL,
+                "",
+                Part.UNDEFINED,
+                "",
+                ""
         );
     }
 }

@@ -1,7 +1,7 @@
 package io.wisoft.wasabi.global.exception;
 
-import io.wisoft.wasabi.global.response.CommonResponse;
-import io.wisoft.wasabi.global.response.dto.error.ErrorDataResponse;
+import io.wisoft.wasabi.global.config.web.response.CommonResponse;
+import io.wisoft.wasabi.global.config.web.response.dto.error.ErrorDataResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;

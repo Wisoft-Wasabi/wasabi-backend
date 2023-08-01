@@ -1,17 +1,13 @@
 package io.wisoft.wasabi.domain.board.dto;
 
-import io.wisoft.wasabi.domain.tag.persistence.Tag;
-
 import java.time.LocalDateTime;
-import java.util.List;
 
-public record ReadBoardResponse (
+public record SortBoardResponse(
         Long id,
         String title,
-        String content,
         String writer,
         LocalDateTime createdAt,
         int likeCount,
         int views,
-        boolean isLike,
-        List<Tag> tags) { }
+        boolean isLike) {
+}

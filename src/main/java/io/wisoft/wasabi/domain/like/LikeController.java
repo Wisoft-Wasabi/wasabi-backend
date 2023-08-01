@@ -4,9 +4,8 @@ import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
 import io.wisoft.wasabi.domain.like.dto.GetLikeResponse;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
-import io.wisoft.wasabi.global.annotation.LoginRequired;
-import io.wisoft.wasabi.global.annotation.MemberId;
-import io.wisoft.wasabi.global.response.CommonResponse;
+import io.wisoft.wasabi.global.config.common.annotation.MemberId;
+import io.wisoft.wasabi.global.config.web.response.CommonResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +39,7 @@ public class LikeController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse> getLikeStatus(@LoginRequired final Long memberId,
+    public ResponseEntity<CommonResponse> getLikeStatus(@MemberId final Long memberId,
                                                         @RequestParam("boardId") final Long boardId) {
 
         final GetLikeResponse response = likeService.getLikeStatus(memberId, boardId);

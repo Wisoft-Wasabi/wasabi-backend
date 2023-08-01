@@ -5,7 +5,8 @@ import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.global.enumeration.Role;
+import io.wisoft.wasabi.domain.member.Part;
+import io.wisoft.wasabi.domain.member.Role;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,13 +40,17 @@ class LikeRepositoryTest {
     @BeforeEach
     void init() {
         // Member 초기화
-        member = Member.createMember(
+        member = new Member(
                 "게시글작성성공@gmail.com",
                 "test1234",
                 "test1234",
                 "01000000000",
                 false,
-                Role.GENERAL);
+                Role.GENERAL,
+                "www.naver.com",
+                Part.BACKEND,
+                "wisoft",
+                "공부는 동엽이처럼");
 
         System.out.println("여기서 null"+member.getCreatedAt());
         em.persist(member);

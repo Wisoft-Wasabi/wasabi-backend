@@ -1,32 +1,14 @@
+server:
+  servlet:
+    context-path: /api
+  port: 8080
+
 spring:
   profiles:
     active: dev
     include: jwt, bcrypt
 
-  sql:
-    init:
-      mode: always
-
-  jpa:
-    database: h2
-    database-platform: org.hibernate.dialect.H2Dialect
-#  jpa:
-#    database: mysql
-#    database-platform: org.hibernate.dialect.MySQL8Dialect
-
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        format_sql: true
-
-  h2:
-    console:
-      enabled: true
-
 logging.level:
   org.hibernate.SQL: debug
 
-server:
-  servlet:
-    context-path: /api
+

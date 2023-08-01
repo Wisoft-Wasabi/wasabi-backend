@@ -1,8 +1,8 @@
-package io.wisoft.wasabi.global.jwt;
+package io.wisoft.wasabi.global.config.common.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.wisoft.wasabi.global.enumeration.Role;
+import io.wisoft.wasabi.domain.member.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

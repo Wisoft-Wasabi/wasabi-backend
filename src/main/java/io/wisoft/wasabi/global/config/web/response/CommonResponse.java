@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.response;
+package io.wisoft.wasabi.global.config.web.response;
 
 import java.time.LocalDateTime;
 

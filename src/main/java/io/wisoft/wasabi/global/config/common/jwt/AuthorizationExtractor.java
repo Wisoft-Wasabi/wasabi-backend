@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.jwt;
+package io.wisoft.wasabi.global.config.common.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.util.Strings;

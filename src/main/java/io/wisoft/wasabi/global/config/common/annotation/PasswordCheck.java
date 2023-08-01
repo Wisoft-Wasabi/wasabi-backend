@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.annotation;
+package io.wisoft.wasabi.global.config.common.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

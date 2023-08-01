@@ -1,5 +1,6 @@
-package io.wisoft.wasabi.global.config;
+package io.wisoft.wasabi.global.config.web;
 
+import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
