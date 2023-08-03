@@ -1,12 +1,13 @@
 package io.wisoft.wasabi.domain.board;
 
+import io.wisoft.wasabi.domain.board.dto.MyLikeBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.global.config.common.annotation.MemberId;
 import io.wisoft.wasabi.global.config.web.response.CommonResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class BoardController {
 
     @PostMapping
     public ResponseEntity<CommonResponse> writeBoard(@RequestBody @Valid final WriteBoardRequest request,
-                                                     @MemberId @Valid @NotNull final Long memberId) {
+                                                     @MemberId final Long memberId) {
 
         final WriteBoardResponse response = boardService.writeBoard(request, memberId);
         return ResponseEntity.status(CREATED).body(CommonResponse.newInstance(response));
@@ -48,5 +49,12 @@ public class BoardController {
         final Slice<SortBoardResponse> sortedBoards = boardService.getSortedBoards(sortBy, page, size);
 
         return ResponseEntity.ok(CommonResponse.newInstance(sortedBoards));
+    }
+
+    @GetMapping("/my-like")
+    public ResponseEntity<CommonResponse> myLikeBoards(@MemberId final Long memberId, final Pageable pageable) {
+
+        Slice<MyLikeBoardResponse> response = boardService.getMyLikeBoards(memberId, pageable);
+        return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 }

@@ -1,7 +1,6 @@
 package io.wisoft.wasabi.global.config.common.annotation;
 
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
-import io.wisoft.wasabi.global.config.common.annotation.MemberId;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
