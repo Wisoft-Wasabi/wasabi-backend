@@ -1,6 +1,5 @@
 package io.wisoft.wasabi.domain.board;
 
-import org.hibernate.annotations.BatchSize;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,9 +24,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Slice<Board> findAllByOrderByLikesDesc(Pageable pageable);
 
     // 내가 좋아요 한 게시글 목록 조회 - 기본값(최신순)
-    @BatchSize(size = 1000)
     @Query("SELECT board FROM Board board" +
-            " JOIN FETCH board.likes likes" +
+            " JOIN board.likes likes" +
             " JOIN FETCH board.member member" +
             " WHERE likes.member.id = :id" +
             " ORDER BY board.createdAt DESC")

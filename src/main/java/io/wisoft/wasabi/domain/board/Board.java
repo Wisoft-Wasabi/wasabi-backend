@@ -5,6 +5,8 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.used.persistence.Used;
 import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
+
 import java.util.HashSet;
 import java.util.Set;
 import static jakarta.persistence.FetchType.LAZY;
@@ -30,6 +32,7 @@ public class Board extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     private Member member;
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "board")
     private Set<Like> likes = new HashSet<>();
 
