@@ -1,6 +1,6 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.board.dto.MyLikeBoardResponse;
+import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
@@ -54,7 +54,7 @@ public class BoardController {
     @GetMapping("/my-like")
     public ResponseEntity<CommonResponse> myLikeBoards(@MemberId final Long memberId, final Pageable pageable) {
 
-        Slice<MyLikeBoardResponse> response = boardService.getMyLikeBoards(memberId, pageable);
+        Slice<MyLikeBoardsResponse> response = boardService.getMyLikeBoards(memberId, pageable);
         return ResponseEntity.ok(CommonResponse.newInstance(response));
     }
 }

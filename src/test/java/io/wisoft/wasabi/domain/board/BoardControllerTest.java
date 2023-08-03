@@ -136,7 +136,7 @@ class BoardControllerTest {
             // given
             final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
 
-            final var response = boardMapper.entityToMyLikeBoardResponse(new SliceImpl<>(boards));
+            final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
 
             given(boardService.getMyLikeBoards(any(), any())).willReturn(response);
 

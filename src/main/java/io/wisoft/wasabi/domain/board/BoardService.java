@@ -12,5 +12,5 @@ public interface BoardService {
 
     Slice<SortBoardResponse> getSortedBoards(final String sortBy, final int page, final int size);
 
-    Slice<MyLikeBoardResponse> getMyLikeBoards(final Long memberId, final Pageable pageable);
+    Slice<MyLikeBoardsResponse> getMyLikeBoards(final Long memberId, final Pageable pageable);
 }
