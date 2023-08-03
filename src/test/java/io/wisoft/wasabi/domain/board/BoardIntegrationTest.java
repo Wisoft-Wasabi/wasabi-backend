@@ -1,8 +1,11 @@
 package io.wisoft.wasabi.domain.board;
 
 import autoparams.AutoSource;
+import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
+import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
@@ -12,7 +15,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -146,7 +148,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/boards/{boardId}", board.getId())
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(APPLICATION_JSON));
 
             //then
             result.andExpect(status().isOk())
@@ -162,10 +164,32 @@ class BoardIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/boards/{boardId}", 10000L)
-                    .contentType(MediaType.APPLICATION_JSON));
+                    .contentType(APPLICATION_JSON));
 
             //then
             result.andExpect(status().isNotFound());
         }
+
+        @ParameterizedTest
+        @AutoSource
+        @Customization(NotSaveBoardCustomization.class)
+        @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요한 게시물들이 반환된다.")
+        void read_my_like_boards(final Member member, final Board board1, final Board board2) throws Exception {
+
+            // given
+            new Like(member, board1);
+            new Like(member, board2);
+
+            final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole());
+
+            // when
+            final var result = mockMvc.perform(get("/boards/my-like")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "bearer " + accessToken));
+
+            // then
+            result.andExpect(status().isOk());
+        }
+
     }
 }

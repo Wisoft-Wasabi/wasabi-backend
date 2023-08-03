@@ -21,6 +21,7 @@ import java.util.Random;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LikeIntegrationTest extends IntegrationTest {
@@ -110,7 +111,7 @@ public class LikeIntegrationTest extends IntegrationTest {
                     member.getRole()
             );
 
-            final var request = new RegisterLikeRequest(10L);
+            final var request = new RegisterLikeRequest(100000L);
 
             final String content = objectMapper.writeValueAsString(request);
 
@@ -211,11 +212,12 @@ public class LikeIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(10L))
+                    .param("boardId", String.valueOf(100000L))
                     .header("Authorization", "Bearer" + token));
 
             //then
-            result.andExpect(status().isNotFound());
+            result.andExpect(status().isNotFound())
+                    .andDo(print());
         }
     }
 }
