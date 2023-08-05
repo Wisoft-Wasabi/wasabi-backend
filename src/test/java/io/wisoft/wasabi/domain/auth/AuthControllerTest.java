@@ -10,10 +10,12 @@ import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
 import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
 import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.domain.member.Part;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +71,33 @@ class AuthControllerTest {
             //then
             result.andExpect(status().isCreated());
         }
+
+        @Test
+        @DisplayName("입력한 정보가 유효성 검사에 적합하지 않아, 회원가입에 실패한다.")
+        void signup_fail_invalid_email_format() throws Exception {
+
+            //given
+            final var request = new SignupRequest(
+                    "not-email-format",
+                    "pass12",
+                    "pass12",
+                    "name12",
+                    "phoneNumber",
+                    "refer12",
+                    Part.BACKEND,
+                    "wisoft",
+                    "motto"
+            );
+
+            //when
+            final var result = mockMvc.perform(post("/auth/signup")
+                    .accept(APPLICATION_JSON)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            //then
+            result.andExpect(status().isBadRequest());
+        }
     }
 
     @Nested
@@ -104,6 +133,26 @@ class AuthControllerTest {
 
             //then
             result.andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("입력한 정보가 유효성 검사에 적합하지 않아, 로그인에 실패한다.")
+        void login_fail_invalid_email_format() throws Exception {
+
+            //given
+            final var request = new LoginRequest(
+                    "not-email-format",
+                    "pass12"
+            );
+
+            //when
+            final var result = mockMvc.perform(post("/auth/login")
+                    .accept(APPLICATION_JSON)
+                    .contentType(APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            //then
+            result.andExpect(status().isBadRequest());
         }
     }
 }
