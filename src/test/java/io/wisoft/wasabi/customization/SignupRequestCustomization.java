@@ -45,7 +45,7 @@ public class SignupRequestCustomization implements Customizer {
                 "referenceUrl",
                 Part.BACKEND,
                 "wisoft",
-                "호롱이 먹여 살리기"
+                "호롱이 먹여  살리기"
         );
     }
 }
