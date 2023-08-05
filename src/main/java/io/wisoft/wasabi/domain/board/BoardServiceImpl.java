@@ -6,6 +6,7 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,24 +67,20 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Slice<SortBoardResponse> getSortedBoards(final String sortBy, final int page, final int size) {
-        // 음수일 경우를 방지
-        final int validatedPage = Math.max(0, page);
-        final int validatedSize = Math.max(2, size);
+    public Slice<SortBoardResponse> getSortedBoards(final String sortBy, final Pageable pageable) {
 
         final BoardSortType sortType = validateSortType(sortBy.toUpperCase());
-        final Slice<Board> boardSlice = sort(sortType, validatedPage, validatedSize);
+        final Slice<Board> boardSlice = sort(sortType, pageable);
 
         return boardMapper.entityToSortBoardResponse(boardSlice);
     }
 
-    private Slice<Board> sort(final BoardSortType sortType, final int page, final int size) {
+    private Slice<Board> sort(final BoardSortType sortType, final Pageable pageable) {
         return switch (sortType) {
-            case LATEST -> boardRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, size));
-            case VIEWS -> boardRepository.findAllByOrderByViewsDesc(PageRequest.of(page, size));
-            case LIKES -> boardRepository.findAllByOrderByLikesDesc(PageRequest.of(page, size));
-            case DEFAULT -> boardRepository.findDefaultBoards(PageRequest.of(page, size));
-            default -> throw BoardExceptionExecutor.BoardSortTypeInvalidException();
+            case LATEST -> boardRepository.findAllByOrderByCreatedAtDesc(pageable);
+            case VIEWS -> boardRepository.findAllByOrderByViewsDesc(pageable);
+            case LIKES -> boardRepository.findAllByOrderByLikesDesc(pageable);
+            case DEFAULT -> boardRepository.findDefaultBoards(pageable);
         };
     }
 

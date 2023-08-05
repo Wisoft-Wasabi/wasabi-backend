@@ -60,6 +60,13 @@ public class Board extends BaseTimeEntity {
         return board;
     }
 
+    public Board(final String title, final String content, final Member member) {
+        this.title = title;
+        this.content = content;
+        this.setMember(member);
+        this.views = 0;
+    }
+
     /* 비즈니스 로직 */
     public void increaseView() {
         this.views++;
