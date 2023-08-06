@@ -1,8 +1,12 @@
 package io.wisoft.wasabi.domain.board;
 
 import autoparams.AutoSource;
+import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
+import io.wisoft.wasabi.domain.like.Like;
+import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
@@ -15,9 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,6 +38,9 @@ class BoardIntegrationTest extends IntegrationTest {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -166,6 +176,56 @@ class BoardIntegrationTest extends IntegrationTest {
 
             //then
             result.andExpect(status().isNotFound());
+        }
+
+        @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시물들이 반환된다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(NotSaveMemberCustomization.class)
+        void read_my_boards(
+                final Member member
+        ) throws Exception {
+
+            // given
+            memberRepository.save(member);
+
+            final List<Board> boards = List.of(
+                    Board.createBoard(
+                            "title",
+                            "content",
+                            member
+                    ),
+                    Board.createBoard(
+                            "title",
+                            "content",
+                            member
+                    )
+            );
+            boardRepository.saveAll(boards);
+
+            final List<Like> likes = List.of(
+                    new Like(member, boards.get(0)),
+                    new Like(member, boards.get(1))
+            );
+            likeRepository.saveAll(likes);
+
+            final String accessToken = jwtTokenProvider.createAccessToken(
+                    member.getId(),
+                    member.getName(),
+                    member.getRole()
+            );
+
+            // when
+            final var result = mockMvc.perform(
+                    get("/boards/my-board")
+                            .param("page", "0")
+                            .param("size", "3")
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "bearer " + accessToken)
+            ).andDo(print());
+
+            // then
+            result.andExpect(status().isOk());
         }
     }
 }

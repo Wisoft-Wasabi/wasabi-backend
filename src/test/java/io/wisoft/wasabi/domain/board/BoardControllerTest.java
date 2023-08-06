@@ -1,6 +1,8 @@
 package io.wisoft.wasabi.domain.board;
 
+import autoparams.AutoSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wisoft.wasabi.domain.board.dto.MyBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
@@ -14,15 +16,18 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -112,6 +117,30 @@ class BoardControllerTest {
                             .accept(APPLICATION_JSON));
 
             //then
+            result.andExpect(status().isOk());
+        }
+
+        @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 반환된다.")
+        @AutoSource
+        void read_my_boards(
+                final List<MyBoardsResponse> boardsResponses
+        ) throws Exception {
+
+            // given
+            given(boardService.getMyBoards(any(), any())).willReturn(new SliceImpl<>(boardsResponses));
+
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+
+            // when
+            final var result = mockMvc.perform(
+                    get("/boards/my-board")
+                            .param("page", String.valueOf(0))
+                            .param("size", String.valueOf(3))
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "bearer " + accessToken)
+            );
+
+            // then
             result.andExpect(status().isOk());
         }
     }

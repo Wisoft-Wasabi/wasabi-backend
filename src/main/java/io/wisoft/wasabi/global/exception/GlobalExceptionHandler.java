@@ -44,6 +44,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<CommonResponse> handleRuntimeException(final RuntimeException ex) {
+        ex.printStackTrace();
         final ResponseEntity response = buildResponse(ErrorType.UNCAUGHT_ERROR);
         return response;
     }

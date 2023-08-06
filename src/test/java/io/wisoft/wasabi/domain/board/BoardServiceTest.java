@@ -1,11 +1,14 @@
 package io.wisoft.wasabi.domain.board;
 
 import autoparams.AutoSource;
+import autoparams.customization.Customization;
+import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,6 +99,30 @@ class BoardServiceTest {
 
             //then
             Assertions.assertThat(response.views()).isEqualTo(1L);
+        }
+
+        @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 최신순으로 조회된다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(NotSaveBoardCustomization.class)
+        void read_my_Boards(
+                final Long memberId,
+                final List<Board> boardList
+                ) {
+
+            // given
+            final Slice<Board> boards = new SliceImpl<>(boardList);
+            given(boardRepository.findAllMyBoards(any(), any())).willReturn(boards);
+
+            // when
+            final var pageable = PageRequest.of(0, 3);
+            final var myBoards = boardServiceImpl.getMyBoards(memberId, pageable);
+
+            // then
+            SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(myBoards).isNotEmpty();
+                softly.assertThat(myBoards.getSize()).isEqualTo(3);
+            });
         }
     }
 }

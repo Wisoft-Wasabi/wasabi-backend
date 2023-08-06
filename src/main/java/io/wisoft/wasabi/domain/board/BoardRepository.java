@@ -4,8 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
+import org.springframework.data.repository.query.Param;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     // 기본값
@@ -22,4 +21,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     // 좋아요 순
     @Query("SELECT board FROM Board board ORDER BY SIZE(board.likes) DESC")
     Slice<Board> findAllByOrderByLikesDesc(Pageable pageable);
+
+    @Query("SELECT board FROM Board board " +
+            "join fetch board.likes " +
+            "join fetch board.member " +
+            "WHERE board.member.id = :memberId " +
+            "ORDER BY board.createdAt DESC")
+    Slice<Board> findAllMyBoards(@Param("memberId") final Long memberId, final Pageable pageable);
 }

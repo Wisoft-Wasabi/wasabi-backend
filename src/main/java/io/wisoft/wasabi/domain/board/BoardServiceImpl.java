@@ -6,6 +6,7 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,6 +95,12 @@ public class BoardServiceImpl implements BoardService {
             }
         }
         throw BoardExceptionExecutor.BoardSortTypeInvalidException();
+    }
+
+    @Override
+    public Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable) {
+        final Slice<Board> myBoards = boardRepository.findAllMyBoards(memberId, pageable);
+        return boardMapper.entityToMyBoardsResponse(myBoards);
     }
 
 }
