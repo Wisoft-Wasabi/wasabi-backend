@@ -30,23 +30,19 @@ public class GlobalExceptionHandler {
         allErrors.addAll(fieldErrors);
 
         final String message = String.join(", ", allErrors);
-        final ResponseEntity response = buildResponse(ErrorType.dtoInvalid(message));
 
-        return response;
+        return buildResponse(ErrorType.dtoInvalid(message));
 
     }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<CommonResponse> handleBusinessException(final BusinessException ex) {
-        final ResponseEntity response = buildResponse(ex.getErrorType());
-        return response;
+        return buildResponse(ex.getErrorType());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<CommonResponse> handleRuntimeException(final RuntimeException ex) {
-        ex.printStackTrace();
-        final ResponseEntity response = buildResponse(ErrorType.UNCAUGHT_ERROR);
-        return response;
+        return buildResponse(ErrorType.UNCAUGHT_ERROR);
     }
 
     private ResponseEntity<CommonResponse> buildResponse(final ErrorType errorType) {

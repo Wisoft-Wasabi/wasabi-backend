@@ -4,8 +4,6 @@ import io.wisoft.wasabi.domain.board.dto.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import java.util.List;
-
 public interface BoardService {
 
     WriteBoardResponse writeBoard(final WriteBoardRequest request, Long memberId);
@@ -15,4 +13,6 @@ public interface BoardService {
     Slice<SortBoardResponse> getSortedBoards(final String sortBy, final int page, final int size);
 
     Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable);
+
+    Slice<MyLikeBoardResponse> getMyLikeBoards(final Long memberId, final Pageable pageable);
 }
