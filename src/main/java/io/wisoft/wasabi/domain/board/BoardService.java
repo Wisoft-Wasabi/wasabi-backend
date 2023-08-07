@@ -14,5 +14,5 @@ public interface BoardService {
 
     Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable);
 
-    Slice<MyLikeBoardResponse> getMyLikeBoards(final Long memberId, final Pageable pageable);
+    Slice<MyLikeBoardsResponse> getMyLikeBoards(final Long memberId, final Pageable pageable);
 }

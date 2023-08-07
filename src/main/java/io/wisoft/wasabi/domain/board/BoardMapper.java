@@ -69,9 +69,9 @@ public class BoardMapper {
         ));
     }
 
-    Slice<MyLikeBoardResponse> entityToMyLikeBoardResponse(final Slice<Board> boards) {
+    Slice<MyLikeBoardsResponse> entityToMyLikeBoardsResponse(final Slice<Board> boards) {
 
-        return boards.map(board -> new MyLikeBoardResponse(
+        return boards.map(board -> new MyLikeBoardsResponse(
                 board.getId(),
                 board.getTitle(),
                 board.getMember().getName(),

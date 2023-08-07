@@ -104,9 +104,9 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Slice<MyLikeBoardResponse> getMyLikeBoards(final Long memberId, final Pageable pageable) {
+    public Slice<MyLikeBoardsResponse> getMyLikeBoards(final Long memberId, final Pageable pageable) {
 
         final Slice<Board> myLikeBoards = boardRepository.findAllMyLikeBoards(memberId, pageable);
-        return boardMapper.entityToMyLikeBoardResponse(myLikeBoards);
+        return boardMapper.entityToMyLikeBoardsResponse(myLikeBoards);
     }
 }
