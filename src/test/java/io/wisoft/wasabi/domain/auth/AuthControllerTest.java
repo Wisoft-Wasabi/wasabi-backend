@@ -11,6 +11,7 @@ import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
 import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Part;
+import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +43,9 @@ class AuthControllerTest {
 
     @MockBean
     private MemberIdResolver memberIdResolver;
+
+    @MockBean
+    private AnyoneResolver anyoneResolver;
 
     @Spy
     private ObjectMapper objectMapper;
