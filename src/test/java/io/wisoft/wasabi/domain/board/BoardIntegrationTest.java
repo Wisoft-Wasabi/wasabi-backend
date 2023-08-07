@@ -147,7 +147,7 @@ class BoardIntegrationTest extends IntegrationTest {
             memberRepository.save(member);
 
             final Board board = boardRepository.save(
-                    Board.createBoard(
+                    new Board(
                             "title",
                             "content",
                             member
@@ -189,12 +189,12 @@ class BoardIntegrationTest extends IntegrationTest {
             memberRepository.save(member);
 
             final List<Board> boards = List.of(
-                    Board.createBoard(
+                    new Board(
                             "title",
                             "content",
                             member
                     ),
-                    Board.createBoard(
+                    new Board(
                             "title",
                             "content",
                             member

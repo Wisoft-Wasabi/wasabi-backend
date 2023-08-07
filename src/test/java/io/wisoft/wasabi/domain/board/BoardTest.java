@@ -20,7 +20,7 @@ class BoardTest {
         public void increase_view_success(final Member member) {
 
             //given -- 조건
-            final Board board = Board.createBoard(
+            final Board board = new Board(
                     "title",
                     "content",
                     member

@@ -75,7 +75,7 @@ class LikeServiceTest {
                     "공부는 동엽이처럼");
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
-            final Board board = Board.createBoard(
+            final Board board = new Board(
                     "title",
                     "content",
                     member
@@ -170,11 +170,11 @@ class LikeServiceTest {
     @Nested
     @DisplayName("좋아요 상태 조회")
     class GetLikeStatus {
-        
+
         @Test
         @DisplayName("요청이 성공적으로 수행되어 정상적으로 조회되어야 한다.")
         void get_like_status() throws Exception {
-            
+
             //given
             final Long memberId = 1L;
             final Long boardId = 1L;
@@ -190,7 +190,7 @@ class LikeServiceTest {
                     Part.BACKEND,
                     "wisoft",
                     "공부는 동엽이처럼");
-            final Board board = Board.createBoard(
+            final Board board = new Board(
                     "title",
                     "content",
                     member
@@ -205,11 +205,11 @@ class LikeServiceTest {
             //then
             assertThat(response).isNotNull();
         }
-        
+
         @Test
         @DisplayName("존재하지 않는 게시글에 대해 좋아요를 조회하면 에러가 발생한다.")
         void get_like_status_fail() throws Exception {
-            
+
             //given
             final Long memberId = 10L;
             final Long boardId = 10L;

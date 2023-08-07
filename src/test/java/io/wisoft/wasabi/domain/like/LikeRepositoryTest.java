@@ -54,11 +54,11 @@ class LikeRepositoryTest {
                 "wisoft",
                 "공부는 동엽이처럼");
 
-        System.out.println("여기서 null"+member.getCreatedAt());
+        System.out.println("여기서 null" + member.getCreatedAt());
         em.persist(member);
 
         // Board 초기화
-        board = Board.createBoard(
+        board = new Board(
                 "title",
                 "content",
                 member
@@ -69,7 +69,7 @@ class LikeRepositoryTest {
     private Like init(final Member member) {
         em.persist(member);
 
-        final Board board = Board.createBoard(
+        final Board board = new Board(
                 "title",
                 "content",
                 member

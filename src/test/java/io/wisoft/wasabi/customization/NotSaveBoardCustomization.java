@@ -16,7 +16,8 @@ public class NotSaveBoardCustomization implements Customizer {
     }
 
     static Board factory(final ObjectGenerationContext context) {
-        return Board.createBoard(
+
+        return new Board(
                 "title",
                 "content",
                 NotSaveMemberCustomization.factory(context)

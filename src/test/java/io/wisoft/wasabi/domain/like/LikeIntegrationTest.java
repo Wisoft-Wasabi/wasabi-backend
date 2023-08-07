@@ -64,10 +64,11 @@ public class LikeIntegrationTest extends IntegrationTest {
                 "공부는 동엽이처럼");
         memberRepository.save(member);
 
-        board = Board.createBoard(
+        board = new Board(
                 "title",
                 "content",
-                member);
+                member
+        );
         boardRepository.save(board);
     }
 
@@ -192,8 +193,8 @@ public class LikeIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/likes")
-                            .param("boardId", String.valueOf(board.getId()))
-                            .header("Authorization", "Bearer" + token));
+                    .param("boardId", String.valueOf(board.getId()))
+                    .header("Authorization", "Bearer" + token));
 
             //then
             result.andExpect(status().isOk());
