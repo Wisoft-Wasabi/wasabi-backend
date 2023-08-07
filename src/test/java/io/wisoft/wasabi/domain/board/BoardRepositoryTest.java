@@ -168,7 +168,6 @@ class BoardRepositoryTest {
                 softly.assertThat(myLikeBoards.getContent().get(0)).isEqualTo(board2);
             });
         }
-
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성하지 않은 게시글 목록은 조회되지 않는다.")
         @ParameterizedTest
         @AutoSource
