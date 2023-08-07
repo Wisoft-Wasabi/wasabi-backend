@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
@@ -126,6 +127,45 @@ class BoardRepositoryTest {
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(myBoards.getContent()).isNotEmpty();
                 softly.assertThat(myBoards.getContent().size()).isEqualTo(2);
+            });
+        }
+
+        @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요를 누른 게시글들만 최신순으로 조회된다.")
+        @ParameterizedTest
+        @AutoSource
+        void read_my_like_boards(final Member member) {
+
+            // given
+            memberRepository.save(member);
+
+            final var board1 = Board.createBoard(
+                    "title",
+                    "content",
+                    member
+            );
+            boardRepository.save(board1);
+
+            final var board2 = Board.createBoard(
+                    "title",
+                    "content",
+                    member
+            );
+            boardRepository.save(board2);
+
+            final var like1 = new Like(member, board1);
+            likeRepository.save(like1);
+
+            final var like2 = new Like(member, board2);
+            likeRepository.save(like2);
+
+            // when
+            final var pageable = PageRequest.of(0, 3);
+            final var myLikeBoards = boardRepository.findAllMyLikeBoards(member.getId(), pageable);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(myLikeBoards.getContent().size()).isEqualTo(member.getLikes().size());
+                softly.assertThat(myLikeBoards.getContent().get(0)).isEqualTo(board2);
             });
         }
 

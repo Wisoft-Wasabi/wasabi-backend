@@ -18,13 +18,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.any;
@@ -108,7 +108,7 @@ class BoardServiceTest {
         void read_my_Boards(
                 final Long memberId,
                 final List<Board> boardList
-                ) {
+        ) {
 
             // given
             final Slice<Board> boards = new SliceImpl<>(boardList);
@@ -122,6 +122,35 @@ class BoardServiceTest {
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(myBoards).isNotEmpty();
                 softly.assertThat(myBoards.getSize()).isEqualTo(3);
+            });
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요를 누른 게시글 목록이 최신순으로 조회된다.")
+        @Customization(NotSaveBoardCustomization.class)
+        void read_my_like_boards(final Long memberId,
+                                 final Board board1,
+                                 final Board board2,
+                                 final Board board3) {
+
+            // given
+            final var boards = new SliceImpl<>(List.of(board3, board2, board1));
+            given(boardRepository.findAllMyLikeBoards(any(), any())).willReturn(boards);
+
+            // when
+            final var pageable = PageRequest.of(0, 3);
+            final var myLikeBoards = boardServiceImpl.getMyLikeBoards(memberId, pageable);
+
+            // then
+            assertSoftly(softly -> {
+                final var response1 = myLikeBoards.getContent().get(0);
+                final var response2 = myLikeBoards.getContent().get(1);
+                final var response3 = myLikeBoards.getContent().get(2);
+
+                softly.assertThat(myLikeBoards.getSize()).isEqualTo(3);
+                softly.assertThat(response1.createAt()).isAfter(response2.createAt());
+                softly.assertThat(response2.createAt()).isAfter(response3.createAt());
             });
         }
     }
