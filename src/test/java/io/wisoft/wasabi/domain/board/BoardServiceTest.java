@@ -3,11 +3,14 @@ package io.wisoft.wasabi.domain.board;
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
+import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
@@ -42,6 +46,9 @@ class BoardServiceTest {
 
     @Mock
     private BoardRepository boardRepository;
+
+    @Mock
+    private LikeRepository likeRepository;
 
     @Nested
     @DisplayName("게시글 작성")
@@ -93,10 +100,34 @@ class BoardServiceTest {
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
 
             //when
-            final var response = boardServiceImpl.readBoard(board.getId());
+            final var response = boardServiceImpl.readBoard(board.getId(), member.getId());
 
             //then
             Assertions.assertThat(response.views()).isEqualTo(1L);
+        }
+
+        @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 최신순으로 조회된다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(NotSaveBoardCustomization.class)
+        void read_my_Boards(
+                final Long memberId,
+                final List<Board> boardList
+        ) {
+
+            // given
+            final Slice<Board> boards = new SliceImpl<>(boardList);
+            given(boardRepository.findAllMyBoards(any(), any())).willReturn(boards);
+
+            // when
+            final var pageable = PageRequest.of(0, 3);
+            final var myBoards = boardServiceImpl.getMyBoards(memberId, pageable);
+
+            // then
+            SoftAssertions.assertSoftly(softly -> {
+                softly.assertThat(myBoards).isNotEmpty();
+                softly.assertThat(myBoards.getSize()).isEqualTo(3);
+            });
         }
 
         @ParameterizedTest
@@ -114,7 +145,7 @@ class BoardServiceTest {
 
             // when
             final var pageable = PageRequest.of(0, 3);
-            final var myLikeBoards = boardServiceImpl.getMyLikeBoards(memberId, pageable);
+            final Slice<MyLikeBoardsResponse> myLikeBoards = boardServiceImpl.getMyLikeBoards(memberId, pageable);
 
             // then
             assertSoftly(softly -> {

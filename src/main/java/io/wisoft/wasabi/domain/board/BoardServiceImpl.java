@@ -60,7 +60,7 @@ public class BoardServiceImpl<T> implements BoardService<T> {
     }
 
     @Transactional
-    public ReadBoardResponse readBoard(final Long boardId, final T accessId) {
+    public ReadBoardResponse readBoard(final Long boardId, final Long accessId) {
 
         final Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardExceptionExecutor::BoardNotFound);
@@ -105,6 +105,12 @@ public class BoardServiceImpl<T> implements BoardService<T> {
             }
         }
         throw BoardExceptionExecutor.BoardSortTypeInvalidException();
+    }
+
+    @Override
+    public Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable) {
+        final Slice<Board> myBoards = boardRepository.findAllMyBoards(memberId, pageable);
+        return boardMapper.entityToMyBoardsResponse(myBoards);
     }
 
     @Override

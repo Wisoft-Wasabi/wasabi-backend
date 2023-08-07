@@ -5,10 +5,12 @@ import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
+import io.wisoft.wasabi.domain.board.dto.MyBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +51,9 @@ class BoardControllerTest {
 
     @MockBean
     private MemberIdResolver memberIdResolver;
+
+    @MockBean
+    private AnyoneResolver anyoneResolver;
 
     @Spy
     private ObjectMapper objectMapper;
@@ -115,7 +120,7 @@ class BoardControllerTest {
                     null
             );
 
-            given(boardService.readBoard(boardId)).willReturn(response);
+            given(boardService.readBoard(any(), any())).willReturn(response);
 
             //when
             final var result = mockMvc.perform(
@@ -124,6 +129,30 @@ class BoardControllerTest {
                             .accept(APPLICATION_JSON));
 
             //then
+            result.andExpect(status().isOk());
+        }
+
+        @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 반환된다.")
+        @AutoSource
+        void read_my_boards(
+                final List<MyBoardsResponse> boardsResponses
+        ) throws Exception {
+
+            // given
+            given(boardService.getMyBoards(any(), any())).willReturn(new SliceImpl<>(boardsResponses));
+
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+
+            // when
+            final var result = mockMvc.perform(
+                    get("/boards/my-board")
+                            .param("page", String.valueOf(0))
+                            .param("size", String.valueOf(3))
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "bearer " + accessToken)
+            );
+
+            // then
             result.andExpect(status().isOk());
         }
 
@@ -167,6 +196,5 @@ class BoardControllerTest {
             // then
             result.andExpect(status().isUnauthorized());
         }
-
     }
 }

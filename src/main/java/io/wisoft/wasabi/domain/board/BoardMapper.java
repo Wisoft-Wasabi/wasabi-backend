@@ -57,6 +57,18 @@ public class BoardMapper {
         ));
     }
 
+    public Slice<MyBoardsResponse> entityToMyBoardsResponse(final Slice<Board> myBoards) {
+
+        return myBoards.map(board -> new MyBoardsResponse(
+                board.getId(),
+                board.getTitle(),
+                board.getContent(),
+                board.getCreatedAt(),
+                board.getLikes().size(),
+                board.getViews()
+        ));
+    }
+
     Slice<MyLikeBoardsResponse> entityToMyLikeBoardsResponse(final Slice<Board> boards) {
 
         return boards.map(board -> new MyLikeBoardsResponse(

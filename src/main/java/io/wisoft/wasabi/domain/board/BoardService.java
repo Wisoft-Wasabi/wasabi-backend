@@ -8,9 +8,11 @@ public interface BoardService<T> {
 
     WriteBoardResponse writeBoard(final WriteBoardRequest request, Long memberId);
 
-    ReadBoardResponse readBoard(final Long boardId, final T accessId);
+    ReadBoardResponse readBoard(final Long boardId, final Long accessId);
 
     Slice<SortBoardResponse> getSortedBoards(final String sortBy, final int page, final int size);
+
+    Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable);
 
     Slice<MyLikeBoardsResponse> getMyLikeBoards(final Long memberId, final Pageable pageable);
 }

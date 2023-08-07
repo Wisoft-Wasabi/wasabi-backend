@@ -1,7 +1,5 @@
 package io.wisoft.wasabi.global.config.common.annotation;
 
-import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
-import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,9 +10,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
-import javax.swing.text.html.Option;
-import java.util.Optional;
 
 @Component
 public class AnyoneResolver implements HandlerMethodArgumentResolver {
