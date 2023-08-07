@@ -7,8 +7,8 @@ spring:
   profiles:
     active: dev
     include: jwt, bcrypt
+    group:
+      test: test-db
 
 logging.level:
   org.hibernate.SQL: debug
-
-

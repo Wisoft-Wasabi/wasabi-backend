@@ -6,6 +6,7 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.util.StringUtils;
 
 @PasswordCheck(field = "password", fieldMatch = "checkPassword")
 public record SignupRequest(
@@ -30,5 +31,27 @@ public record SignupRequest(
         @Nullable
         String motto
 ) {
+    public SignupRequest(
+            final String email,
+            final String password,
+            final String checkPassword,
+            final String name,
+            final String phoneNumber,
+            final String referenceUrl,
+            final Part part,
+            final String organization,
+            final String motto
+
+    ) {
+        this.email = email;
+        this.password = password;
+        this.checkPassword = checkPassword;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.referenceUrl = StringUtils.hasText(referenceUrl) ? referenceUrl : "www.wisoft.io";
+        this.part = part;
+        this.organization = StringUtils.hasText(organization) ? organization : "wisoft";
+        this.motto = StringUtils.hasText(motto) ? motto : "아자아자";
+    }
 }
 

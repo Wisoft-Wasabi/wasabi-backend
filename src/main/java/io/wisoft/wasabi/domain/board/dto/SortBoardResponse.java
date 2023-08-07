@@ -8,6 +8,5 @@ public record SortBoardResponse(
         String writer,
         LocalDateTime createdAt,
         int likeCount,
-        int views,
-        boolean isLike) {
+        int views) {
 }

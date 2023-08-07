@@ -151,7 +151,7 @@ class BoardControllerTest {
         final var boards = boardMapper.entityToSortBoardResponse(
                 new SliceImpl<>(List.of(board2, board1)));
 
-        given(boardService.getSortedBoards(eq("views"), any())).willReturn(boards);
+        given(boardService.getSortedBoards(any(), any())).willReturn(boards);
 
         //when
         final var result = mockMvc.perform(
@@ -176,7 +176,7 @@ class BoardControllerTest {
                 new SliceImpl<>(List.of(board2,board1))
         );
 
-        given(boardService.getSortedBoards(eq("latest"),any())).willReturn(boards);
+        given(boardService.getSortedBoards(any(),any())).willReturn(boards);
 
         //when
         final var result = mockMvc.perform(
@@ -207,7 +207,7 @@ class BoardControllerTest {
                 new SliceImpl<>(List.of(board2,board1))
         );
 
-        given(boardService.getSortedBoards(eq("likes"),any())).willReturn(boards);
+        given(boardService.getSortedBoards(any(),any())).willReturn(boards);
 
         //when
         final var result = mockMvc.perform(

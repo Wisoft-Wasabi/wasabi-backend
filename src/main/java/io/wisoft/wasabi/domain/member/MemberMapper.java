@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 @Component
 public class MemberMapper {
     private final EncryptHelper encryptHelper;
@@ -29,7 +32,8 @@ public class MemberMapper {
                 false,
                 Role.GENERAL,
                 convertEmptyToNull(request.referenceUrl()),
-                request.part(),
+//                request.part(),
+                convertEmptyToUndefined(String.valueOf(request.part())),
                 convertEmptyToNull(request.organization()),
                 convertEmptyToNull(request.motto())
         );
@@ -53,5 +57,11 @@ public class MemberMapper {
 
     public static String convertEmptyToNull(final String value) {
         return StringUtils.hasText(value) ? null : value;
+    }
+
+    public static Part convertEmptyToUndefined(final String value) {
+        return (StringUtils.hasText(value)) ? Stream.of(Part.values())
+                .filter(part -> part.name().equalsIgnoreCase(value))
+                .findFirst().orElse(Part.UNDEFINED) : Part.UNDEFINED;
     }
 }

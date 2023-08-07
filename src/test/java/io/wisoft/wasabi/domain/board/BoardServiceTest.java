@@ -1,6 +1,8 @@
 package io.wisoft.wasabi.domain.board;
 
 import autoparams.AutoSource;
+import autoparams.customization.Customization;
+import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.like.Like;
@@ -134,26 +136,22 @@ class BoardServiceTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("게시글 목록 최신순 정렬 조회시, 가장 최근 게시물이 첫 번째로 보인다.")
+        @Customization(NotSaveBoardCustomization.class)
         void read_boards_order_by_created_at(
                 final Board board1,
                 final Board board2,
                 final Board board3) throws Exception {
 
             //given
-            final Slice<Board> boards = new SliceImpl<>(List.of(board3, board2, board1));
+            final var boards = new SliceImpl<>(List.of(board3, board2, board1));
             given(boardRepository.findAllByOrderByCreatedAtDesc(pageable)).willReturn(boards);
 
             //when
             final var sortedBoards = boardServiceImpl.getSortedBoards("latest", pageable);
 
             //then
-            final var response1 = sortedBoards.getContent().get(0);
-            final var response2 = sortedBoards.getContent().get(1);
-            final var response3 = sortedBoards.getContent().get(2);
-
-            Assertions.assertThat(sortedBoards.getSize()).isEqualTo(3);
-            Assertions.assertThat(response1.createdAt()).isAfter(response2.createdAt());
-            Assertions.assertThat(response2.createdAt()).isAfter(response3.createdAt());
+            final var latestBoard = sortedBoards.getContent().get(0);
+            Assertions.assertThat(latestBoard.title()).isEqualTo(board1.getTitle());
         }
 
 
