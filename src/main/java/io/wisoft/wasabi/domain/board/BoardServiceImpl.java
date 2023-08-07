@@ -2,6 +2,7 @@ package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
@@ -14,17 +15,20 @@ import java.util.Arrays;
 
 @Service
 @Transactional(readOnly = true)
-public class BoardServiceImpl implements BoardService {
+public class BoardServiceImpl<T> implements BoardService<T> {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final LikeRepository likeRepository;
     private final BoardMapper boardMapper;
 
     public BoardServiceImpl(final BoardRepository boardRepository,
                             final MemberRepository memberRepository,
+                            final LikeRepository likeRepository,
                             final BoardMapper boardMapper) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
+        this.likeRepository = likeRepository;
         this.boardMapper = boardMapper;
     }
 
@@ -55,14 +59,20 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Transactional
-    public ReadBoardResponse readBoard(final Long boardId) {
+    public ReadBoardResponse readBoard(final Long boardId, final T accessId) {
 
         final Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
+        /**
+         * TODO: 비회원일 경우 처리해주기
+         */
+
+        // 회원일 경우
+        final boolean isLike = likeRepository.findByMemberIdAndBoardId((Long) accessId, boardId).isPresent();
         board.increaseView();
 
-        return boardMapper.entityToReadBoardResponse(board);
+        return boardMapper.entityToReadBoardResponse(board, isLike);
     }
 
     @Override
