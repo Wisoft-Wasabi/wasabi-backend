@@ -3,8 +3,10 @@ package io.wisoft.wasabi.domain.board;
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
+import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import org.assertj.core.api.Assertions;
@@ -44,6 +46,9 @@ class BoardServiceTest {
 
     @Mock
     private BoardRepository boardRepository;
+
+    @Mock
+    private LikeRepository likeRepository;
 
     @Nested
     @DisplayName("게시글 작성")
@@ -95,7 +100,7 @@ class BoardServiceTest {
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
 
             //when
-            final var response = boardServiceImpl.readBoard(board.getId());
+            final var response = boardServiceImpl.readBoard(board.getId(), member.getId());
 
             //then
             Assertions.assertThat(response.views()).isEqualTo(1L);
@@ -140,7 +145,7 @@ class BoardServiceTest {
 
             // when
             final var pageable = PageRequest.of(0, 3);
-            final var myLikeBoards = boardServiceImpl.getMyLikeBoards(memberId, pageable);
+            final Slice<MyLikeBoardsResponse> myLikeBoards = boardServiceImpl.getMyLikeBoards(memberId, pageable);
 
             // then
             assertSoftly(softly -> {

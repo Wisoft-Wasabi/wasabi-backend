@@ -1,15 +1,16 @@
 package io.wisoft.wasabi.domain.board;
 
 import autoparams.AutoSource;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.domain.board.dto.MyBoardsResponse;
 import autoparams.customization.Customization;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
+import io.wisoft.wasabi.domain.board.dto.MyBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -50,6 +51,9 @@ class BoardControllerTest {
 
     @MockBean
     private MemberIdResolver memberIdResolver;
+
+    @MockBean
+    private AnyoneResolver anyoneResolver;
 
     @Spy
     private ObjectMapper objectMapper;
@@ -116,7 +120,7 @@ class BoardControllerTest {
                     null
             );
 
-            given(boardService.readBoard(boardId)).willReturn(response);
+            given(boardService.readBoard(any(), any())).willReturn(response);
 
             //when
             final var result = mockMvc.perform(
