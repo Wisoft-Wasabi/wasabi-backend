@@ -1,28 +1,37 @@
 package io.wisoft.wasabi.domain.board;
 
+import autoparams.AutoSource;
+import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
+import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
-import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -43,6 +52,9 @@ class BoardControllerTest {
 
     @Spy
     private ObjectMapper objectMapper;
+
+    @Spy
+    private BoardMapper boardMapper;
 
     @Nested
     @DisplayName("게시글 작성")
@@ -114,5 +126,47 @@ class BoardControllerTest {
             //then
             result.andExpect(status().isOk());
         }
+
+        @ParameterizedTest
+        @AutoSource
+        @Customization(NotSaveBoardCustomization.class)
+        @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요를 누른 게시글 목록이 반환된다.")
+        void read_my_like_boards(final List<Board> boards) throws Exception {
+
+            // given
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+
+            final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
+
+            given(boardService.getMyLikeBoards(any(), any())).willReturn(response);
+
+            // when
+            final var result = mockMvc.perform(
+                    get("/boards/my-like")
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "bearer " + accessToken));
+
+            // then
+            result.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content.size()", is(3)));
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("로그인 하지 않은 사용자가 좋아요한 게시글 목록 조회 요청시 예외가 발생한다.")
+        void read_my_like_boards_fail(final TokenNotExistException exception) throws Exception {
+
+            // given
+            given(boardService.getMyLikeBoards(any(), any())).willThrow(exception);
+
+            // when
+            final var result = mockMvc.perform(
+                    get("/boards/my-like")
+                            .contentType(APPLICATION_JSON));
+
+            // then
+            result.andExpect(status().isUnauthorized());
+        }
+
     }
 }

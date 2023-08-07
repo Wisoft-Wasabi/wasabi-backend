@@ -15,7 +15,7 @@ public class NotSaveBoardCustomization implements Customizer {
                 : generator.generate(query, context));
     }
 
-    private Board factory(final ObjectGenerationContext context) {
+    static Board factory(final ObjectGenerationContext context) {
         return Board.createBoard(
                 "title",
                 "content",

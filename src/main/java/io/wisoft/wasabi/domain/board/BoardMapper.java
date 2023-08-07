@@ -1,9 +1,6 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
-import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.used.persistence.Used;
 import org.springframework.data.domain.Slice;
@@ -60,4 +57,15 @@ public class BoardMapper {
         ));
     }
 
+    Slice<MyLikeBoardsResponse> entityToMyLikeBoardsResponse(final Slice<Board> boards) {
+
+        return boards.map(board -> new MyLikeBoardsResponse(
+                board.getId(),
+                board.getTitle(),
+                board.getMember().getName(),
+                board.getCreatedAt(),
+                board.getLikes().size(),
+                board.getViews()
+        ));
+    }
 }
