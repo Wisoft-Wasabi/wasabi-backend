@@ -32,7 +32,6 @@ public class GlobalExceptionHandler {
         final String message = String.join(", ", allErrors);
 
         return buildResponse(ErrorType.dtoInvalid(message));
-
     }
 
     @ExceptionHandler(BusinessException.class)
