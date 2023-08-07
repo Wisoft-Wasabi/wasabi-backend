@@ -113,4 +113,8 @@ public class Member extends BaseTimeEntity {
     public String getReferenceUrl() {
         return referenceUrl;
     }
+
+    public String getEmail() {
+        return email;
+    }
 }
