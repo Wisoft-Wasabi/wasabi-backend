@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.member;
 import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
 import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
+import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class MemberMapper {
         this.encryptHelper = encryptHelper;
     }
 
-    public Member createMemberFromRequest(final SignupRequest request) {
+    public Member signUpRequestToEntity(final SignupRequest request) {
 
         return new Member(
                 request.email(),
@@ -51,7 +52,21 @@ public class MemberMapper {
         return new LoginResponse(name, role, activation, accessToken, tokenType);
     }
 
-    public static String convertEmptyToNull(final String value) {
+    public String convertEmptyToNull(final String value) {
         return StringUtils.hasText(value) ? null : value;
+    }
+
+    public ReadMemberInfoResponse entityToReadMemberInfoResponse(final Member member) {
+
+        return new ReadMemberInfoResponse(
+                member.getEmail(),
+                member.getName(),
+                member.getPhoneNumber(),
+                member.getRole(),
+                member.getReferenceUrl(),
+                member.getPart(),
+                member.getOrganization(),
+                member.getMotto()
+        );
     }
 }
