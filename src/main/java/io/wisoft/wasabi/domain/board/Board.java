@@ -49,18 +49,14 @@ public class Board extends BaseTimeEntity {
 
     protected Board() {}
 
-    public static Board createBoard(
+    public Board(
             final String title,
             final String content,
             final Member member) {
-
-        final Board board = new Board();
-        board.title = title;
-        board.content = content;
-        board.views = 0;
-        board.setMember(member);
-
-        return board;
+        this.title = title;
+        this.content = content;
+        this.views = 0;
+        setMember(member);
     }
 
     /* 비즈니스 로직 */

@@ -49,11 +49,12 @@ class BoardRepositoryTest {
             // given
             memberRepository.save(member);
 
-            final Board board = Board.createBoard(
+            final Board board = new Board(
                     "title",
                     "content",
                     member
             );
+
             boardRepository.save(board);
 
             // when
@@ -65,7 +66,6 @@ class BoardRepositoryTest {
             assertEquals("content", findBoard.getContent());
         }
     }
-
 
     @Nested
     @DisplayName("게시글 조회")
@@ -79,11 +79,12 @@ class BoardRepositoryTest {
             //given
             memberRepository.save(member);
 
-            final Board board = Board.createBoard(
+            final Board board = new Board(
                     "title",
                     "content",
                     member
             );
+
             boardRepository.save(board);
 
             //when
@@ -104,12 +105,12 @@ class BoardRepositoryTest {
             memberRepository.save(member);
 
             final List<Board> boards = List.of(
-                    Board.createBoard(
+                    new Board(
                             "title",
                             "content",
                             member
                     ),
-                    Board.createBoard(
+                    new Board(
                             "title",
                             "content",
                             member
@@ -142,14 +143,14 @@ class BoardRepositoryTest {
             // given
             memberRepository.save(member);
 
-            final var board1 = Board.createBoard(
+            final var board1 = new Board(
                     "title",
                     "content",
                     member
             );
             boardRepository.save(board1);
 
-            final var board2 = Board.createBoard(
+            final var board2 = new Board(
                     "title",
                     "content",
                     member
@@ -172,6 +173,7 @@ class BoardRepositoryTest {
                 softly.assertThat(myLikeBoards.getContent().get(0)).isEqualTo(board2);
             });
         }
+
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성하지 않은 게시글 목록은 조회되지 않는다.")
         @ParameterizedTest
         @AutoSource
@@ -185,12 +187,12 @@ class BoardRepositoryTest {
             memberRepository.saveAll(List.of(member1, member2));
 
             final List<Board> boards = List.of(
-                    Board.createBoard(
+                    new Board(
                             "title",
                             "content",
                             member1
                     ),
-                    Board.createBoard(
+                    new Board(
                             "title",
                             "content",
                             member2

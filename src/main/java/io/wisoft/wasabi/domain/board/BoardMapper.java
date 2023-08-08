@@ -11,10 +11,11 @@ public class BoardMapper {
 
     Board writeBoardRequestToEntity(final WriteBoardRequest request, final Member member) {
 
-        return Board.createBoard(
+        return new Board(
                 request.title(),
                 request.content(),
-                member);
+                member
+        );
     }
 
 
