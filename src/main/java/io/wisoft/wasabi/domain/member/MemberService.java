@@ -6,7 +6,6 @@ import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
 
 public interface MemberService {
 
-    UpdateMemberInfoResponse updateMemberInfo(final Long memberId, final UpdateMemberInfoRequest request);
-
     ReadMemberInfoResponse getMemberInfo(final Long memberId);
+    UpdateMemberInfoResponse updateMemberInfo(final Long memberId, final UpdateMemberInfoRequest request);
 }
