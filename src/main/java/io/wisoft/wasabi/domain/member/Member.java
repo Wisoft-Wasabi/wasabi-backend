@@ -133,7 +133,19 @@ public class Member extends BaseTimeEntity {
         return email;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
     public Part getPart() {
         return part;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public String getMotto() {
+        return motto;
     }
 }

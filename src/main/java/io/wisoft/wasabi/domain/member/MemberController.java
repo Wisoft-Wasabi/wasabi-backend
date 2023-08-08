@@ -5,10 +5,7 @@ import io.wisoft.wasabi.global.config.common.annotation.MemberId;
 import io.wisoft.wasabi.global.config.web.response.CommonResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/members")
@@ -26,5 +23,11 @@ public class MemberController {
 
         final var updateMemberInfoResponse = memberService.updateMemberInfo(memberId, request);
         return ResponseEntity.ok(CommonResponse.newInstance(updateMemberInfoResponse));
+    }
+    @GetMapping
+    public ResponseEntity<CommonResponse> getMemberInfo(@MemberId final Long memberId) {
+
+        final var readMemberInfoResponse = memberService.getMemberInfo(memberId);
+        return ResponseEntity.ok(CommonResponse.newInstance(readMemberInfoResponse));
     }
 }
