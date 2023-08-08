@@ -78,6 +78,9 @@ class MemberControllerTest {
             final var perform = mockMvc.perform(get("/members")
                     .contentType(APPLICATION_JSON)
                     .header("Authorization", "bearer " + accessToken));
+
+            // then
+            perform.andExpect(status().isOk());
         }
     }
 
