@@ -47,40 +47,6 @@ class MemberControllerTest {
     private ObjectMapper objectMapper;
 
     @Nested
-    @DisplayName("회원 개인 정보 수정")
-    class UpdateInfo {
-
-        @ParameterizedTest
-        @AutoSource
-        @DisplayName("요청시 정상적으로 수정사항이 반영된다.")
-        void update_info(final UpdateMemberInfoResponse response) throws Exception {
-
-            // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
-
-            final var request = new UpdateMemberInfoRequest(
-                    "name",
-                    "phoneNumber",
-                    "referenceUrl",
-                    Part.BACKEND,
-                    "organization",
-                    "motto"
-            );
-
-            given(memberService.updateMemberInfo(any(), any())).willReturn(response);
-
-            // when
-            final var perform = mockMvc.perform(patch("/members")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request)));
-
-            // then
-            perform.andExpect(status().isOk());
-        }
-    }
-
-    @Nested
     @DisplayName("개인 정보 조회")
     class ReadMemberInfo {
 
@@ -109,6 +75,40 @@ class MemberControllerTest {
             final var perform = mockMvc.perform(get("/members")
                     .contentType(APPLICATION_JSON)
                     .header("Authorization", "bearer " + accessToken));
+
+            // then
+            perform.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("회원 개인 정보 수정")
+    class UpdateInfo {
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("요청시 정상적으로 수정사항이 반영된다.")
+        void update_info(final UpdateMemberInfoResponse response) throws Exception {
+
+            // given
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+
+            final var request = new UpdateMemberInfoRequest(
+                    "name",
+                    "phoneNumber",
+                    "referenceUrl",
+                    Part.BACKEND,
+                    "organization",
+                    "motto"
+            );
+
+            given(memberService.updateMemberInfo(any(), any())).willReturn(response);
+
+            // when
+            final var perform = mockMvc.perform(patch("/members")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request)));
 
             // then
             perform.andExpect(status().isOk());
