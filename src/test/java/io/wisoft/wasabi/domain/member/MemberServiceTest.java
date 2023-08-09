@@ -157,4 +157,78 @@ class MemberServiceTest {
             });
         }
     }
+
+    @Nested
+    @DisplayName("회원 개인 정보 수정")
+    class UpdateInfo {
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("회원이 자신의 개인 정보를 수정시 정상적으로 반영된다.")
+        void update_info(final Member member) {
+
+            // given
+            given(memberRepository.findById(any())).willReturn(Optional.of(member));
+
+            final var request = new UpdateMemberInfoRequest(
+                    "name",
+                    "phoneNumber",
+                    "referenceUrl",
+                    Part.BACKEND,
+                    "organization",
+                    "motto");
+
+            // when
+            memberService.updateMemberInfo(member.getId(), request);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(member.getUpdatedAt()).isAfter(member.getCreatedAt());
+                softly.assertThat(member.getPart()).isEqualTo(Part.BACKEND);
+            });
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("직군에 설정되어 있지 않는 값이 들어올시 기본 직군으로 수정된다.")
+        void update_info_default(final Member member) {
+
+            // given
+            given(memberRepository.findById(any())).willReturn(Optional.of(member));
+
+            final var request = new UpdateMemberInfoRequest(
+                    "name",
+                    "phoneNumber",
+                    "referenceUrl",
+                    null,
+                    "organization",
+                    "motto");
+
+            // when
+            memberService.updateMemberInfo(member.getId(), request);
+
+            // then
+            assertSoftly(softly -> softly.assertThat(member.getPart()).isEqualTo(Part.UNDEFINED));
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 사용자의 개인 정보 수정 접근시 예외가 발생한다.")
+        void update_info_fail() {
+
+            // given
+            final var request = new UpdateMemberInfoRequest(
+                    "name",
+                    "phoneNumber",
+                    "referenceUrl",
+                    Part.BACKEND,
+                    "organization",
+                    "motto");
+
+            // when
+
+            // then
+            assertSoftly(softly -> softly.assertThatThrownBy(() -> memberService.updateMemberInfo(1000L, request))
+                    .isInstanceOf(MemberNotFoundException.class));
+        }
+    }
 }
