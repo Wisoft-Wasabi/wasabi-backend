@@ -8,7 +8,6 @@ import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 public class MemberMapper {
@@ -59,6 +58,10 @@ public class MemberMapper {
 
     public String convertEmptyToNull(final String value) {
         return StringUtils.hasText(value) ? null : value;
+    }
+
+    public UpdateMemberInfoResponse entityToUpdateMemberInfoResponse(final Member member) {
+        return new UpdateMemberInfoResponse(member.getId());
     }
 
     public ReadMemberInfoResponse entityToReadMemberInfoResponse(final Member member) {
