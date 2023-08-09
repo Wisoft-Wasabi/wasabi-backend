@@ -24,6 +24,7 @@ public class MemberController {
         final var updateMemberInfoResponse = memberService.updateMemberInfo(memberId, request);
         return ResponseEntity.ok(CommonResponse.newInstance(updateMemberInfoResponse));
     }
+
     @GetMapping
     public ResponseEntity<CommonResponse> getMemberInfo(@MemberId final Long memberId) {
 

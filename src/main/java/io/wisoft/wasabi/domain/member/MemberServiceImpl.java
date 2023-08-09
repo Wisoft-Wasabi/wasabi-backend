@@ -1,8 +1,8 @@
 package io.wisoft.wasabi.domain.member;
 
+import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoRequest;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
-import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
