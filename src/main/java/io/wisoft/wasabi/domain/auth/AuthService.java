@@ -43,6 +43,7 @@ public class AuthService {
         }
 
         final Member member = memberMapper.createMemberFromRequest(request);
+
         memberRepository.save(member);
 
         return memberMapper.entityToMemberSignupResponse(member);

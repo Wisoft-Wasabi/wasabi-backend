@@ -6,7 +6,6 @@ import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 public class MemberMapper {
@@ -20,7 +19,6 @@ public class MemberMapper {
     }
 
     public Member createMemberFromRequest(final SignupRequest request) {
-
         return new Member(
                 request.email(),
                 encryptHelper.encrypt(request.password(), salt),
@@ -28,10 +26,10 @@ public class MemberMapper {
                 request.phoneNumber(),
                 false,
                 Role.GENERAL,
-                convertEmptyToNull(request.referenceUrl()),
+                request.referenceUrl(),
                 request.part(),
-                convertEmptyToNull(request.organization()),
-                convertEmptyToNull(request.motto())
+                request.organization(),
+                request.motto()
         );
     }
 
@@ -49,9 +47,5 @@ public class MemberMapper {
         final boolean activation = member.isActivation();
 
         return new LoginResponse(name, role, activation, accessToken, tokenType);
-    }
-
-    public static String convertEmptyToNull(final String value) {
-        return StringUtils.hasText(value) ? null : value;
     }
 }
