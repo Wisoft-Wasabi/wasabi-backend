@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,11 +48,9 @@ public class BoardController<T> {
     @GetMapping
     public ResponseEntity<CommonResponse> sortedBoards(
             @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
-            @Valid @RequestParam(name = "page", defaultValue = "0") final int page,
-            @Valid @RequestParam(name = "size", defaultValue = "2") final int size) {
+            @PageableDefault(size = 2) final Pageable pageable) {
 
-        final Slice<SortBoardResponse> sortedBoards = boardService.getSortedBoards(sortBy, page, size);
-
+        final Slice<SortBoardResponse> sortedBoards = boardService.getSortedBoards(sortBy, pageable);
         return ResponseEntity.ok(CommonResponse.newInstance(sortedBoards));
     }
 

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LikeMapper {
-    Like registerLikeRequestToEntity(final Member member, final Board board) {
+    public Like registerLikeRequestToEntity(final Member member, final Board board) {
 
         return new Like(member, board);
     }
