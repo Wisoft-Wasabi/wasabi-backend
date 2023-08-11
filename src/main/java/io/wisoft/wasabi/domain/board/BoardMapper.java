@@ -63,7 +63,7 @@ public class BoardMapper {
         return myBoards.map(board -> new MyBoardsResponse(
                 board.getId(),
                 board.getTitle(),
-                board.getContent(),
+                board.getMember().getName(),
                 board.getCreatedAt(),
                 board.getLikes().size(),
                 board.getViews()
