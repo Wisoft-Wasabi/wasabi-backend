@@ -10,6 +10,8 @@ import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.like.LikeMapper;
+import io.wisoft.wasabi.domain.like.LikeService;
+import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
@@ -54,6 +56,9 @@ class BoardControllerTest {
     private BoardService boardService;
 
     @MockBean
+    private LikeService likeService;
+
+    @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
@@ -68,8 +73,7 @@ class BoardControllerTest {
     @Spy
     private BoardMapper boardMapper;
 
-    @Spy
-    private LikeMapper likeMapper;
+
 
     @Nested
     @DisplayName("게시글 작성")
@@ -110,8 +114,6 @@ class BoardControllerTest {
     @Nested
     @DisplayName("게시글 조회")
     class ReadBoard {
-        final Pageable pageable = PageRequest.of(0, 2);
-
         @Test
         @DisplayName("요청이 성공적으로 수행되어, 게시글 조회에 성공한다.")
         void read_board_success() throws Exception {
@@ -174,7 +176,7 @@ class BoardControllerTest {
         @AutoSource
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 최신순으로 게시글이 먼저 조회된다.")
         @Customization(NotSaveBoardCustomization.class)
-        void read_boards_order_by_createdAt(final Board board1,
+        void read_boards_order_by_created_at(final Board board1,
                                             final Board board2) throws Exception {
             //given
             final var boards = boardMapper.entityToSortBoardResponse(
@@ -204,9 +206,8 @@ class BoardControllerTest {
                 final Board board1,
                 final Board board2,
                 final Member member) throws Exception {
-
             //given
-            likeMapper.registerLikeRequestToEntity(member, board2);
+            likeService.registerLike(member.getId(), new RegisterLikeRequest(board1.getId()));
 
             final var boards = boardMapper.entityToSortBoardResponse(
                     new SliceImpl<>(List.of(board2,board1))
@@ -223,7 +224,7 @@ class BoardControllerTest {
 
             //then
             result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.data.content[0].title").value(equalTo(board2.getTitle())));
+            result.andExpect(jsonPath("$.data.content[0].title").value(equalTo(board1.getTitle())));
         }
 
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 반환된다.")

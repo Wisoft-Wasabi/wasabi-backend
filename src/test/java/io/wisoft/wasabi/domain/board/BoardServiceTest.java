@@ -133,7 +133,7 @@ class BoardServiceTest {
 
             //then
             final SortBoardResponse mostViewedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
-            Assertions.assertThat(sortedBoards.getSize()).isEqualTo(2);
+            Assertions.assertThat(mostViewedBoard.id()).isEqualTo(board2.getId());
             Assertions.assertThat(mostViewedBoard.title()).isEqualTo(board2.getTitle());
         }
 
@@ -182,8 +182,9 @@ class BoardServiceTest {
 
             //then
             final SortBoardResponse mostLikedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
-            Assertions.assertThat(sortedBoards.getSize()).isEqualTo(2);
+            Assertions.assertThat(mostLikedBoard.id()).isEqualTo(board2.getId());
             Assertions.assertThat(mostLikedBoard.title()).isEqualTo(board2.getTitle());
+
         }
     }
 
