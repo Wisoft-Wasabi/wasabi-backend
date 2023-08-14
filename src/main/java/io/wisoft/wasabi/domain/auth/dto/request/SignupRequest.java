@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.auth.dto.request;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.wisoft.wasabi.global.config.common.annotation.PasswordCheck;
 import io.wisoft.wasabi.domain.member.Part;
+import io.wisoft.wasabi.global.config.common.annotation.PasswordCheck;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

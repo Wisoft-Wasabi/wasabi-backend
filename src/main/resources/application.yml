@@ -8,9 +8,11 @@ spring:
     active: dev
     include: jwt, bcrypt
     group:
+      dev: dev-db
       test: test-db
 
 logging.level:
   org.hibernate.SQL: debug
 
-
+logging:
+  config: classpath:application-log-dev.yml

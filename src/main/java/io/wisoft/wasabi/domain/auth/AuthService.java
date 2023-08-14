@@ -42,7 +42,7 @@ public class AuthService {
             throw MemberExceptionExecutor.EmailOverlap();
         }
 
-        final Member member = memberMapper.createMemberFromRequest(request);
+        final Member member = memberMapper.signUpRequestToEntity(request);
 
         memberRepository.save(member);
 

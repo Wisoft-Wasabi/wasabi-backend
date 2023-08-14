@@ -8,9 +8,10 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
 
 public class PartDeserializer extends JsonDeserializer<Part> {
+
     @Override
-    public Part deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
-        final String value = ((TextNode) p.getCodec().readTree(p)).asText();
+    public Part deserialize(final JsonParser parser, final DeserializationContext context) throws IOException {
+        final String value = ((TextNode) parser.getCodec().readTree(parser)).asText();
         return Part.fromString(value);
     }
 }
