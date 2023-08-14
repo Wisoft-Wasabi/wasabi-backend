@@ -79,6 +79,21 @@ public class Member extends BaseTimeEntity {
         this.motto = motto;
     }
 
+    /* 비즈니스 로직 */
+    public void update(final String name,
+                       final String phoneNumber,
+                       final String referenceUrl,
+                       final Part part,
+                       final String organization,
+                       final String motto) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.referenceUrl = referenceUrl;
+        this.part = part;
+        this.organization = organization;
+        this.motto = motto;
+    }
+
     protected Member() {
     }
 
