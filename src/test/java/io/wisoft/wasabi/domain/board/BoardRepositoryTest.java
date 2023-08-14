@@ -52,13 +52,6 @@ class BoardRepositoryTest {
             // given
             memberRepository.save(member);
 
-//            final Board board = new Board(
-//                    "title",
-//                    "content",
-//                    member
-//            );
-
-
             // when
             final Board savedBoard = boardRepository.save(board);
 
@@ -83,12 +76,6 @@ class BoardRepositoryTest {
             //given
             memberRepository.save(member);
 
-//            final Board board = new Board(
-//                    "title",
-//                    "content",
-//                    member
-//            );
-
             boardRepository.save(board);
 
             //when
@@ -109,18 +96,6 @@ class BoardRepositoryTest {
             // given
             memberRepository.save(member);
 
-//            final List<Board> boards = List.of(
-//                    new Board(
-//                            "title",
-//                            "content",
-//                            member
-//                    ),
-//                    new Board(
-//                            "title",
-//                            "content",
-//                            member
-//                    )
-//            );
             boardRepository.saveAll(boards);
 
             final List<Like> likes = List.of(
@@ -151,18 +126,7 @@ class BoardRepositoryTest {
             // given
             memberRepository.save(member);
 
-//            final var board1 = new Board(
-//                    "title",
-//                    "content",
-//                    member
-//            );
             boardRepository.save(board1);
-
-//            final var board2 = new Board(
-//                    "title",
-//                    "content",
-//                    member
-//            );
             boardRepository.save(board2);
 
             final var like1 = new Like(member, board1);
