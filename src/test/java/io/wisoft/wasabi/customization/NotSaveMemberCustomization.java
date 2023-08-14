@@ -4,6 +4,7 @@ import autoparams.customization.Customizer;
 import autoparams.generator.ObjectContainer;
 import autoparams.generator.ObjectGenerationContext;
 import autoparams.generator.ObjectGenerator;
+import io.wisoft.wasabi.customization.container.MemberStaticContainer;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Part;
 import io.wisoft.wasabi.domain.member.Role;
@@ -18,14 +19,14 @@ public class NotSaveMemberCustomization implements Customizer {
                 : generator.generate(query, context));
     }
 
-    static Member factory(final ObjectGenerationContext context) {
+    private Member factory(final ObjectGenerationContext context) {
         final Random random = new Random();
         final String email = new StringBuilder()
                 .append("test")
                 .append(random.nextInt(1_000_000))
                 .append("@gmail.com")
                 .toString();
-        return new Member(
+        final Member member = new Member(
                 email,
                 "test1234",
                 "test",
@@ -37,5 +38,8 @@ public class NotSaveMemberCustomization implements Customizer {
                 "",
                 ""
         );
+        MemberStaticContainer.put(context.hashCode(), member);
+
+        return member;
     }
 }

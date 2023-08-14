@@ -133,6 +133,7 @@ class BoardControllerTest {
         }
 
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 반환된다.")
+        @ParameterizedTest
         @AutoSource
         void read_my_boards(
                 final List<MyBoardsResponse> boardsResponses

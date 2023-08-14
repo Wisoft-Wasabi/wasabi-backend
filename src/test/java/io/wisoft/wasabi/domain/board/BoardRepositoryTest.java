@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.board;
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
+import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
@@ -44,18 +45,12 @@ class BoardRepositoryTest {
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
         @ParameterizedTest
         @AutoSource
-        void write_board(final Member member) throws Exception {
+        @Customization(BoardCompositeCustomizer.class)
+        void write_board(final Member member,
+                         final Board board) throws Exception {
 
             // given
             memberRepository.save(member);
-
-            final Board board = new Board(
-                    "title",
-                    "content",
-                    member
-            );
-
-            boardRepository.save(board);
 
             // when
             final Board savedBoard = boardRepository.save(board);
@@ -74,16 +69,12 @@ class BoardRepositoryTest {
         @DisplayName("요청이 성공적으로 수행되어, 게시글 조회에 성공한다.")
         @ParameterizedTest
         @AutoSource
-        void read_board_success(final Member member) throws Exception {
+        @Customization(BoardCompositeCustomizer.class)
+        void read_board_success(final Member member,
+                                final Board board) throws Exception {
 
             //given
             memberRepository.save(member);
-
-            final Board board = new Board(
-                    "title",
-                    "content",
-                    member
-            );
 
             boardRepository.save(board);
 
@@ -98,24 +89,13 @@ class BoardRepositoryTest {
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글들만 최신순으로 조회된다.")
         @ParameterizedTest
         @AutoSource
-        @Customization(NotSaveMemberCustomization.class)
-        void read_my_boards(final Member member) {
+        @Customization(BoardCompositeCustomizer.class)
+        void read_my_boards(final Member member,
+                            final List<Board> boards) {
 
             // given
             memberRepository.save(member);
 
-            final List<Board> boards = List.of(
-                    new Board(
-                            "title",
-                            "content",
-                            member
-                    ),
-                    new Board(
-                            "title",
-                            "content",
-                            member
-                    )
-            );
             boardRepository.saveAll(boards);
 
             final List<Like> likes = List.of(
@@ -138,23 +118,15 @@ class BoardRepositoryTest {
         @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요를 누른 게시글들만 최신순으로 조회된다.")
         @ParameterizedTest
         @AutoSource
-        void read_my_like_boards(final Member member) {
+        @Customization(BoardCompositeCustomizer.class)
+        void read_my_like_boards(final Member member,
+                                 final Board board1,
+                                 final Board board2) {
 
             // given
             memberRepository.save(member);
 
-            final var board1 = new Board(
-                    "title",
-                    "content",
-                    member
-            );
             boardRepository.save(board1);
-
-            final var board2 = new Board(
-                    "title",
-                    "content",
-                    member
-            );
             boardRepository.save(board2);
 
             final var like1 = new Like(member, board1);
@@ -179,36 +151,35 @@ class BoardRepositoryTest {
         @AutoSource
         @Customization(NotSaveMemberCustomization.class)
         void read_not_my_boards(
-                final Member member1,
-                final Member member2
+                final List<Member> members
         ) {
 
             // given
-            memberRepository.saveAll(List.of(member1, member2));
+            memberRepository.saveAll(members);
 
             final List<Board> boards = List.of(
                     new Board(
                             "title",
                             "content",
-                            member1
+                            members.get(0)
                     ),
                     new Board(
                             "title",
                             "content",
-                            member2
+                            members.get(1)
                     )
             );
             boardRepository.saveAll(boards);
 
             final List<Like> likes = List.of(
-                    new Like(member1, boards.get(0)),
-                    new Like(member2, boards.get(1))
+                    new Like(members.get(0), boards.get(0)),
+                    new Like(members.get(1), boards.get(1))
             );
             likeRepository.saveAll(likes);
 
             // when
             final var pageable = PageRequest.of(0, 3);
-            final var myBoards = boardRepository.findAllMyBoards(member1.getId(), pageable);
+            final var myBoards = boardRepository.findAllMyBoards(members.get(0).getId(), pageable);
 
             // then
             SoftAssertions.assertSoftly(softly -> {
