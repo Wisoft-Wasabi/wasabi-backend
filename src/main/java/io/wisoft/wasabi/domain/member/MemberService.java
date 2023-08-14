@@ -9,5 +9,4 @@ public interface MemberService {
     ReadMemberInfoResponse getMemberInfo(final Long memberId);
 
     UpdateMemberInfoResponse updateMemberInfo(final Long memberId, final UpdateMemberInfoRequest request);
-
 }

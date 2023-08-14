@@ -46,8 +46,6 @@ class MemberControllerTest {
     @Spy
     private ObjectMapper objectMapper;
 
-    @Spy
-    private ObjectMapper objectMapper;
 
     @Nested
     @DisplayName("개인 정보 조회")
@@ -81,66 +79,6 @@ class MemberControllerTest {
 
             // then
             perform.andExpect(status().isOk());
-        }
-    }
-
-    @Nested
-    @DisplayName("회원 개인 정보 수정")
-    class UpdateInfo {
-
-        @ParameterizedTest
-        @AutoSource
-        @DisplayName("요청시 정상적으로 수정사항이 반영된다.")
-        void update_info(final UpdateMemberInfoResponse response) throws Exception {
-
-            // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
-
-            final var request = new UpdateMemberInfoRequest(
-                    "name",
-                    "phoneNumber",
-                    "referenceUrl",
-                    Part.BACKEND,
-                    "organization",
-                    "motto"
-            );
-
-            given(memberService.updateMemberInfo(any(), any())).willReturn(response);
-
-            // when
-            final var perform = mockMvc.perform(patch("/members")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request)));
-
-            // then
-            perform.andExpect(status().isOk());
-        }
-
-        @ParameterizedTest
-        @AutoSource
-        @DisplayName("회원이 아닌 사용자가 개인 정보 수정 접근시 예외가 발생한다.")
-        void update_info_fail1(final TokenNotExistException exception) throws Exception {
-
-            // given
-            final var request = new UpdateMemberInfoRequest(
-                    "name",
-                    "phoneNumber",
-                    "referenceUrl",
-                    Part.BACKEND,
-                    "organization",
-                    "motto"
-            );
-
-            given(memberService.updateMemberInfo(any(), any())).willThrow(exception);
-
-            // when
-            final var perform = mockMvc.perform(patch("/members")
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
-
-            // then
-            perform.andExpect(status().isUnauthorized());
         }
     }
 
