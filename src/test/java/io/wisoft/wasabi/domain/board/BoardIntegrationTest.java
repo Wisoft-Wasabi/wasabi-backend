@@ -7,7 +7,9 @@ import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.like.Like;
+import io.wisoft.wasabi.domain.like.LikeMapper;
 import io.wisoft.wasabi.domain.like.LikeRepository;
+import io.wisoft.wasabi.domain.like.LikeService;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
@@ -16,10 +18,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Random;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,6 +51,16 @@ class BoardIntegrationTest extends IntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private LikeService likeService;
+
+    @Spy
+    private LikeMapper likeMapper;
+
+    @Spy
+    private BoardMapper boardMapper;
+
 
     @Nested
     @DisplayName("게시글 작성")
@@ -246,6 +261,84 @@ class BoardIntegrationTest extends IntegrationTest {
 
             // then
             result.andExpect(status().isOk());
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("게시글 좋아요 순 정렬 후 조회시, 좋아요가 많은 게시글이 먼저 조회된다.")
+        @Customization({NotSaveBoardCustomization.class, NotSaveMemberCustomization.class})
+        void read_boards_order_by_likes(final Member member) throws Exception {
+
+            //given
+            memberRepository.save(member);
+
+            final Board board1 = saveBoard(member);
+            final Board board2 = saveBoard(member);
+
+            likeRepository.save(likeMapper.registerLikeRequestToEntity(member, board2));
+
+            //when
+            final var result = mockMvc.perform(get("/boards?sortBy=likes")
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON));
+
+
+            //then
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("게시글 조회수 순 정렬 후 조회시, 조회수가 많은 게시글이 먼저 조회된다.")
+        @Customization(NotSaveBoardCustomization.class)
+        void read_boards_order_by_views(final Member member) throws Exception {
+
+            //given
+            memberRepository.save(member);
+
+            final Board board1 = saveBoard(member);
+            final Board board2 = saveBoard(member);
+
+            board2.increaseView();
+            boardRepository.save(board2);
+
+            //when
+            final var result = mockMvc.perform(get("/boards?sortBy=views")
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON));
+
+            //then
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("게시글 최신 순 정렬 후 조회시, 최신에 작성한 게시글이 먼저 조회된다.")
+        @Customization(NotSaveBoardCustomization.class)
+        void read_boards_order_by_created_at(final Member member) throws Exception {
+
+            //given
+            memberRepository.save(member);
+
+            final Board board1 = saveBoard(member);
+            final Board board2 = saveBoard(member);
+
+            //when
+            final var result = mockMvc.perform(get("/boards?sortBy=latest")
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON));
+
+            //then
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
+        }
+
+        private Board saveBoard(final Member member) {
+            final Random random = new Random();
+            final String title = "title" + random.nextInt(10);
+            return boardRepository.save(new Board(title, "content", member));
         }
     }
 }

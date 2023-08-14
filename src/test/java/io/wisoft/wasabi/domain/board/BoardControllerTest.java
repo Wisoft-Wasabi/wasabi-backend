@@ -9,10 +9,15 @@ import io.wisoft.wasabi.domain.board.dto.MyBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.domain.like.LikeMapper;
+import io.wisoft.wasabi.domain.like.LikeService;
+import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
+import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -21,12 +26,16 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -47,6 +56,9 @@ class BoardControllerTest {
     private BoardService boardService;
 
     @MockBean
+    private LikeService likeService;
+
+    @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
@@ -60,6 +72,8 @@ class BoardControllerTest {
 
     @Spy
     private BoardMapper boardMapper;
+
+
 
     @Nested
     @DisplayName("게시글 작성")
@@ -100,7 +114,6 @@ class BoardControllerTest {
     @Nested
     @DisplayName("게시글 조회")
     class ReadBoard {
-
         @Test
         @DisplayName("요청이 성공적으로 수행되어, 게시글 조회에 성공한다.")
         void read_board_success() throws Exception {
@@ -131,6 +144,88 @@ class BoardControllerTest {
             //then
             result.andExpect(status().isOk());
         }
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("게시글 조회수 순 정렬 후 조회시, 조회수 가장 많은 게시글이 먼저 조회된다.")
+        @Customization(NotSaveBoardCustomization.class)
+        void read_boards_order_by_views(
+                final Board board1,
+                final Board board2) throws Exception {
+
+            //given
+            board2.increaseView();
+
+            final var boards = boardMapper.entityToSortBoardResponse(
+                    new SliceImpl<>(List.of(board2, board1)));
+
+            given(boardService.getSortedBoards(any(), any())).willReturn(boards);
+
+            //when
+            final var result = mockMvc.perform(
+                    get("/boards?sortBy=views")
+                            .contentType(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON));
+
+            //then
+            //정렬한 뒤 response의 content의 첫번째 title가 board2의 title과 같은지 확인 같으면 테스트 성공
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.data.content[0].title").value(equalTo(board2.getTitle())));
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("게시글 조회수 순 정렬 후 조회시, 최신순으로 게시글이 먼저 조회된다.")
+        @Customization(NotSaveBoardCustomization.class)
+        void read_boards_order_by_created_at(final Board board1,
+                                            final Board board2) throws Exception {
+            //given
+            final var boards = boardMapper.entityToSortBoardResponse(
+                    new SliceImpl<>(List.of(board2,board1))
+            );
+
+            given(boardService.getSortedBoards(any(),any())).willReturn(boards);
+
+            //when
+            final var result = mockMvc.perform(
+                    get("/boards?sortBy=latest")
+                            .contentType(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON)
+            );
+
+            //then
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.data.content[0].title").value(equalTo(board2.getTitle())));
+
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("게시글 좋아요 순 정렬 후 조회시, 좋아요가 가장 많은 게시글이 먼저 조회된다.")
+        @Customization(NotSaveBoardCustomization.class)
+        void read_boards_order_by_likes(
+                final Board board1,
+                final Board board2,
+                final Member member) throws Exception {
+            //given
+            likeService.registerLike(member.getId(), new RegisterLikeRequest(board1.getId()));
+
+            final var boards = boardMapper.entityToSortBoardResponse(
+                    new SliceImpl<>(List.of(board2,board1))
+            );
+
+            given(boardService.getSortedBoards(any(),any())).willReturn(boards);
+
+            //when
+            final var result = mockMvc.perform(
+                    get("/boards?sortBy=likes")
+                            .contentType(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON)
+            );
+
+            //then
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.data.content[0].title").value(equalTo(board1.getTitle())));
+        }
 
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 반환된다.")
         @ParameterizedTest
@@ -156,6 +251,7 @@ class BoardControllerTest {
             // then
             result.andExpect(status().isOk());
         }
+
 
         @ParameterizedTest
         @AutoSource

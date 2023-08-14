@@ -4,8 +4,11 @@ import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
+import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.domain.like.Like;
+import io.wisoft.wasabi.domain.like.LikeMapper;
 import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
@@ -20,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
@@ -49,6 +53,9 @@ class BoardServiceTest {
 
     @Mock
     private LikeRepository likeRepository;
+
+    @Spy
+    private LikeMapper likeMapper;
 
     @Nested
     @DisplayName("게시글 작성")
@@ -84,6 +91,8 @@ class BoardServiceTest {
     @DisplayName("게시글 조회")
     class ReadBoard {
 
+        final Pageable pageable = PageRequest.of(0, 2);
+
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
         @ParameterizedTest
         @AutoSource
@@ -106,57 +115,130 @@ class BoardServiceTest {
             Assertions.assertThat(response.views()).isEqualTo(1L);
         }
 
-        @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 최신순으로 조회된다.")
         @ParameterizedTest
         @AutoSource
-        @Customization(NotSaveBoardCustomization.class)
-        void read_my_Boards(
-                final Long memberId,
-                final List<Board> boardList
-        ) {
+        @DisplayName("게시글 목록 조회수 순 정렬 조회시, 가장 조회수가 많은 게시물이 첫 번째로 보인다.")
+        void read_boards_order_by_views(
+                final Board board1,
+                final Board board2) throws Exception {
 
-            // given
-            final Slice<Board> boards = new SliceImpl<>(boardList);
-            given(boardRepository.findAllMyBoards(any(), any())).willReturn(boards);
+            //given
+            board2.increaseView();
 
-            // when
-            final var pageable = PageRequest.of(0, 3);
-            final var myBoards = boardServiceImpl.getMyBoards(memberId, pageable);
+            final Slice<Board> boards = new SliceImpl<>(List.of(board2, board1));
+            given(boardRepository.findAllByOrderByViewsDesc(pageable)).willReturn(boards);
 
-            // then
-            SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(myBoards).isNotEmpty();
-                softly.assertThat(myBoards.getSize()).isEqualTo(3);
-            });
+            //when
+            final var sortedBoards = boardServiceImpl.getSortedBoards("views", pageable);
+
+            //then
+            final SortBoardResponse mostViewedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
+            Assertions.assertThat(mostViewedBoard.id()).isEqualTo(board2.getId());
+            Assertions.assertThat(mostViewedBoard.title()).isEqualTo(board2.getTitle());
         }
 
         @ParameterizedTest
         @AutoSource
-        @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요를 누른 게시글 목록이 최신순으로 조회된다.")
+        @DisplayName("게시글 목록 최신순 정렬 조회시, 가장 최근 게시물이 첫 번째로 보인다.")
         @Customization(NotSaveBoardCustomization.class)
-        void read_my_like_boards(final Long memberId,
-                                 final Board board1,
-                                 final Board board2,
-                                 final Board board3) {
+        void read_boards_order_by_created_at(
+                final Board board1,
+                final Board board2,
+                final Board board3) throws Exception {
 
-            // given
+            //given
             final var boards = new SliceImpl<>(List.of(board3, board2, board1));
-            given(boardRepository.findAllMyLikeBoards(any(), any())).willReturn(boards);
+            given(boardRepository.findAllByOrderByCreatedAtDesc(pageable)).willReturn(boards);
 
-            // when
-            final var pageable = PageRequest.of(0, 3);
-            final Slice<MyLikeBoardsResponse> myLikeBoards = boardServiceImpl.getMyLikeBoards(memberId, pageable);
+            //when
+            final var sortedBoards = boardServiceImpl.getSortedBoards("latest", pageable);
 
-            // then
-            assertSoftly(softly -> {
-                final var response1 = myLikeBoards.getContent().get(0);
-                final var response2 = myLikeBoards.getContent().get(1);
-                final var response3 = myLikeBoards.getContent().get(2);
+            //then
+            final SortBoardResponse latestBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
+            Assertions.assertThat(latestBoard.title()).isEqualTo(board1.getTitle());
+        }
 
-                softly.assertThat(myLikeBoards.getSize()).isEqualTo(3);
-                softly.assertThat(response1.createAt()).isAfter(response2.createAt());
-                softly.assertThat(response2.createAt()).isAfter(response3.createAt());
-            });
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("게시글 목록 좋아요 순 정렬 조회시, 가장 좋아요가 많은 게시물이 첫 번째로 보인다.")
+        void read_boards_order_by_likes(
+                final Board board1,
+                final Board board2,
+                final Member member) throws Exception {
+
+            //given
+            given(memberRepository.save(member)).willReturn(member);
+            memberRepository.save(member);
+
+            final Like like = likeMapper.registerLikeRequestToEntity(member, board2);
+            given(likeRepository.save(like)).willReturn(like);
+            likeRepository.save(like);
+
+            final Slice<Board> boards = new SliceImpl<>(List.of(board2, board1));
+            given(boardRepository.findAllByOrderByLikesDesc(pageable)).willReturn(boards);
+
+            //when
+            final var sortedBoards = boardServiceImpl.getSortedBoards("likes", pageable);
+
+            //then
+            final SortBoardResponse mostLikedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
+            Assertions.assertThat(mostLikedBoard.id()).isEqualTo(board2.getId());
+            Assertions.assertThat(mostLikedBoard.title()).isEqualTo(board2.getTitle());
+
         }
     }
+
+    @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 최신순으로 조회된다.")
+    @ParameterizedTest
+    @AutoSource
+    @Customization(NotSaveBoardCustomization.class)
+    void read_my_Boards(
+            final Long memberId,
+            final List<Board> boardList
+    ) {
+
+        // given
+        final Slice<Board> boards = new SliceImpl<>(boardList);
+        given(boardRepository.findAllMyBoards(any(), any())).willReturn(boards);
+
+        // when
+        final var pageable = PageRequest.of(0, 3);
+        final var myBoards = boardServiceImpl.getMyBoards(memberId, pageable);
+
+        // then
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(myBoards).isNotEmpty();
+            softly.assertThat(myBoards.getSize()).isEqualTo(3);
+        });
+    }
+
+    @ParameterizedTest
+    @AutoSource
+    @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요를 누른 게시글 목록이 최신순으로 조회된다.")
+    @Customization(NotSaveBoardCustomization.class)
+    void read_my_like_boards(final Long memberId,
+                             final Board board1,
+                             final Board board2,
+                             final Board board3) {
+
+        // given
+        final var boards = new SliceImpl<>(List.of(board3, board2, board1));
+        given(boardRepository.findAllMyLikeBoards(any(), any())).willReturn(boards);
+
+        // when
+        final var pageable = PageRequest.of(0, 3);
+        final Slice<MyLikeBoardsResponse> myLikeBoards = boardServiceImpl.getMyLikeBoards(memberId, pageable);
+
+        // then
+        assertSoftly(softly -> {
+            final var response1 = myLikeBoards.getContent().get(0);
+            final var response2 = myLikeBoards.getContent().get(1);
+            final var response3 = myLikeBoards.getContent().get(2);
+
+            softly.assertThat(myLikeBoards.getSize()).isEqualTo(3);
+            softly.assertThat(response1.createAt()).isAfter(response2.createAt());
+            softly.assertThat(response2.createAt()).isAfter(response3.createAt());
+        });
+    }
 }
+

@@ -8,10 +8,7 @@ import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
 import io.wisoft.wasabi.global.config.web.response.CommonResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
 

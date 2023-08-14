@@ -12,7 +12,6 @@ import java.util.Set;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
-@DynamicInsert
 public class Member extends BaseTimeEntity {
 
     @Id
@@ -123,10 +122,6 @@ public class Member extends BaseTimeEntity {
 
     public String getPassword() {
         return password;
-    }
-
-    public String getReferenceUrl() {
-        return referenceUrl;
     }
 
     public String getEmail() {

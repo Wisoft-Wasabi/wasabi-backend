@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.domain.auth.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.wisoft.wasabi.global.config.common.annotation.PasswordCheck;
 import io.wisoft.wasabi.domain.member.Part;
 import io.wisoft.wasabi.global.config.common.annotation.PasswordCheck;
 import jakarta.annotation.Nullable;
@@ -18,7 +19,6 @@ public record SignupRequest(
         String password,
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).{4,20}",
                 message = "비밀번호는 영문과 숫자가 포함된 4자 ~ 20자의 비밀번호여야 합니다.") @NotBlank(message = "비밀번호를 입력하세요.")
-
         String checkPassword,
         @NotBlank(message = "이름을 입력하세요.") String name,
         @NotBlank(message = "전화번호를 입력하세요.") String phoneNumber,
@@ -55,4 +55,3 @@ public record SignupRequest(
         this.motto = StringUtils.hasText(motto) ? motto : "아자아자";
     }
 }
-
