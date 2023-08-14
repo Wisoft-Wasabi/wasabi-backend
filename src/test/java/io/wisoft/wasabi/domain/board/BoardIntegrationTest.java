@@ -266,7 +266,7 @@ class BoardIntegrationTest extends IntegrationTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("게시글 좋아요 순 정렬 후 조회시, 좋아요가 많은 게시글이 먼저 조회된다.")
-        @Customization(NotSaveBoardCustomization.class)
+        @Customization({NotSaveBoardCustomization.class, NotSaveMemberCustomization.class})
         void read_boards_order_by_likes(final Member member) throws Exception {
 
             //given
