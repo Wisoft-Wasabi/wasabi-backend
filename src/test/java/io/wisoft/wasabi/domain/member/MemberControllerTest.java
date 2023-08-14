@@ -41,7 +41,7 @@ class MemberControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
-    private AuthorizationExtractor authorizationExtractor;
+    private AuthorizationExtractor extractor;
 
     @Spy
     private ObjectMapper objectMapper;
