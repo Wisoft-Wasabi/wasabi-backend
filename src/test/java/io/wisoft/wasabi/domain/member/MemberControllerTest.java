@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.domain.member;
 
 import autoparams.AutoSource;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
@@ -12,11 +13,13 @@ import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
+
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+
 
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
@@ -43,9 +46,9 @@ class MemberControllerTest {
     @MockBean
     private AuthorizationExtractor extractor;
 
+
     @Spy
     private ObjectMapper objectMapper;
-
 
     @Nested
     @DisplayName("개인 정보 조회")
@@ -81,6 +84,7 @@ class MemberControllerTest {
             perform.andExpect(status().isOk());
         }
     }
+
 
     @Nested
     @DisplayName("회원 개인 정보 수정")

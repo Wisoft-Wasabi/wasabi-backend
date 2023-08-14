@@ -4,7 +4,9 @@ import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
 import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
+
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
+
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -52,6 +54,7 @@ public class MemberMapper {
 
         return new LoginResponse(name, role, activation, accessToken, tokenType);
     }
+
 
     public UpdateMemberInfoResponse entityToUpdateMemberInfoResponse(final Member member) {
         return new UpdateMemberInfoResponse(member.getId());

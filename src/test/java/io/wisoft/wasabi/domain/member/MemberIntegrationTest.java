@@ -24,6 +24,7 @@ public class MemberIntegrationTest extends IntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
+
     private MemberRepository memberRepository;
 
     @Autowired
