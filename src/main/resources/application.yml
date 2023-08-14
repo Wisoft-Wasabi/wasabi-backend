@@ -13,4 +13,5 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
 
-
+logging:
+  config: classpath:application-log-dev.yml
