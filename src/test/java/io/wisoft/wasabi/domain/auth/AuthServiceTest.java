@@ -71,9 +71,9 @@ class AuthServiceTest {
                     request.organization(),
                     request.motto()
             );
-            given(memberMapper.createMemberFromRequest(request)).willReturn(mockMember);
+            given(memberMapper.signUpRequestToEntity(request)).willReturn(mockMember);
 
-            final Member member = memberMapper.createMemberFromRequest(request);
+            final Member member = memberMapper.signUpRequestToEntity(request);
             given(memberRepository.existsByEmail(request.email())).willReturn(false);
 
             final SignupResponse mockResponse = new SignupResponse(
@@ -111,8 +111,8 @@ class AuthServiceTest {
                     request.motto()
             );
 
-            given(memberMapper.createMemberFromRequest(request)).willReturn(mockMember);
-            memberMapper.createMemberFromRequest(request);
+            given(memberMapper.signUpRequestToEntity(request)).willReturn(mockMember);
+            memberMapper.signUpRequestToEntity(request);
 
             given(memberRepository.existsByEmail(request.email())).willReturn(true);
 
