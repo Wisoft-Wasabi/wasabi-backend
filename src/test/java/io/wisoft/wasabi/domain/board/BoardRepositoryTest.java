@@ -193,7 +193,7 @@ class BoardRepositoryTest {
             // then
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(myBoards.getContent()).isNotEmpty();
-                softly.assertThat(myBoards.getContent().size()).isEqualTo(2);
+                softly.assertThat(myBoards.getContent().size()).isEqualTo(3);
             });
         }
 

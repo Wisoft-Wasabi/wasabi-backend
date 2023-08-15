@@ -38,6 +38,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -74,7 +75,6 @@ class BoardControllerTest {
     private BoardMapper boardMapper;
 
 
-
     @Nested
     @DisplayName("게시글 작성")
     class WriteBoard {
@@ -84,7 +84,7 @@ class BoardControllerTest {
         void write_board() throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             final var request = new WriteBoardRequest(
                     "title",
@@ -144,6 +144,7 @@ class BoardControllerTest {
             //then
             result.andExpect(status().isOk());
         }
+
         @ParameterizedTest
         @AutoSource
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 조회수 가장 많은 게시글이 먼저 조회된다.")
@@ -177,13 +178,13 @@ class BoardControllerTest {
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 최신순으로 게시글이 먼저 조회된다.")
         @Customization(NotSaveBoardCustomization.class)
         void read_boards_order_by_created_at(final Board board1,
-                                            final Board board2) throws Exception {
+                                             final Board board2) throws Exception {
             //given
             final var boards = boardMapper.entityToSortBoardResponse(
-                    new SliceImpl<>(List.of(board2,board1))
+                    new SliceImpl<>(List.of(board2, board1))
             );
 
-            given(boardService.getSortedBoards(any(),any())).willReturn(boards);
+            given(boardService.getSortedBoards(any(), any())).willReturn(boards);
 
             //when
             final var result = mockMvc.perform(
@@ -210,10 +211,10 @@ class BoardControllerTest {
             likeService.registerLike(member.getId(), new RegisterLikeRequest(board1.getId()));
 
             final var boards = boardMapper.entityToSortBoardResponse(
-                    new SliceImpl<>(List.of(board2,board1))
+                    new SliceImpl<>(List.of(board2, board1))
             );
 
-            given(boardService.getSortedBoards(any(),any())).willReturn(boards);
+            given(boardService.getSortedBoards(any(), any())).willReturn(boards);
 
             //when
             final var result = mockMvc.perform(
@@ -237,7 +238,7 @@ class BoardControllerTest {
             // given
             given(boardService.getMyBoards(any(), any())).willReturn(new SliceImpl<>(boardsResponses));
 
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             // when
             final var result = mockMvc.perform(
@@ -260,7 +261,7 @@ class BoardControllerTest {
         void read_my_like_boards(final List<Board> boards) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, eq(true));
 
             final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
 

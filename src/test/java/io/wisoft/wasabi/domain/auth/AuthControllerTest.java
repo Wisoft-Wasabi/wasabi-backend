@@ -117,7 +117,7 @@ class AuthControllerTest {
             //given
             final var request = new LoginRequest(member.getEmail(), member.getPassword());
 
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, member.getName(), member.getRole(), false);
 
             final LoginResponse loginResponse = new LoginResponse(
                     member.getName(),

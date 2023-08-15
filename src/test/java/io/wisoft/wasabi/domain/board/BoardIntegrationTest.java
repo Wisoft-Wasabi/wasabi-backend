@@ -74,7 +74,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // given
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), member.getName(), member.getRole(), member.isActivation());
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
@@ -128,7 +128,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // given
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), savedMember.getName(), savedMember.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), savedMember.getName(), savedMember.getRole(), member.isActivation());
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "    ",
@@ -176,7 +176,6 @@ class BoardIntegrationTest extends IntegrationTest {
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.views").value(1));
         }
-
 
         @Test
         @DisplayName("존재하지 않는 게시글을 조회하려 할 경우, 조회에 실패한다.")
@@ -226,7 +225,8 @@ class BoardIntegrationTest extends IntegrationTest {
             final String accessToken = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    member.isActivation()
             );
 
             // when
@@ -252,7 +252,7 @@ class BoardIntegrationTest extends IntegrationTest {
             new Like(member, board1);
             new Like(member, board2);
 
-            final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole(), member.isActivation());
 
             // when
             final var result = mockMvc.perform(get("/boards/my-like")

@@ -4,7 +4,6 @@ import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
-import org.hibernate.annotations.DynamicInsert;
 
 import java.util.HashSet;
 import java.util.Set;

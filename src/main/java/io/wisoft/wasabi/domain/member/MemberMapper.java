@@ -1,5 +1,7 @@
 package io.wisoft.wasabi.domain.member;
 
+import io.wisoft.wasabi.domain.admin.dto.response.ApproveMemberResponse;
+import io.wisoft.wasabi.domain.admin.dto.response.MembersResponse;
 import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
 import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
@@ -9,6 +11,7 @@ import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
 
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,7 +33,7 @@ public class MemberMapper {
                 request.name(),
                 request.phoneNumber(),
                 false,
-                Role.GENERAL,
+                Role.ADMIN,
                 request.referenceUrl(),
                 request.part(),
                 request.organization(),
@@ -70,5 +73,18 @@ public class MemberMapper {
                 member.getOrganization(),
                 member.getMotto()
         );
+    }
+
+    public Slice<MembersResponse> entityToReadMembersInfoResponses(final Slice<Member> members) {
+
+        return members.map(member -> new MembersResponse(
+                member.getId(),
+                member.getName(),
+                member.getEmail()
+        ));
+    }
+
+    public ApproveMemberResponse entityToApproveMemberResponses(final Member member) {
+        return new ApproveMemberResponse(member.getId());
     }
 }
