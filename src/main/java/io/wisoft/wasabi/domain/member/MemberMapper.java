@@ -58,10 +58,6 @@ public class MemberMapper {
         return new UpdateMemberInfoResponse(member.getId());
     }
 
-    public String convertEmptyToNull(final String value) {
-        return StringUtils.hasText(value) ? null : value;
-    }
-
     public ReadMemberInfoResponse entityToReadMemberInfoResponse(final Member member) {
 
         return new ReadMemberInfoResponse(

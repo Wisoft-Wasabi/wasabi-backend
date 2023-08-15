@@ -132,6 +132,8 @@ public class Member extends BaseTimeEntity {
         return phoneNumber;
     }
 
+    public String getReferenceUrl() { return referenceUrl;}
+
     public Part getPart() {
         return part;
     }
