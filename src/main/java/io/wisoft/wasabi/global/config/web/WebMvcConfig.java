@@ -1,5 +1,6 @@
 package io.wisoft.wasabi.global.config.web;
 
+import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -12,14 +13,18 @@ import java.util.List;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final MemberIdResolver memberIdResolver;
+    private final AnyoneResolver anyoneResolver;
 
-    public WebMvcConfig(final MemberIdResolver memberIdResolver) {
+    public WebMvcConfig(final MemberIdResolver memberIdResolver,
+                        final AnyoneResolver anyoneResolver) {
         this.memberIdResolver = memberIdResolver;
+        this.anyoneResolver = anyoneResolver;
     }
 
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(memberIdResolver);
+        resolvers.add(anyoneResolver);
     }
 
     @Override
