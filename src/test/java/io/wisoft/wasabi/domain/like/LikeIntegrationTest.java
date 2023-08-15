@@ -84,7 +84,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             final var request = new RegisterLikeRequest(board.getId());
@@ -109,7 +110,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             final var request = new RegisterLikeRequest(100000L);
@@ -142,7 +144,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             // when
@@ -162,7 +165,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             // when
@@ -188,7 +192,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final var token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             //when
@@ -208,7 +213,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final var token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             //when

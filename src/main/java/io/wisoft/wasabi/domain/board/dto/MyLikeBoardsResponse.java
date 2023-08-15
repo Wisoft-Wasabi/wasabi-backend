@@ -6,7 +6,7 @@ public record MyLikeBoardsResponse(
         Long id,
         String title,
         String writer,
-        LocalDateTime createAt,
+        LocalDateTime createdAt,
         int likeCount,
         int views) {
 }

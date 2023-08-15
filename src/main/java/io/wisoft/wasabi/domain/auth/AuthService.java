@@ -28,8 +28,7 @@ public class AuthService {
             final MemberRepository memberRepository,
             final JwtTokenProvider jwtTokenProvider,
             final EncryptHelper encryptHelper,
-            final MemberMapper memberMapper
-    ) {
+            final MemberMapper memberMapper) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.encryptHelper = encryptHelper;
@@ -57,7 +56,8 @@ public class AuthService {
             throw AuthExceptionExecutor.LoginFail();
         }
 
-        final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole());
-        return memberMapper.mapToLoginResponse(member, accessToken);
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole(), member.isActivation());
+        return memberMapper.entityToLoginResponse(member, accessToken);
     }
+
 }

@@ -1,6 +1,5 @@
 package io.wisoft.wasabi.domain.auth;
 
-
 import io.wisoft.wasabi.domain.auth.dto.request.LoginRequest;
 import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
@@ -27,7 +26,7 @@ public class AuthController {
         final SignupResponse dataResponse = authService.signup(request);
         final CommonResponse response = CommonResponse.newInstance(dataResponse);
 
-        return ResponseEntity.status(CREATED).body(CommonResponse.newInstance(response));
+        return ResponseEntity.status(CREATED).body(response);
     }
 
     @PostMapping("/login")
