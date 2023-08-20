@@ -6,6 +6,8 @@ import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -17,6 +19,8 @@ import java.util.Arrays;
 @Service
 @Transactional(readOnly = true)
 public class BoardServiceImpl<T> implements BoardService<T> {
+
+    private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
@@ -105,7 +109,10 @@ public class BoardServiceImpl<T> implements BoardService<T> {
 
     @Override
     public Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable) {
+
         final Slice<Board> myBoards = boardRepository.findAllMyBoards(memberId, pageable);
+        logger.debug("[{}-회원]이 작성한 게시글 목록 조회", memberId);
+
         return boardMapper.entityToMyBoardsResponse(myBoards);
     }
 

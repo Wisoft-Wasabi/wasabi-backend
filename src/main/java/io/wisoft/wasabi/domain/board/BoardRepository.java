@@ -24,8 +24,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Slice<Board> findAllByOrderByLikesDesc(Pageable pageable);
 
     @Query("SELECT board FROM Board board " +
+            "LEFT JOIN FETCH board.likes " +
             "JOIN FETCH board.member " +
-            "LEFT JOIN board.likes " +
             "WHERE board.member.id = :memberId " +
             "ORDER BY board.createdAt DESC")
     Slice<Board> findAllMyBoards(@Param("memberId") final Long memberId, final Pageable pageable);

@@ -236,8 +236,8 @@ class BoardServiceTest {
             final var response3 = myLikeBoards.getContent().get(2);
 
             softly.assertThat(myLikeBoards.getSize()).isEqualTo(3);
-            softly.assertThat(response1.createAt()).isAfter(response2.createAt());
-            softly.assertThat(response2.createAt()).isAfter(response3.createAt());
+            softly.assertThat(response1.createdAt()).isAfter(response2.createdAt());
+            softly.assertThat(response2.createdAt()).isAfter(response3.createdAt());
         });
     }
 }

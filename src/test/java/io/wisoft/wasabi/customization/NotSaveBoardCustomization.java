@@ -22,6 +22,7 @@ public class NotSaveBoardCustomization implements Customizer {
                 "title",
                 "content",
                 MemberStaticContainer.get(context.hashCode())
+                        .orElse(NotSaveMemberCustomization.factory(context))
         );
     }
 }
