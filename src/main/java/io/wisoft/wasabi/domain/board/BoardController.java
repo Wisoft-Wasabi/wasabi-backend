@@ -1,13 +1,10 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.board.dto.MyBoardsResponse;
-import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
-import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.global.config.common.annotation.Anyone;
 import io.wisoft.wasabi.global.config.common.annotation.MemberId;
-import io.wisoft.wasabi.global.config.web.response.CommonResponse;
+import io.wisoft.wasabi.global.config.web.response.Response;
+import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Pageable;
@@ -30,42 +27,67 @@ public class BoardController<T> {
 
 
     @PostMapping
-    public ResponseEntity<CommonResponse> writeBoard(@RequestBody @Valid final WriteBoardRequest request,
-                                                     @MemberId final Long memberId) {
+    public ResponseEntity<Response<WriteBoardResponse>> writeBoard(@RequestBody @Valid final WriteBoardRequest request,
+                                                                   @MemberId final Long memberId) {
 
-        final WriteBoardResponse response = boardService.writeBoard(request, memberId);
-        return ResponseEntity.status(CREATED).body(CommonResponse.newInstance(response));
+        final WriteBoardResponse data = boardService.writeBoard(request, memberId);
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.BOARD_WRITE_SUCCESS,
+                data
+            )
+        );
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<CommonResponse> readBoard(@PathVariable final Long boardId,
-                                                    @Anyone final Long accessId) {
+    public ResponseEntity<Response<ReadBoardResponse>> readBoard(@PathVariable final Long boardId,
+                                                                 @Anyone final Long accessId) {
 
-        final var response = boardService.readBoard(boardId, accessId);
-        return ResponseEntity.ok(CommonResponse.newInstance(response));
+        final ReadBoardResponse data = boardService.readBoard(boardId, accessId);
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.BOARD_READ_SUCCESS,
+                data
+            )
+        );
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse> sortedBoards(
+    public ResponseEntity<Response<Slice<SortBoardResponse>>> sortedBoards(
             @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
             @PageableDefault(size = 2) final Pageable pageable) {
 
-        final Slice<SortBoardResponse> sortedBoards = boardService.getSortedBoards(sortBy, pageable);
-        return ResponseEntity.ok(CommonResponse.newInstance(sortedBoards));
+        final Slice<SortBoardResponse> data = boardService.getSortedBoards(sortBy, pageable);
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.BOARD_SORTED_LIST_SUCCESS,
+                data
+            )
+        );
     }
 
     @GetMapping("/my-board")
-    public ResponseEntity<CommonResponse> myBoards(@MemberId final Long memberId, final Pageable pageable) {
-        final Slice<MyBoardsResponse> response = boardService.getMyBoards(memberId, pageable);
+    public ResponseEntity<Response<Slice<MyBoardsResponse>>> myBoards(@MemberId final Long memberId, final Pageable pageable) {
+        final Slice<MyBoardsResponse> data = boardService.getMyBoards(memberId, pageable);
 
-        return ResponseEntity.ok(CommonResponse.newInstance(response));
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.MY_BOARD_LIST_SUCCESS,
+                data
+            )
+        );
     }
 
     @GetMapping("/my-like")
-    public ResponseEntity<CommonResponse> myLikeBoards(@MemberId final Long memberId, final Pageable pageable) {
-        final Slice<MyLikeBoardsResponse> response = boardService.getMyLikeBoards(memberId, pageable);
+    public ResponseEntity<Response<Slice<MyLikeBoardsResponse>>> myLikeBoards(@MemberId final Long memberId, final Pageable pageable) {
+        final Slice<MyLikeBoardsResponse> data = boardService.getMyLikeBoards(memberId, pageable);
 
-        return ResponseEntity.ok(CommonResponse.newInstance(response));
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.MY_LIKE_BOARD_LIST_SUCCESS,
+                data
+            )
+        );
     }
 
 }

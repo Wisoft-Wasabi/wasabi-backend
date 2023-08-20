@@ -1,14 +1,16 @@
 package io.wisoft.wasabi.global.exception;
 
-public abstract class BusinessException extends RuntimeException {
-    private final ErrorType errorType;
+import io.wisoft.wasabi.global.config.web.response.ResponseType;
 
-    protected BusinessException(final ErrorType errorType) {
-        this.errorType = errorType;
+public abstract class BusinessException extends RuntimeException {
+    private final ResponseType responseType;
+
+    protected BusinessException(final ResponseType responseType) {
+        this.responseType = responseType;
     }
 
-    public ErrorType getErrorType(){
-        return errorType;
+    public ResponseType getErrorType(){
+        return responseType;
     }
 
 }

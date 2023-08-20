@@ -3,12 +3,14 @@ package io.wisoft.wasabi.global.config.web;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+@EnableAspectJAutoProxy
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
