@@ -8,6 +8,8 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.like.dto.*;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,9 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 public class LikeServiceImpl implements LikeService {
+
+    private final Logger logger = LoggerFactory.getLogger(LikeServiceImpl.class);
+
     private final LikeRepository likeRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
@@ -55,6 +60,8 @@ public class LikeServiceImpl implements LikeService {
 
         like.delete();
         likeRepository.deleteById(like.getId());
+
+        logger.info("[{}-회원]의 [{}-게시글]에 대한 좋아요 삭제", memberId, boardId);
 
         return new CancelLikeResponse(like.getId());
     }

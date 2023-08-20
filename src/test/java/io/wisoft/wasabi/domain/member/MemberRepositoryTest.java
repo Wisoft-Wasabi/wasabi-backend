@@ -23,16 +23,16 @@ class MemberRepositoryTest {
     @DisplayName("이메일로 회원 유무 확인")
     class ExistsByEmail {
 
+        @DisplayName("이메일로 회원의 존재 여부를 확인할 수 있다.")
         @ParameterizedTest
         @AutoSource
-        @DisplayName("이메일로 회원의 존재 여부를 확인할 수 있다.")
-        void exists_by_email_success(final Member member) throws Exception {
+        void exists_by_email_success(final Member member) {
 
             //given
             memberRepository.save(member);
 
             //when
-            final boolean result = memberRepository.existsByEmail(member.getEmail());
+            final var result = memberRepository.existsByEmail(member.getEmail());
 
             //then
             assertThat(result).isTrue();
@@ -43,20 +43,20 @@ class MemberRepositoryTest {
     @DisplayName("이메일로 회원 찾기")
     class FindMemberByEmail {
 
+        @DisplayName("이메일로 회원 정보를 조회할 수 있다.")
         @ParameterizedTest
         @AutoSource
-        @DisplayName("이메일로 회원 정보를 조회할 수 있다.")
-        void find_by_email_success(final Member member) throws Exception {
+        void find_by_email_success(final Member member) {
 
             //given
-            memberRepository.save(member);
+            final var expected = memberRepository.save(member);
 
             //when
-            final Member findMember = memberRepository.findMemberByEmail(member.getEmail())
+            final var result = memberRepository.findMemberByEmail(member.getEmail())
                     .orElseThrow();
 
             //then
-            assertThat(findMember.getId()).isEqualTo(member.getId());
+            assertThat(result.getId()).isEqualTo(expected.getId());
         }
     }
 }
