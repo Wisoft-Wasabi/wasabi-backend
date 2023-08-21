@@ -6,7 +6,8 @@ import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
-import org.springframework.data.domain.PageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import java.util.Arrays;
 @Service
 @Transactional(readOnly = true)
 public class BoardServiceImpl<T> implements BoardService<T> {
+
+    private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
@@ -44,6 +47,8 @@ public class BoardServiceImpl<T> implements BoardService<T> {
 
         boardRepository.save(board);
         saveImages(board, request);
+
+        logger.info("{} 회원이 작성한 게시글이 저장되었습니다.", memberId);
 
         return boardMapper.entityToWriteBoardResponse(board);
     }
@@ -113,6 +118,9 @@ public class BoardServiceImpl<T> implements BoardService<T> {
     public Slice<MyLikeBoardsResponse> getMyLikeBoards(final Long memberId, final Pageable pageable) {
 
         final Slice<Board> myLikeBoards = boardRepository.findAllMyLikeBoards(memberId, pageable);
+
+        logger.info("{} 회원의 좋아요한 게시글 목록이 조회되었습니다.", memberId);
+
         return boardMapper.entityToMyLikeBoardsResponse(myLikeBoards);
     }
 }
