@@ -3,11 +3,14 @@ package io.wisoft.wasabi.domain.like;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.domain.board.exception.BoardNotFoundException;
 import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.like.dto.*;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,7 @@ public class LikeServiceImpl implements LikeService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final LikeMapper likeMapper;
+    private static final Logger logger = LogManager.getLogger(LikeServiceImpl.class);
 
     public LikeServiceImpl(final LikeRepository likeRepository,
                            final MemberRepository memberRepository,
@@ -44,6 +48,8 @@ public class LikeServiceImpl implements LikeService {
 
         likeRepository.save(like);
 
+        logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 등록", memberId, board.getId());
+
         return likeMapper.entityToRegisterLikeResponse(like);
     }
 
@@ -60,19 +66,17 @@ public class LikeServiceImpl implements LikeService {
     }
 
     public GetLikeResponse getLikeStatus(final Long memberId, final Long boardId) {
-        boardRepository.findById(boardId)
-                .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
         final boolean isLike = generateIsLike(memberId, boardId);
 
         final int likeCount = likeRepository.countByBoardId(boardId);
 
+        logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 상태 조회", memberId, boardId);
+
         return new GetLikeResponse(isLike, likeCount);
     }
 
     private boolean generateIsLike(final Long memberId, final Long boardId) {
-        final Optional<Like> like = likeRepository.findByMemberIdAndBoardId(memberId, boardId);
-
-        return like.isPresent();
+        return likeRepository.existsByMemberIdAndBoardId(memberId, boardId);
     }
 }
