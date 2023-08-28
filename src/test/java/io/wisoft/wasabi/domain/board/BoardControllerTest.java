@@ -14,6 +14,7 @@ import io.wisoft.wasabi.domain.like.LikeService;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
@@ -67,6 +68,9 @@ class BoardControllerTest {
 
     @MockBean
     private AnyoneResolver anyoneResolver;
+
+    @MockBean
+    private AdminRoleResolver adminRoleResolver;
 
     @Spy
     private ObjectMapper objectMapper;
@@ -256,12 +260,29 @@ class BoardControllerTest {
 
         @ParameterizedTest
         @AutoSource
+        @DisplayName("로그인 하지 않은 사용자가 좋아요한 게시글 목록 조회 요청시 예외가 발생한다.")
+        void read_my_like_boards_fail(final TokenNotExistException exception) throws Exception {
+
+            // given
+            given(boardService.getMyLikeBoards(any(), any())).willThrow(exception);
+
+            // when
+            final var result = mockMvc.perform(
+                    get("/boards/my-like")
+                            .contentType(APPLICATION_JSON));
+
+            // then
+            result.andExpect(status().isUnauthorized());
+        }
+
+        @ParameterizedTest
+        @AutoSource
         @Customization(NotSaveBoardCustomization.class)
         @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요를 누른 게시글 목록이 반환된다.")
         void read_my_like_boards(final List<Board> boards) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, eq(true));
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL,true);
 
             final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
 
@@ -276,23 +297,6 @@ class BoardControllerTest {
             // then
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content.size()", is(3)));
-        }
-
-        @ParameterizedTest
-        @AutoSource
-        @DisplayName("로그인 하지 않은 사용자가 좋아요한 게시글 목록 조회 요청시 예외가 발생한다.")
-        void read_my_like_boards_fail(final TokenNotExistException exception) throws Exception {
-
-            // given
-            given(boardService.getMyLikeBoards(any(), any())).willThrow(exception);
-
-            // when
-            final var result = mockMvc.perform(
-                    get("/boards/my-like")
-                            .contentType(APPLICATION_JSON));
-
-            // then
-            result.andExpect(status().isUnauthorized());
         }
     }
 }

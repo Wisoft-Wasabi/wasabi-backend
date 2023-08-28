@@ -2,6 +2,8 @@ package io.wisoft.wasabi.global.exception;
 
 import io.wisoft.wasabi.global.config.web.response.CommonResponse;
 import io.wisoft.wasabi.global.config.web.response.dto.error.ErrorDataResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CommonResponse> handlerMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
@@ -36,12 +40,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<CommonResponse> handleBusinessException(final BusinessException ex) {
+
+        logger.info("\n [Error] BusinessException : HttpStatus : {}, ErrorCode : {}, ErrorType : {}", ex.getErrorType().getHttpStatusCode(), ex.getErrorType().getErrorCode(), ex.getErrorType());
         return buildResponse(ex.getErrorType());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<CommonResponse> handleRuntimeException(final RuntimeException ex) {
-        ex.printStackTrace();
+
+        logger.info("\n [Error] RuntimeException : ErrorMessage : {}  Path: {}", ex.getMessage(), ex.fillInStackTrace());
         return buildResponse(ErrorType.UNCAUGHT_ERROR);
     }
 

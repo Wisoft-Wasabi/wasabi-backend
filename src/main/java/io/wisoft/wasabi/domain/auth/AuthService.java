@@ -11,6 +11,8 @@ import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final EncryptHelper encryptHelper;
     private final MemberMapper memberMapper;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public AuthService(
@@ -45,6 +48,7 @@ public class AuthService {
 
         memberRepository.save(member);
 
+        logger.info("[Result] {} 회원의 회원가입 요청", request.name());
         return memberMapper.entityToMemberSignupResponse(member);
     }
 
@@ -57,6 +61,8 @@ public class AuthService {
         }
 
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole(), member.isActivation());
+
+        logger.info("[Result] 이메일 : {} 의 로그인 요청", request.email());
         return memberMapper.entityToLoginResponse(member, accessToken);
     }
 

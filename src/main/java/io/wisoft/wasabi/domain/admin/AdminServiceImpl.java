@@ -9,6 +9,8 @@ import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminServiceImpl implements AdminService {
     private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public AdminServiceImpl(final MemberMapper memberMapper,
                             final MemberRepository memberRepository) {
@@ -27,6 +30,7 @@ public class AdminServiceImpl implements AdminService {
     public Slice<MembersResponse> getUnapprovedMembers(final Pageable pageable) {
         final Slice<Member> members = memberRepository.findMemberByUnactivated(pageable);
 
+        logger.info("[Result] 관리자가 승인되지 않은 회원 전체조회");
         return memberMapper.entityToReadMembersInfoResponses(members);
     }
 
@@ -39,6 +43,7 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(MemberExceptionExecutor::MemberNotFound);
         member.activate();
 
+        logger.info("[Result] {} 회원의 가입 승인", member.getName());
         return memberMapper.entityToApproveMemberResponses(member);
     }
 

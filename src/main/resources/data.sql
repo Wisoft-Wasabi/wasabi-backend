@@ -1,2 +1,0 @@
-INSERT INTO member (email, password, name, phone_number, created_at, updated_at, activation, role)
-VALUES('admin@wisoft.io', '$2a$10$aHpH.w4ioXBqLg4Qylr7UuFRBvKfPG1LoNsmVFMNlmJ6RQUxv.wLW', 'MIGNI', '010-7597-6959', NOW(), NOW(), TRUE, 'ADMIN');
