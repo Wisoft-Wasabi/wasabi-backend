@@ -9,7 +9,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 
 class BoardTest {
 
-
     @Nested
     @DisplayName("게시글 조회수 증가")
     class IncreaseView {

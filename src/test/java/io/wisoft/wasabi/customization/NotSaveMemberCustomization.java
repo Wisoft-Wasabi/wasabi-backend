@@ -19,7 +19,7 @@ public class NotSaveMemberCustomization implements Customizer {
                 : generator.generate(query, context));
     }
 
-    private Member factory(final ObjectGenerationContext context) {
+    static Member factory(final ObjectGenerationContext context) {
         final Random random = new Random();
         final String email = new StringBuilder()
                 .append("test")

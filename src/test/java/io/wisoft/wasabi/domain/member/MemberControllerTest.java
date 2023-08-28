@@ -61,7 +61,7 @@ class MemberControllerTest {
 
             //given
             final Long memberId = 1L;
-            final String accessToken = jwtTokenProvider.createAccessToken(memberId, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(memberId, "writer", Role.GENERAL, false);
 
             final var mockResponse = new ReadMemberInfoResponse(
                     member.getEmail(),
@@ -96,7 +96,7 @@ class MemberControllerTest {
         void update_info(final UpdateMemberInfoResponse response) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             final var request = new UpdateMemberInfoRequest(
                     "name",

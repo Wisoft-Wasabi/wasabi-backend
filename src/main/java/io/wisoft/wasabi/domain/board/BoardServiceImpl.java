@@ -8,7 +8,6 @@ import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -20,11 +19,12 @@ import java.util.Arrays;
 @Transactional(readOnly = true)
 public class BoardServiceImpl<T> implements BoardService<T> {
 
+
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
     private final BoardMapper boardMapper;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
 
 
     public BoardServiceImpl(final BoardRepository boardRepository,
@@ -112,9 +112,11 @@ public class BoardServiceImpl<T> implements BoardService<T> {
 
     @Override
     public Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable) {
+
         final Slice<Board> myBoards = boardRepository.findAllMyBoards(memberId, pageable);
 
         logger.info("[Result] {}번 회원의 자신이 작성한 게시글 목록 조회", memberId);
+
         return boardMapper.entityToMyBoardsResponse(myBoards);
     }
 
