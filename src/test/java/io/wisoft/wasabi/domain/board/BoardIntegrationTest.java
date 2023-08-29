@@ -12,6 +12,7 @@ import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.like.LikeService;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +22,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -53,14 +57,10 @@ class BoardIntegrationTest extends IntegrationTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private LikeService likeService;
+    private AnyoneResolver anyoneResolver;
 
     @Spy
     private LikeMapper likeMapper;
-
-    @Spy
-    private BoardMapper boardMapper;
-
 
     @Nested
     @DisplayName("게시글 작성")
@@ -74,7 +74,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // given
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), member.getName(), member.getRole(), member.isActivation());
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
@@ -128,7 +128,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // given
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), savedMember.getName(), savedMember.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), savedMember.getName(), savedMember.getRole(), member.isActivation());
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "    ",
@@ -156,17 +156,21 @@ class BoardIntegrationTest extends IntegrationTest {
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
         @ParameterizedTest
         @AutoSource
+        @Customization(NotSaveMemberCustomization.class)
         void read_board_success(final Member member) throws Exception {
 
             //given
             memberRepository.save(member);
 
-            final Board board = boardRepository.save(
-                    new Board(
-                            "title",
-                            "content",
-                            member
-                    ));
+            final Board board = new Board(
+                    "title",
+                    "content",
+                    member
+            );
+            boardRepository.save(board);
+            board.increaseView();
+
+            System.out.println("board.getId() = " + board.getId());
 
             //when
             final var result = mockMvc.perform(get("/boards/{boardId}", board.getId())
@@ -177,7 +181,6 @@ class BoardIntegrationTest extends IntegrationTest {
                     .andExpect(jsonPath("$.data.views").value(1));
         }
 
-
         @Test
         @DisplayName("존재하지 않는 게시글을 조회하려 할 경우, 조회에 실패한다.")
         void read_not_found_board() throws Exception {
@@ -185,8 +188,8 @@ class BoardIntegrationTest extends IntegrationTest {
             //given
 
             //when
-            final var result = mockMvc.perform(get("/boards/{boardId}", 10000L)
-                    .contentType(APPLICATION_JSON));
+            final var result = mockMvc.perform(get("/boards/{boardId}", 123L)
+                    .contentType(MediaType.APPLICATION_JSON));
 
             //then
             result.andExpect(status().isNotFound());
@@ -226,7 +229,8 @@ class BoardIntegrationTest extends IntegrationTest {
             final String accessToken = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    member.isActivation()
             );
 
             // when
@@ -252,7 +256,7 @@ class BoardIntegrationTest extends IntegrationTest {
             new Like(member, board1);
             new Like(member, board2);
 
-            final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole(), member.isActivation());
 
             // when
             final var result = mockMvc.perform(get("/boards/my-like")
@@ -267,15 +271,17 @@ class BoardIntegrationTest extends IntegrationTest {
         @AutoSource
         @DisplayName("게시글 좋아요 순 정렬 후 조회시, 좋아요가 많은 게시글이 먼저 조회된다.")
         @Customization({NotSaveBoardCustomization.class, NotSaveMemberCustomization.class})
-        void read_boards_order_by_likes(final Member member) throws Exception {
-
+        void read_boards_order_by_likes(final Member member1, final Member member2, final Member member3) throws Exception {
+            final Slice<Member> members = new SliceImpl<>(List.of(member1, member2, member3));
             //given
-            memberRepository.save(member);
+            memberRepository.saveAll(members);
 
-            final Board board1 = saveBoard(member);
-            final Board board2 = saveBoard(member);
+            final Board board1 = saveBoard(member1);
+            final Board board2 = saveBoard(member1);
 
-            likeRepository.save(likeMapper.registerLikeRequestToEntity(member, board2));
+            likeRepository.save(likeMapper.registerLikeRequestToEntity(member1, board2));
+            likeRepository.save(likeMapper.registerLikeRequestToEntity(member2, board2));
+            likeRepository.save(likeMapper.registerLikeRequestToEntity(member3, board2));
 
             //when
             final var result = mockMvc.perform(get("/boards?sortBy=likes")
@@ -291,7 +297,7 @@ class BoardIntegrationTest extends IntegrationTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 조회수가 많은 게시글이 먼저 조회된다.")
-        @Customization(NotSaveBoardCustomization.class)
+        @Customization(NotSaveMemberCustomization.class)
         void read_boards_order_by_views(final Member member) throws Exception {
 
             //given
@@ -309,8 +315,8 @@ class BoardIntegrationTest extends IntegrationTest {
                     .accept(APPLICATION_JSON));
 
             //then
-            result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
+            result.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
         }
 
         @ParameterizedTest

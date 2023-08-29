@@ -24,6 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -149,15 +150,18 @@ class BoardRepositoryTest {
         @AutoSource
         @DisplayName("게시글 목록 조회시, 좋아요 많은 순 정렬 후 조회에 성공한다.")
         @Customization({NotSaveMemberCustomization.class, NotSaveBoardCustomization.class})
-        void read_boards_order_by_likes(final Member member) throws Exception {
+        void read_boards_order_by_likes(final Member member1, final Member member2, final Member member3) throws Exception {
 
             //given
-            memberRepository.save(member);
-            final List<Board> savedBoards = saveBoards(member);
+            final Slice<Member> members = new SliceImpl<>(List.of(member1, member2, member3));
+            memberRepository.saveAll(members);
+            final List<Board> savedBoards = saveBoards(member1);
 
             final Board likeTarget = savedBoards.get(0);
 
-            likeRepository.save(likeMapper.registerLikeRequestToEntity(member, likeTarget));
+            likeRepository.save(likeMapper.registerLikeRequestToEntity(member1, likeTarget));
+            likeRepository.save(likeMapper.registerLikeRequestToEntity(member2, likeTarget));
+            likeRepository.save(likeMapper.registerLikeRequestToEntity(member3, likeTarget));
 
             //when
             final Slice<Board> sortedBoards = boardRepository.findAllByOrderByLikesDesc(pageable);
@@ -193,7 +197,7 @@ class BoardRepositoryTest {
             // then
             SoftAssertions.assertSoftly(softly -> {
                 softly.assertThat(myBoards.getContent()).isNotEmpty();
-                softly.assertThat(myBoards.getContent().size()).isEqualTo(2);
+                softly.assertThat(myBoards.getContent().size()).isEqualTo(3);
             });
         }
 

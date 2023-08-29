@@ -6,7 +6,7 @@ server:
 spring:
   profiles:
     active: dev
-    include: jwt, bcrypt
+    include: jwt, bcrypt, dev
     group:
       dev: dev-db
       test: test-db
@@ -15,4 +15,4 @@ logging.level:
   org.hibernate.SQL: debug
 
 logging:
-  config: classpath:application-log-dev.yml
+  config: classpath:application-log-local.yml
