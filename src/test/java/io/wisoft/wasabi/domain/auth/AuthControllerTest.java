@@ -71,10 +71,11 @@ class AuthControllerTest {
             given(authService.signup(request)).willReturn(response);
 
             //when
-            final var result = mockMvc.perform(post("/auth/signup")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/auth/signup")
+                            .accept(APPLICATION_JSON)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isCreated());
@@ -98,10 +99,11 @@ class AuthControllerTest {
             );
 
             //when
-            final var result = mockMvc.perform(post("/auth/signup")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/auth/signup")
+                            .accept(APPLICATION_JSON)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isBadRequest());
@@ -123,7 +125,7 @@ class AuthControllerTest {
 
             final String accessToken = jwtTokenProvider.createAccessToken(1L, member.getName(), member.getRole(), false);
 
-            final LoginResponse loginResponse = new LoginResponse(
+            final var response = new LoginResponse(
                     member.getName(),
                     member.getRole(),
                     member.isActivation(),
@@ -131,13 +133,14 @@ class AuthControllerTest {
                     TOKEN_TYPE
             );
 
-            given(authService.login(request)).willReturn(loginResponse);
+            given(authService.login(request)).willReturn(response);
 
             //when
-            final var result = mockMvc.perform(post("/auth/login")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/auth/login")
+                            .accept(APPLICATION_JSON)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isOk());
@@ -154,10 +157,11 @@ class AuthControllerTest {
             );
 
             //when
-            final var result = mockMvc.perform(post("/auth/login")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/auth/login")
+                            .accept(APPLICATION_JSON)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isBadRequest());
