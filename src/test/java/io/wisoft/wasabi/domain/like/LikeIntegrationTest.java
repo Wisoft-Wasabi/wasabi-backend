@@ -84,7 +84,7 @@ public class LikeIntegrationTest extends IntegrationTest {
         void register_like() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(
+            final String accessToken = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
                     member.getRole(),
@@ -98,7 +98,7 @@ public class LikeIntegrationTest extends IntegrationTest {
             //when
             final var result = mockMvc.perform(post("/likes")
                     .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer" + token)
+                    .header("Authorization", "Bearer" + accessToken)
                     .content(content));
 
             //then
@@ -110,7 +110,7 @@ public class LikeIntegrationTest extends IntegrationTest {
         void register_like_fail() throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(
+            final String accessToken = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
                     member.getRole(),
@@ -125,7 +125,7 @@ public class LikeIntegrationTest extends IntegrationTest {
             final var result = mockMvc.perform(post("/likes")
                     .contentType(APPLICATION_JSON)
                     .content(content)
-                    .header("Authorization", "Bearer " + token));
+                    .header("Authorization", "Bearer " + accessToken));
 
             // then
             result.andExpect(status().isNotFound());
@@ -144,7 +144,7 @@ public class LikeIntegrationTest extends IntegrationTest {
             final Like like = new Like(member, board);
             likeRepository.save(like);
 
-            final String token = jwtTokenProvider.createAccessToken(
+            final String accessToken = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
                     member.getRole(),
@@ -154,7 +154,7 @@ public class LikeIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(delete("/likes")
                     .param("boardId", String.valueOf(board.getId()))
-                    .header("Authorization", "Bearer " + token));
+                    .header("Authorization", "Bearer " + accessToken));
 
             // then
             result.andExpect(status().isOk());
@@ -165,7 +165,7 @@ public class LikeIntegrationTest extends IntegrationTest {
         void cancel_like_fail() throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(
+            final String accessToken = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
                     member.getRole(),
@@ -175,7 +175,7 @@ public class LikeIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(delete("/likes")
                     .param("boardId", String.valueOf(10L))
-                    .header("Authorization", "Bearer " + token));
+                    .header("Authorization", "Bearer " + accessToken));
 
             // then
             result.andExpect(status().isNotFound());
@@ -192,7 +192,7 @@ public class LikeIntegrationTest extends IntegrationTest {
         void get_like_status() throws Exception {
 
             //given
-            final var token = jwtTokenProvider.createAccessToken(
+            final var accessToken = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
                     member.getRole(),
@@ -202,7 +202,7 @@ public class LikeIntegrationTest extends IntegrationTest {
             //when
             final var result = mockMvc.perform(get("/likes")
                     .param("boardId", String.valueOf(board.getId()))
-                    .header("Authorization", "Bearer" + token));
+                    .header("Authorization", "Bearer" + accessToken));
 
             //then
             result.andExpect(status().isOk());
@@ -213,7 +213,7 @@ public class LikeIntegrationTest extends IntegrationTest {
         void get_like_status_fail() throws Exception {
 
             //given
-            final var token = jwtTokenProvider.createAccessToken(
+            final var accessToken = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
                     member.getRole(),
@@ -223,7 +223,7 @@ public class LikeIntegrationTest extends IntegrationTest {
             //when
             final var result = mockMvc.perform(get("/likes")
                     .param("boardId", String.valueOf(100000L))
-                    .header("Authorization", "Bearer" + token));
+                    .header("Authorization", "Bearer" + accessToken));
 
             //then
             result.andExpect(status().isNotFound())

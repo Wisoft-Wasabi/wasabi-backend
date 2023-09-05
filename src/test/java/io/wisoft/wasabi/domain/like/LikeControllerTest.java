@@ -58,7 +58,7 @@ class LikeControllerTest {
         void register_like() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
 
             final var request = new RegisterLikeRequest(1L);
 
@@ -67,11 +67,10 @@ class LikeControllerTest {
 
 
             //when
-            final var result = mockMvc.perform(
-                    post("/likes")
-                            .contentType(APPLICATION_JSON)
-                            .header("Authorization", "Bearer" + token)
-                            .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(post("/likes")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer" + accessToken)
+                    .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isCreated());
@@ -82,7 +81,7 @@ class LikeControllerTest {
         void register_like_fail() throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
 
             final var request = new RegisterLikeRequest(1L);
 
@@ -90,11 +89,11 @@ class LikeControllerTest {
             given(likeService.registerLike(any(), any())).willThrow(new LikeNotFoundException());
 
             // when
-            final var result = mockMvc.perform(
-                    post("/likes")
-                            .contentType(APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(post("/likes")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request)));
+
 
             // then
             result.andExpect(status().isNotFound());
@@ -115,15 +114,14 @@ class LikeControllerTest {
         ) throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             given(likeService.cancelLike(any(), any())).willReturn(response);
 
             // when
-            final var result = mockMvc.perform(
-                    delete("/likes")
-                            .param("boardId", String.valueOf(boardId))
-                            .header("Authorization", "Bearer " + token));
+            final var result = mockMvc.perform(delete("/likes")
+                    .param("boardId", String.valueOf(boardId))
+                    .header("Authorization", "Bearer " + accessToken));
 
             // then
             result.andExpect(status().isOk());
@@ -138,15 +136,14 @@ class LikeControllerTest {
         ) throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             given(likeService.cancelLike(any(), any())).willThrow(exception);
 
             // when
-            final var result = mockMvc.perform(
-                    delete("/likes")
-                            .param("boardId", String.valueOf(boardId))
-                            .header("Authorization", "Bearer " + token));
+            final var result = mockMvc.perform(delete("/likes")
+                    .param("boardId", String.valueOf(boardId))
+                    .header("Authorization", "Bearer " + accessToken));
 
             // then
             result.andExpect(status().isNotFound());
@@ -162,7 +159,7 @@ class LikeControllerTest {
         void get_like_status() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             final Long boardId = 1L;
 
@@ -170,10 +167,9 @@ class LikeControllerTest {
             given(likeService.getLikeStatus(any(), any())).willReturn(response);
 
             //when
-            final var result = mockMvc.perform(
-                    get("/likes")
-                            .param("boardId", String.valueOf(boardId))
-                            .header("Authorization", "Bearer" + token));
+            final var result = mockMvc.perform(get("/likes")
+                    .param("boardId", String.valueOf(boardId))
+                    .header("Authorization", "Bearer" + accessToken));
 
             //then
             result.andExpect(status().isOk());
@@ -184,7 +180,7 @@ class LikeControllerTest {
         void get_like_status_fail() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             final Long boardId = 10L;
 
@@ -192,10 +188,10 @@ class LikeControllerTest {
             given(likeService.getLikeStatus(any(), any())).willThrow(new LikeNotFoundException());
 
             //when
-            final var result = mockMvc.perform(
-                    get("/likes")
-                            .param("boardId", String.valueOf(boardId))
-                            .header("Authorization", "Bearer" + token));
+            final var result = mockMvc.perform(get("/likes")
+                    .param("boardId", String.valueOf(boardId))
+                    .header("Authorization", "Bearer" + accessToken));
+
 
             //then
             result.andExpect(status().isNotFound());

@@ -9,11 +9,14 @@ import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberMapper;
 import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -30,10 +33,10 @@ public class AuthIntegrationTest extends IntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private MemberMapper memberMapper;
+    private MemberRepository memberRepository;
 
     @Autowired
-    private MemberRepository memberRepository;
+    private EncryptHelper encryptHelper;
 
 
     @Nested
@@ -64,23 +67,37 @@ public class AuthIntegrationTest extends IntegrationTest {
     @DisplayName("로그인")
     class Login {
 
+        @Value("${bcrypt.secret.salt}")
+        private String salt;
+
         @DisplayName("이메일과 비밀번호가 일치해, 로그인에 성공한다.")
         @ParameterizedTest
         @AutoSource
         @Customization(SignupRequestCustomization.class)
-        void login_success(final SignupRequest signupRequest) throws Exception {
+        void login_success(final SignupRequest request) throws Exception {
 
             //given
-            final Member member = memberMapper.signUpRequestToEntity(signupRequest);
+            final Member member = new Member(
+                    request.email(),
+                    encryptHelper.encrypt(request.password(), salt),
+                    request.name(),
+                    request.phoneNumber(),
+                    false,
+                    Role.GENERAL,
+                    request.referenceUrl(),
+                    request.part(),
+                    request.organization(),
+                    request.motto()
+            );
             memberRepository.save(member);
 
-            final var request = new LoginRequest(signupRequest.email(), signupRequest.password());
+            final var loginRequest = new LoginRequest(request.email(), request.password());
 
             //when
             final var result = mockMvc.perform(post("/auth/login")
                     .accept(APPLICATION_JSON)
                     .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+                    .content(objectMapper.writeValueAsString(loginRequest)));
 
             //then
             result.andExpect(status().isOk())
