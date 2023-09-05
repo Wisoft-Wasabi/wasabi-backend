@@ -21,7 +21,7 @@ public class BoardImage {
     private Board board;
 
 
-    public void setBoard(final Board board) {
+    private void setBoard(final Board board) {
         this.board = board;
         board.getBoardImages().add(this);
     }
