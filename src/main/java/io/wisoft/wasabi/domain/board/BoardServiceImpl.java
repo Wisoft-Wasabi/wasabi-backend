@@ -18,11 +18,12 @@ import java.util.Arrays;
 @Service
 @Transactional(readOnly = true)
 public class BoardServiceImpl<T> implements BoardService<T> {
+
+    private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
     private final BoardMapper boardMapper;
-    private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
 
 
     public BoardServiceImpl(final BoardRepository boardRepository,
