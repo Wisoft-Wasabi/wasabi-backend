@@ -14,9 +14,11 @@ import io.wisoft.wasabi.domain.like.LikeService;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,6 +28,7 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -38,6 +41,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -67,13 +71,17 @@ class BoardControllerTest {
     @MockBean
     private AnyoneResolver anyoneResolver;
 
+    @MockBean
+    private AdminRoleResolver adminRoleResolver;
+
     @Spy
     private ObjectMapper objectMapper;
 
     @Spy
     private BoardMapper boardMapper;
 
-
+    @SpyBean
+    private ResponseAspect responseAspect;
 
     @Nested
     @DisplayName("게시글 작성")
@@ -84,7 +92,7 @@ class BoardControllerTest {
         void write_board() throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             final var request = new WriteBoardRequest(
                     "title",
@@ -144,6 +152,7 @@ class BoardControllerTest {
             //then
             result.andExpect(status().isOk());
         }
+
         @ParameterizedTest
         @AutoSource
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 조회수 가장 많은 게시글이 먼저 조회된다.")
@@ -177,13 +186,13 @@ class BoardControllerTest {
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 최신순으로 게시글이 먼저 조회된다.")
         @Customization(NotSaveBoardCustomization.class)
         void read_boards_order_by_created_at(final Board board1,
-                                            final Board board2) throws Exception {
+                                             final Board board2) throws Exception {
             //given
             final var boards = boardMapper.entityToSortBoardResponse(
-                    new SliceImpl<>(List.of(board2,board1))
+                    new SliceImpl<>(List.of(board2, board1))
             );
 
-            given(boardService.getSortedBoards(any(),any())).willReturn(boards);
+            given(boardService.getSortedBoards(any(), any())).willReturn(boards);
 
             //when
             final var result = mockMvc.perform(
@@ -210,10 +219,10 @@ class BoardControllerTest {
             likeService.registerLike(member.getId(), new RegisterLikeRequest(board1.getId()));
 
             final var boards = boardMapper.entityToSortBoardResponse(
-                    new SliceImpl<>(List.of(board2,board1))
+                    new SliceImpl<>(List.of(board2, board1))
             );
 
-            given(boardService.getSortedBoards(any(),any())).willReturn(boards);
+            given(boardService.getSortedBoards(any(), any())).willReturn(boards);
 
             //when
             final var result = mockMvc.perform(
@@ -237,7 +246,7 @@ class BoardControllerTest {
             // given
             given(boardService.getMyBoards(any(), any())).willReturn(new SliceImpl<>(boardsResponses));
 
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             // when
             final var result = mockMvc.perform(
@@ -255,12 +264,29 @@ class BoardControllerTest {
 
         @ParameterizedTest
         @AutoSource
+        @DisplayName("로그인 하지 않은 사용자가 좋아요한 게시글 목록 조회 요청시 예외가 발생한다.")
+        void read_my_like_boards_fail(final TokenNotExistException exception) throws Exception {
+
+            // given
+            given(boardService.getMyLikeBoards(any(), any())).willThrow(exception);
+
+            // when
+            final var result = mockMvc.perform(
+                    get("/boards/my-like")
+                            .contentType(APPLICATION_JSON));
+
+            // then
+            result.andExpect(status().isUnauthorized());
+        }
+
+        @ParameterizedTest
+        @AutoSource
         @Customization(NotSaveBoardCustomization.class)
         @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요를 누른 게시글 목록이 반환된다.")
         void read_my_like_boards(final List<Board> boards) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL,true);
 
             final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
 
@@ -275,23 +301,6 @@ class BoardControllerTest {
             // then
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.content.size()", is(3)));
-        }
-
-        @ParameterizedTest
-        @AutoSource
-        @DisplayName("로그인 하지 않은 사용자가 좋아요한 게시글 목록 조회 요청시 예외가 발생한다.")
-        void read_my_like_boards_fail(final TokenNotExistException exception) throws Exception {
-
-            // given
-            given(boardService.getMyLikeBoards(any(), any())).willThrow(exception);
-
-            // when
-            final var result = mockMvc.perform(
-                    get("/boards/my-like")
-                            .contentType(APPLICATION_JSON));
-
-            // then
-            result.andExpect(status().isUnauthorized());
         }
     }
 }

@@ -1,10 +1,10 @@
 package io.wisoft.wasabi.domain.board.exception;
 
 import io.wisoft.wasabi.global.exception.BusinessException;
-import io.wisoft.wasabi.global.exception.ErrorType;
+import io.wisoft.wasabi.global.config.web.response.ResponseType;
 
 public class BoardSortTypeInvalidException extends BusinessException {
     public BoardSortTypeInvalidException() {
-        super(ErrorType.SORT_TYPE_NOT_FOUND);
+        super(ResponseType.SORT_TYPE_NOT_FOUND);
     }
 }
