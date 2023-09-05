@@ -196,7 +196,6 @@ class LikeServiceTest {
                     member
             );
 
-            given(boardRepository.findById(any())).willReturn(Optional.of(board));
             given(likeRepository.countByBoardId(any())).willReturn(1);
 
             //when
@@ -214,14 +213,11 @@ class LikeServiceTest {
             final Long memberId = 10L;
             final Long boardId = 10L;
 
-            given(boardRepository.findById(any())).willReturn(Optional.empty());
-
             //when
 
             //then
-            assertThatThrownBy(
-                    () -> likeService.getLikeStatus(memberId, boardId)
-            ).isInstanceOf(BoardNotFoundException.class);
+            final GetLikeResponse response = likeService.getLikeStatus(memberId, boardId);
+            assertThat(response.isLike()).isFalse();
         }
     }
 }

@@ -19,12 +19,11 @@ import java.util.Arrays;
 @Transactional(readOnly = true)
 public class BoardServiceImpl<T> implements BoardService<T> {
 
-
+    private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
     private final BoardMapper boardMapper;
-    private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
 
 
     public BoardServiceImpl(final BoardRepository boardRepository,
@@ -50,6 +49,7 @@ public class BoardServiceImpl<T> implements BoardService<T> {
         saveImages(board, request);
 
         logger.info("[Result] {}번 회원의 {}번 게시글 작성", memberId, board.getId());
+
         return boardMapper.entityToWriteBoardResponse(board);
     }
 
@@ -126,6 +126,7 @@ public class BoardServiceImpl<T> implements BoardService<T> {
         final Slice<Board> myLikeBoards = boardRepository.findAllMyLikeBoards(memberId, pageable);
 
         logger.info("[Result] {}번 회원의 자신이 좋아요 한 게시글 목록 조회", memberId);
+
         return boardMapper.entityToMyLikeBoardsResponse(myLikeBoards);
     }
 }
