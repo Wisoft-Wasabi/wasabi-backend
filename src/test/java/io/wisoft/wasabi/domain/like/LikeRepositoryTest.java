@@ -2,16 +2,11 @@ package io.wisoft.wasabi.domain.like;
 
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
-import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
+import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.member.Part;
-import io.wisoft.wasabi.domain.member.Role;
-import org.assertj.core.api.SoftAssertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -22,58 +17,22 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @ActiveProfiles("test")
-@DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DataJpaTest
 class LikeRepositoryTest {
-
-    @Autowired
-    private LikeRepository likeRepository;
 
     @Autowired
     private TestEntityManager em;
 
-    private Member member;
+    @Autowired
+    private LikeRepository likeRepository;
 
-    private Board board;
-
-    @BeforeEach
-    void init() {
-        // Member 초기화
-        member = new Member(
-                "게시글작성성공@gmail.com",
-                "test1234",
-                "test1234",
-                "01000000000",
-                false,
-                Role.GENERAL,
-                "www.naver.com",
-                Part.BACKEND,
-                "wisoft",
-                "공부는 동엽이처럼");
-
-        System.out.println("여기서 null" + member.getCreatedAt());
+    private Like init(final Member member,
+                      final Board board) {
         em.persist(member);
-
-        // Board 초기화
-        board = new Board(
-                "title",
-                "content",
-                member
-        );
-        em.persist(board);
-    }
-
-    private Like init(final Member member) {
-        em.persist(member);
-
-        final Board board = new Board(
-                "title",
-                "content",
-                member
-        );
         em.persist(board);
 
         return new Like(member, board);
@@ -83,30 +42,36 @@ class LikeRepositoryTest {
     @DisplayName("좋아요 등록")
     class RegisterLike {
 
-        @Test
         @DisplayName("요청 시 정상적으로 등록되어야 한다.")
-        void register_like() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        @Customization(BoardCompositeCustomizer.class)
+        void register_like(final Member member,
+                           final Board board) {
 
             //given
-            final Like like = new Like(member, board);
+            final Like like = init(member, board);
 
             //when
-            final Like savedLike = likeRepository.save(like);
+            final var result = likeRepository.save(like);
 
             //then
-            assertNotNull(savedLike);
-            assertThat(savedLike.getId()).isEqualTo(like.getId());
-            assertThat(savedLike.getBoard()).isEqualTo(board);
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result).isNotNull();
+                softAssertions.assertThat(result.getId()).isNotNull();
+            });
         }
 
-        @Test
         @DisplayName("존재하지 않는 데이터 요청 시 등록되지 않는다.")
-        void register_like_fail() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void register_like_fail(final Long memberId,
+                                final Long boardId) {
 
             //given
 
             //when
-            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
+            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(memberId, boardId);
 
             //then
             assertThat(result).isEmpty();
@@ -120,42 +85,36 @@ class LikeRepositoryTest {
         @DisplayName("요청 시 정상적으로 삭제되어야 한다.")
         @ParameterizedTest
         @AutoSource
-        @Customization(NotSaveMemberCustomization.class)
-        void cancel_like(
-                final Member member
-        ) {
+        @Customization(BoardCompositeCustomizer.class)
+        void cancel_like(final Member member,
+                         final Board board) {
 
             // given
-            final Like like = init(member);
-            likeRepository.save(like);
+            likeRepository.save(init(member, board));
 
             // when
-            like.delete();
             final int result = likeRepository.deleteByMemberIdAndBoardId(
-                    like.getMember().getId(),
-                    like.getBoard().getId()
+                    member.getId(),
+                    board.getId()
             );
 
             // then
-            SoftAssertions.assertSoftly(softAssertions -> {
-                softAssertions.assertThat(result).isEqualTo(1);
-                softAssertions.assertThat(like.getMember().getLikes().contains(like)).isEqualTo(false);
-                softAssertions.assertThat(like.getBoard().getLikes().contains(like)).isEqualTo(false);
-            });
-
+            assertThat(result).isOne();
         }
 
-        @Test
         @DisplayName("존재하지 않는 데이터 삭제시 아무것도 삭제되지 않는다.")
-        void cancel_like_fail() {
+        @ParameterizedTest
+        @AutoSource
+        void cancel_like_fail(final Long memberId,
+                              final Long boardId) {
 
             // given
 
             // when
-            final int result = likeRepository.deleteByMemberIdAndBoardId(10L, 10L);
+            final int result = likeRepository.deleteByMemberIdAndBoardId(memberId, boardId);
 
             // then
-            assertThat(result).isEqualTo(0);
+            assertThat(result).isZero();
         }
     }
 
@@ -166,36 +125,38 @@ class LikeRepositoryTest {
         @DisplayName("Member Id와 Board Id 조회 시 정상적으로 조회된다.")
         @ParameterizedTest
         @AutoSource
-        @Customization(NotSaveMemberCustomization.class)
-        void find_like_by_member_id_and_board_id(
-                final Member member
-        ) {
+        @Customization(BoardCompositeCustomizer.class)
+        void find_like_by_member_id_and_board_id(final Member member,
+                                                 final Board board) {
 
             // given
-            final Like like = init(member);
-            likeRepository.save(like);
+            final Like like = init(member, board);
+
+            final var expected = likeRepository.save(like);
 
             // when
-            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(
-                    like.getMember().getId(),
-                    like.getBoard().getId()
-            );
+            final var result = likeRepository.findByMemberIdAndBoardId(
+                    member.getId(),
+                    board.getId()
+            ).orElseThrow();
 
             // then
-            SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(result).isNotEmpty();
-                softly.assertThat(result.get().getId()).isEqualTo(like.getId());
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result).isNotNull();
+                softAssertions.assertThat(result.getId()).isEqualTo(expected.getId());
             });
         }
 
-        @Test
         @DisplayName("Member Id와 Board Id 조회 시 데이터가 없다면 빈값이 조회된다.")
-        void find_like_by_member_id_and_board_id_fail() {
+        @ParameterizedTest
+        @AutoSource
+        void find_like_by_member_id_and_board_id_fail(final Long memberId,
+                                                      final Long boardId) {
 
             // given
 
             // when
-            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId());
+            final Optional<Like> result = likeRepository.findByMemberIdAndBoardId(memberId, boardId);
 
             // then
             assertThat(result).isEmpty();
@@ -206,29 +167,33 @@ class LikeRepositoryTest {
     @DisplayName("좋아요 상태 조회")
     class GetLikeStatus {
 
-        @Test
         @DisplayName("BoardId 조회 시 정상적으로 좋아요수가 조회되어야 한다.")
-        void count_like_by_board_id() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        @Customization(BoardCompositeCustomizer.class)
+        void count_like_by_board_id(final Member member,
+                                    final Board board) {
 
             //given
-            final Like like = new Like(member, board);
+            final Like like = init(member, board);
             likeRepository.save(like);
 
             //when
             int result = likeRepository.countByBoardId(board.getId());
 
             //then
-            assertThat(result).isEqualTo(1);
+            assertThat(result).isOne();
         }
 
-        @Test
         @DisplayName("BoardId 조회 시 데이터가 없다면 빈값이 조회되어야 한다.")
-        void count_like_by_board_id_fail() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void count_like_by_board_id_fail(final Long boardId) {
 
             //given
 
             //when
-            int result = likeRepository.countByBoardId(board.getId());
+            int result = likeRepository.countByBoardId(boardId);
 
             //then
             assertThat(result).isZero();

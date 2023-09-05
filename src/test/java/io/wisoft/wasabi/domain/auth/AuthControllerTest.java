@@ -15,6 +15,7 @@ import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.given;
@@ -48,6 +50,9 @@ class AuthControllerTest {
     @MockBean
     private AnyoneResolver anyoneResolver;
 
+    @SpyBean
+    private ResponseAspect responseAspect;
+
     @MockBean
     private AdminRoleResolver adminRoleResolver;
 
@@ -71,10 +76,11 @@ class AuthControllerTest {
             given(authService.signup(request)).willReturn(response);
 
             //when
-            final var result = mockMvc.perform(post("/auth/signup")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/auth/signup")
+                            .accept(APPLICATION_JSON)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isCreated());
@@ -98,10 +104,11 @@ class AuthControllerTest {
             );
 
             //when
-            final var result = mockMvc.perform(post("/auth/signup")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/auth/signup")
+                            .accept(APPLICATION_JSON)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isBadRequest());
@@ -123,7 +130,7 @@ class AuthControllerTest {
 
             final String accessToken = jwtTokenProvider.createAccessToken(1L, member.getName(), member.getRole(), false);
 
-            final LoginResponse loginResponse = new LoginResponse(
+            final var response = new LoginResponse(
                     member.getName(),
                     member.getRole(),
                     member.isActivation(),
@@ -131,13 +138,14 @@ class AuthControllerTest {
                     TOKEN_TYPE
             );
 
-            given(authService.login(request)).willReturn(loginResponse);
+            given(authService.login(request)).willReturn(response);
 
             //when
-            final var result = mockMvc.perform(post("/auth/login")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/auth/login")
+                            .accept(APPLICATION_JSON)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isOk());
@@ -154,10 +162,11 @@ class AuthControllerTest {
             );
 
             //when
-            final var result = mockMvc.perform(post("/auth/login")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/auth/login")
+                            .accept(APPLICATION_JSON)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isBadRequest());

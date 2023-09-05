@@ -5,7 +5,8 @@ import io.wisoft.wasabi.domain.like.dto.GetLikeResponse;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
 import io.wisoft.wasabi.global.config.common.annotation.MemberId;
-import io.wisoft.wasabi.global.config.web.response.CommonResponse;
+import io.wisoft.wasabi.global.config.web.response.Response;
+import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,26 +24,41 @@ public class LikeController {
     }
 
     @PostMapping
-    public ResponseEntity<CommonResponse> registerLike(@MemberId final Long memberId,
-                                                       @RequestBody @Valid final RegisterLikeRequest request) {
+    public ResponseEntity<Response<RegisterLikeResponse>> registerLike(@MemberId final Long memberId,
+                                                                       @RequestBody @Valid final RegisterLikeRequest request) {
 
-        final RegisterLikeResponse response = likeService.registerLike(memberId, request);
-        return ResponseEntity.status(CREATED).body(CommonResponse.newInstance(response));
+        final RegisterLikeResponse data = likeService.registerLike(memberId, request);
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.LIKE_REGISTER_SUCCESS,
+                data
+            )
+        );
     }
 
     @DeleteMapping
-    public ResponseEntity<CommonResponse> cancelLike(@MemberId final Long memberId,
-                                                     @RequestParam("boardId") @Valid final Long boardId) {
+    public ResponseEntity<Response<CancelLikeResponse>> cancelLike(@MemberId final Long memberId,
+                                                                   @RequestParam("boardId") @Valid final Long boardId) {
 
-        final CancelLikeResponse response = likeService.cancelLike(memberId, boardId);
-        return ResponseEntity.ok(CommonResponse.newInstance(response));
+        final CancelLikeResponse data = likeService.cancelLike(memberId, boardId);
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.LIKE_CANCEL_SUCCESS,
+                data
+            )
+        );
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse> getLikeStatus(@MemberId final Long memberId,
-                                                        @RequestParam("boardId") final Long boardId) {
+    public ResponseEntity<Response<GetLikeResponse>> getLikeStatus(@MemberId final Long memberId,
+                                                                   @RequestParam("boardId") final Long boardId) {
 
-        final GetLikeResponse response = likeService.getLikeStatus(memberId, boardId);
-        return ResponseEntity.ok(CommonResponse.newInstance(response));
+        final GetLikeResponse data = likeService.getLikeStatus(memberId, boardId);
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.GET_LIKE_STATUS_SUCCESS,
+                data
+            )
+        );
     }
 }

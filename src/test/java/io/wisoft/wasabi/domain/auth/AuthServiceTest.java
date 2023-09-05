@@ -13,7 +13,6 @@ import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.member.exception.EmailOverlapException;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,12 +53,12 @@ class AuthServiceTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("회원가입이 정상적으로 동작하여, 회원이 생성된다.")
-        void signUp_success(final SignupRequest request) throws Exception {
+        void signUp_success(final SignupRequest request) {
 
             //given
             given(encryptHelper.encrypt(any(), any())).willReturn(request.password());
 
-            final Member mockMember = new Member(
+            final var mockMember = new Member(
                     request.email(),
                     encryptHelper.encrypt(request.password(), "test"),
                     request.name(),
@@ -73,10 +72,10 @@ class AuthServiceTest {
             );
             given(memberMapper.signUpRequestToEntity(request)).willReturn(mockMember);
 
-            final Member member = memberMapper.signUpRequestToEntity(request);
+            final var member = memberMapper.signUpRequestToEntity(request);
             given(memberRepository.existsByEmail(request.email())).willReturn(false);
 
-            final SignupResponse mockResponse = new SignupResponse(
+            final var mockResponse = new SignupResponse(
                     1L,
                     request.name()
             );
@@ -98,7 +97,7 @@ class AuthServiceTest {
             //given
             given(encryptHelper.encrypt(any(), any())).willReturn(request.password());
 
-            final Member mockMember = new Member(
+            final var mockMember = new Member(
                     request.email(),
                     encryptHelper.encrypt(request.password(), "test"),
                     request.name(),
@@ -119,9 +118,7 @@ class AuthServiceTest {
             //when
 
             //then
-            assertThrows(EmailOverlapException.class, () -> {
-                authService.signup(request);
-            });
+            assertThrows(EmailOverlapException.class, () -> authService.signup(request));
         }
     }
 
@@ -132,11 +129,11 @@ class AuthServiceTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("이메일, 비밀번호가 일치하여 로그인에 성공한다.")
-        void login_success(final Member member) throws Exception {
+        void login_success(final Member member) {
 
             //given
-            final String TOKEN_TYPE = "bearer";
-            final String ACCESS_TOKEN = "accessToken";
+            final var TOKEN_TYPE = "bearer";
+            final var ACCESS_TOKEN = "accessToken";
             final var request = new LoginRequest(member.getEmail(), member.getPassword());
 
             given(memberRepository.findMemberByEmail(request.email())).willReturn(Optional.of(member));
@@ -163,7 +160,7 @@ class AuthServiceTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("존재하지 않는 이메일이 입력으로 들어와 로그인에 실패한다.")
-        void login_fail_not_exist_email(final LoginRequest request) throws Exception {
+        void login_fail_not_exist_email(final LoginRequest request) {
 
             //given
             given(memberRepository.findMemberByEmail(request.email())).willThrow(LoginFailException.class);
@@ -171,15 +168,13 @@ class AuthServiceTest {
             //when
 
             //then
-            Assertions.assertThrows(LoginFailException.class, () -> {
-                authService.login(request);
-            });
+            assertThrows(LoginFailException.class, () -> authService.login(request));
         }
 
         @ParameterizedTest
         @AutoSource
         @DisplayName("이메일은 존재하지만, 비밀번호가 존재하지 않아 로그인에 실패한다.")
-        void login_fail_invalid_password(final Member member) throws Exception {
+        void login_fail_invalid_password(final Member member) {
 
             //given
             final var request = new LoginRequest(member.getEmail(), member.getPassword());
@@ -189,9 +184,7 @@ class AuthServiceTest {
             //when
 
             //then
-            Assertions.assertThrows(LoginFailException.class, () -> {
-                authService.login(request);
-            });
+            assertThrows(LoginFailException.class, () -> authService.login(request));
         }
     }
 }

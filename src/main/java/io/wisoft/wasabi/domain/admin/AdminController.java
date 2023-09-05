@@ -5,7 +5,6 @@ import io.wisoft.wasabi.domain.admin.dto.response.ApproveMemberResponse;
 import io.wisoft.wasabi.domain.admin.dto.response.MembersResponse;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.aop.UserRole;
-import io.wisoft.wasabi.global.config.web.response.CommonResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
