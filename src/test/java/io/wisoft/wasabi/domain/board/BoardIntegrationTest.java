@@ -9,12 +9,12 @@ import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.like.LikeMapper;
 import io.wisoft.wasabi.domain.like.LikeRepository;
-import io.wisoft.wasabi.domain.like.LikeService;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class BoardIntegrationTest extends IntegrationTest {
 
@@ -58,10 +59,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
     @MockBean
     private AnyoneResolver anyoneResolver;
-
-    @Spy
-    private LikeMapper likeMapper;
-
+    
     @Nested
     @DisplayName("게시글 작성")
     class WriteBoard {
@@ -85,13 +83,13 @@ class BoardIntegrationTest extends IntegrationTest {
             final String json = objectMapper.writeValueAsString(request);
 
             // when
-            final var perform = mockMvc.perform(post("/boards")
+            final var result = mockMvc.perform(post("/boards")
                     .contentType(APPLICATION_JSON)
                     .header("Authorization", "bearer " + accessToken)
                     .content(json));
 
             // then
-            perform.andExpect(status().isCreated())
+            result.andExpect(status().isCreated())
                     .andExpect(jsonPath("$.data.id").exists());
         }
 
@@ -112,12 +110,12 @@ class BoardIntegrationTest extends IntegrationTest {
             final String json = objectMapper.writeValueAsString(request);
 
             // when
-            final var perform = mockMvc.perform(post("/boards")
+            final var result = mockMvc.perform(post("/boards")
                     .contentType(APPLICATION_JSON)
                     .content(json));
 
             // then
-            perform.andExpect(status().isUnauthorized());
+            result.andExpect(status().isUnauthorized());
         }
 
         @DisplayName("요청시 제목과 본문은 필수다.")
@@ -139,13 +137,13 @@ class BoardIntegrationTest extends IntegrationTest {
             final String json = objectMapper.writeValueAsString(request);
 
             // when
-            final var perform = mockMvc.perform(post("/boards")
+            final var result = mockMvc.perform(post("/boards")
                     .contentType(APPLICATION_JSON)
                     .header("Authorization", "bearer " + accessToken)
                     .content(json));
 
             // then
-            perform.andExpect(status().isBadRequest());
+            result.andExpect(status().isBadRequest());
         }
     }
 
@@ -279,9 +277,9 @@ class BoardIntegrationTest extends IntegrationTest {
             final Board board1 = saveBoard(member1);
             final Board board2 = saveBoard(member1);
 
-            likeRepository.save(likeMapper.registerLikeRequestToEntity(member1, board2));
-            likeRepository.save(likeMapper.registerLikeRequestToEntity(member2, board2));
-            likeRepository.save(likeMapper.registerLikeRequestToEntity(member3, board2));
+            likeRepository.save(new Like(member1, board2));
+            likeRepository.save(new Like(member2, board2));
+            likeRepository.save(new Like(member3, board2));
 
             //when
             final var result = mockMvc.perform(get("/boards?sortBy=likes")
@@ -290,8 +288,8 @@ class BoardIntegrationTest extends IntegrationTest {
 
 
             //then
-            result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
+            result.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
         }
 
         @ParameterizedTest
@@ -307,6 +305,11 @@ class BoardIntegrationTest extends IntegrationTest {
             final Board board2 = saveBoard(member);
 
             board2.increaseView();
+            board2.increaseView();
+            board2.increaseView();
+            board2.increaseView();
+            board2.increaseView();
+
             boardRepository.save(board2);
 
             //when
@@ -337,13 +340,14 @@ class BoardIntegrationTest extends IntegrationTest {
                     .accept(APPLICATION_JSON));
 
             //then
-            result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
+            result.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
         }
 
         private Board saveBoard(final Member member) {
             final Random random = new Random();
             final String title = "title" + random.nextInt(10);
+
             return boardRepository.save(new Board(title, "content", member));
         }
     }

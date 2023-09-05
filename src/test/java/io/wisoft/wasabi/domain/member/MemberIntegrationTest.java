@@ -58,13 +58,13 @@ public class MemberIntegrationTest extends IntegrationTest {
             final String json = objectMapper.writeValueAsString(request);
 
             // when
-            final var perform = mockMvc.perform(patch("/members")
+            final var result = mockMvc.perform(patch("/members")
                     .contentType(APPLICATION_JSON)
                     .header("Authorization", "bearer " + accessToken)
                     .content(json));
 
             // then
-            perform.andExpect(status().isOk())
+            result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.memberId").exists());
         }
 
@@ -85,12 +85,12 @@ public class MemberIntegrationTest extends IntegrationTest {
             final String json = objectMapper.writeValueAsString(request);
 
             // when
-            final var perform = mockMvc.perform(patch("/members")
+            final var result = mockMvc.perform(patch("/members")
                     .contentType(APPLICATION_JSON)
                     .content(json));
 
             // then
-            perform.andExpect(status().isUnauthorized());
+            result.andExpect(status().isUnauthorized());
 
         }
     }
@@ -110,12 +110,12 @@ public class MemberIntegrationTest extends IntegrationTest {
             final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole(), true);
 
             //when
-            final var perform = mockMvc.perform(get("/members")
+            final var result = mockMvc.perform(get("/members")
                     .contentType(APPLICATION_JSON)
                     .header("Authorization", "bearer " + accessToken));
 
             //then
-            perform.andExpect(status().isOk());
+            result.andExpect(status().isOk());
         }
     }
 }

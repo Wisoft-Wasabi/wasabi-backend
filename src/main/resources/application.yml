@@ -6,7 +6,7 @@ server:
 spring:
   profiles:
     active: dev
-    include: jwt, bcrypt, dev
+    include: jwt, bcrypt
     group:
       dev: dev-db
       test: test-db
