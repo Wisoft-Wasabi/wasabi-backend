@@ -6,7 +6,8 @@ import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
-import org.springframework.data.domain.PageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,13 @@ import java.util.Arrays;
 @Transactional(readOnly = true)
 public class BoardServiceImpl<T> implements BoardService<T> {
 
+
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
     private final BoardMapper boardMapper;
+    private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
+
 
     public BoardServiceImpl(final BoardRepository boardRepository,
                             final MemberRepository memberRepository,
@@ -45,6 +49,7 @@ public class BoardServiceImpl<T> implements BoardService<T> {
         boardRepository.save(board);
         saveImages(board, request);
 
+        logger.info("[Result] {}번 회원의 {}번 게시글 작성", memberId, board.getId());
         return boardMapper.entityToWriteBoardResponse(board);
     }
 
@@ -73,6 +78,7 @@ public class BoardServiceImpl<T> implements BoardService<T> {
         final boolean isLike = likeRepository.findByMemberIdAndBoardId((Long) accessId, boardId).isPresent();
         board.increaseView();
 
+        logger.info("[Result] {}번 회원의 {}번 게시글 조회", accessId, boardId);
         return boardMapper.entityToReadBoardResponse(board, isLike);
     }
 
@@ -82,6 +88,7 @@ public class BoardServiceImpl<T> implements BoardService<T> {
         final BoardSortType sortType = validateSortType(sortBy.toUpperCase());
         final Slice<Board> boardSlice = sort(sortType, pageable);
 
+        logger.info("[Result] {}를 기준으로 정렬한 게시글 목록 조회", sortBy);
         return boardMapper.entityToSortBoardResponse(boardSlice);
     }
 
@@ -105,7 +112,11 @@ public class BoardServiceImpl<T> implements BoardService<T> {
 
     @Override
     public Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable) {
+
         final Slice<Board> myBoards = boardRepository.findAllMyBoards(memberId, pageable);
+
+        logger.info("[Result] {}번 회원의 자신이 작성한 게시글 목록 조회", memberId);
+
         return boardMapper.entityToMyBoardsResponse(myBoards);
     }
 
@@ -113,6 +124,8 @@ public class BoardServiceImpl<T> implements BoardService<T> {
     public Slice<MyLikeBoardsResponse> getMyLikeBoards(final Long memberId, final Pageable pageable) {
 
         final Slice<Board> myLikeBoards = boardRepository.findAllMyLikeBoards(memberId, pageable);
+
+        logger.info("[Result] {}번 회원의 자신이 좋아요 한 게시글 목록 조회", memberId);
         return boardMapper.entityToMyLikeBoardsResponse(myLikeBoards);
     }
 }

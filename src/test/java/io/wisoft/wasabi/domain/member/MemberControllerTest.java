@@ -22,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -65,7 +64,7 @@ class MemberControllerTest {
 
             //given
             final Long memberId = 1L;
-            final String accessToken = jwtTokenProvider.createAccessToken(memberId, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(memberId, "writer", Role.GENERAL, false);
 
             final var mockResponse = new ReadMemberInfoResponse(
                     member.getEmail(),
@@ -100,7 +99,7 @@ class MemberControllerTest {
         void update_info(final UpdateMemberInfoResponse response) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             final var request = new UpdateMemberInfoRequest(
                     "name",

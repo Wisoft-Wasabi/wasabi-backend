@@ -35,6 +35,7 @@ public class AuthIntegrationTest extends IntegrationTest {
     @Autowired
     private MemberRepository memberRepository;
 
+
     @Nested
     @DisplayName("회원 가입")
     class SignUp {

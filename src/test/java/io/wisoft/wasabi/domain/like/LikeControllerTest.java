@@ -58,7 +58,7 @@ class LikeControllerTest {
         void register_like() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
 
             final var request = new RegisterLikeRequest(1L);
 
@@ -81,7 +81,7 @@ class LikeControllerTest {
         void register_like_fail() throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
 
             final var request = new RegisterLikeRequest(1L);
 
@@ -103,7 +103,7 @@ class LikeControllerTest {
     @DisplayName("좋아요 취소")
     class CancelLike {
 
-//        @Test
+        //        @Test
         @DisplayName("요청 시 정상적으로 응답된다.")
         @ParameterizedTest
         @AutoSource
@@ -113,13 +113,13 @@ class LikeControllerTest {
         ) throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             given(likeService.cancelLike(any(), any())).willReturn(response);
 
             // when
             final var result = mockMvc.perform(delete("/likes")
-                            .param("boardId", String.valueOf(boardId))
+                    .param("boardId", String.valueOf(boardId))
                     .header("Authorization", "Bearer " + token));
 
             // then
@@ -135,7 +135,7 @@ class LikeControllerTest {
         ) throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             given(likeService.cancelLike(any(), any())).willThrow(exception);
 
@@ -158,7 +158,7 @@ class LikeControllerTest {
         void get_like_status() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             final Long boardId = 1L;
 
@@ -179,7 +179,7 @@ class LikeControllerTest {
         void get_like_status_fail() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             final Long boardId = 10L;
 

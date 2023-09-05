@@ -1,6 +1,5 @@
 package io.wisoft.wasabi.domain.member;
 
-
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoRequest;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @RestController
 @RequestMapping("/members")

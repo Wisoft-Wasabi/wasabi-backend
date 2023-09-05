@@ -11,6 +11,7 @@ import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
 import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Part;
+import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
@@ -51,6 +52,9 @@ class AuthControllerTest {
 
     @SpyBean
     private ResponseAspect responseAspect;
+
+    @MockBean
+    private AdminRoleResolver adminRoleResolver;
 
     @Spy
     private ObjectMapper objectMapper;
@@ -122,7 +126,7 @@ class AuthControllerTest {
             //given
             final var request = new LoginRequest(member.getEmail(), member.getPassword());
 
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, member.getName(), member.getRole(), false);
 
             final LoginResponse loginResponse = new LoginResponse(
                     member.getName(),
