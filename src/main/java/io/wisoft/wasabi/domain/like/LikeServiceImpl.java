@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.like;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.domain.board.exception.BoardNotFoundException;
 import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
@@ -20,7 +21,6 @@ import java.util.Optional;
 public class LikeServiceImpl implements LikeService {
 
     private final Logger logger = LoggerFactory.getLogger(LikeServiceImpl.class);
-
     private final LikeRepository likeRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
@@ -49,6 +49,8 @@ public class LikeServiceImpl implements LikeService {
 
         likeRepository.save(like);
 
+        logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 등록", memberId, board.getId());
+
         return likeMapper.entityToRegisterLikeResponse(like);
     }
 
@@ -63,23 +65,23 @@ public class LikeServiceImpl implements LikeService {
         likeRepository.deleteById(like.getId());
         logger.info("[{}-회원]의 [{}-게시글]에 대한 좋아요 삭제", memberId, boardId);
 
+        logger.info("[{}-회원]의 [{}-게시글]에 대한 좋아요 삭제", memberId, boardId);
+
         return new CancelLikeResponse(like.getId());
     }
 
     public GetLikeResponse getLikeStatus(final Long memberId, final Long boardId) {
-        boardRepository.findById(boardId)
-                .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
         final boolean isLike = generateIsLike(memberId, boardId);
 
         final int likeCount = likeRepository.countByBoardId(boardId);
 
+        logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 상태 조회", memberId, boardId);
+
         return new GetLikeResponse(isLike, likeCount);
     }
 
     private boolean generateIsLike(final Long memberId, final Long boardId) {
-        final Optional<Like> like = likeRepository.findByMemberIdAndBoardId(memberId, boardId);
-
-        return like.isPresent();
+        return likeRepository.existsByMemberIdAndBoardId(memberId, boardId);
     }
 }

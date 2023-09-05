@@ -3,6 +3,9 @@ package io.wisoft.wasabi.global.config.web;
 import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
+import io.wisoft.wasabi.global.config.web.filter.LogFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -33,6 +36,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         resolvers.add(memberIdResolver);
         resolvers.add(anyoneResolver);
         resolvers.add(adminRoleResolver);
+    }
+
+    @Bean
+    public FilterRegistrationBean<LogFilter> filterRegistrationBean() {
+        return new FilterRegistrationBean<>(new LogFilter());
     }
 
     @Override

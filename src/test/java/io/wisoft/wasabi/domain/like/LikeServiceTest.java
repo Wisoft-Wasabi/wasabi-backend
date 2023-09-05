@@ -7,14 +7,12 @@ import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.board.exception.BoardNotFoundException;
-import io.wisoft.wasabi.domain.like.dto.*;
+import io.wisoft.wasabi.domain.like.dto.GetLikeResponse;
+import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.exception.LikeNotFoundException;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.domain.member.Part;
-import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.member.exception.MemberNotFoundException;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,38 +54,28 @@ class LikeServiceTest {
     @DisplayName("좋아요 등록")
     class RegisterLike {
 
-        @Test
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("요청 시 정상적으로 등록되어야 한다.")
-        void register_like() throws Exception {
+        void register_like(final Member member) {
 
             //given
-            final Member member = new Member(
-                    "게시글작성성공@gmail.com",
-                    "test1234",
-                    "test1234",
-                    "01000000000",
-                    false,
-                    Role.GENERAL,
-                    "www.naver.com",
-                    Part.BACKEND,
-                    "wisoft",
-                    "공부는 동엽이처럼");
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
-            final Board board = new Board(
+            final var board = new Board(
                     "title",
                     "content",
                     member
             );
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
 
-            final RegisterLikeRequest request = new RegisterLikeRequest(board.getId());
+            final var request = new RegisterLikeRequest(board.getId());
 
-            final Like like = likeMapper.registerLikeRequestToEntity(member, board);
+            final var like = likeMapper.registerLikeRequestToEntity(member, board);
             given(likeRepository.save(any())).willReturn(like);
 
             //when
-            final RegisterLikeResponse response = likeService.registerLike(member.getId(), request);
+            final var response = likeService.registerLike(member.getId(), request);
 
             //then
             assertNotNull(response);
@@ -97,19 +84,17 @@ class LikeServiceTest {
 
         @Test
         @DisplayName("존재하지 않는 데이터 요청 시 등록되지 않는다.")
-        void register_like_fail() throws Exception {
+        void register_like_fail() {
 
             //given
-            final RegisterLikeRequest request = new RegisterLikeRequest(1L);
+            final var request = new RegisterLikeRequest(1L);
             given(memberRepository.findById(any())).willReturn(Optional.empty());
 
             //when
 
             //then
-            assertThrows(
-                    MemberNotFoundException.class,
-                    () -> likeService.registerLike(null, request)
-            );
+            assertThrows(MemberNotFoundException.class,
+                    () -> likeService.registerLike(null, request));
         }
     }
 
@@ -132,28 +117,25 @@ class LikeServiceTest {
         ) {
 
             // given
-
-            final Like like = new Like(member, board);
+            final var like = new Like(member, board);
 
             given(likeRepository.findByMemberIdAndBoardId(any(), any())).willReturn(Optional.of(like));
 
             // when
-            final CancelLikeResponse result = likeService.cancelLike(memberId, boardId);
+            final var result = likeService.cancelLike(memberId, boardId);
 
             // then
-            SoftAssertions.assertSoftly(softly -> {
-                softly.assertThat(result).isNotNull();
-                softly.assertThat(like.getMember().getLikes().contains(like)).isFalse();
-                softly.assertThat(like.getBoard().getLikes().contains(like)).isFalse();
+            SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result).isNotNull();
+                softAssertions.assertThat(like.getMember().getLikes().contains(like)).isFalse();
+                softAssertions.assertThat(like.getBoard().getLikes().contains(like)).isFalse();
             });
         }
 
         @DisplayName("존재하지 않는 좋아요를 조회하여 에러를 던진다.")
         @ParameterizedTest
         @AutoSource
-        void cancel_like_fail(
-                final Long boardId
-        ) {
+        void cancel_like_fail(final Long boardId) {
 
             // given
             given(likeRepository.findByMemberIdAndBoardId(any(), any())).willReturn(Optional.empty());
@@ -161,9 +143,8 @@ class LikeServiceTest {
             // when
 
             // then
-            Assertions.assertThatThrownBy(
-                    () -> likeService.cancelLike(null, boardId)
-            ).isInstanceOf(LikeNotFoundException.class);
+            assertThrows(LikeNotFoundException.class,
+                    () -> likeService.cancelLike(null, boardId));
         }
     }
 
@@ -171,57 +152,38 @@ class LikeServiceTest {
     @DisplayName("좋아요 상태 조회")
     class GetLikeStatus {
 
-        @Test
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("요청이 성공적으로 수행되어 정상적으로 조회되어야 한다.")
-        void get_like_status() throws Exception {
+        void get_like_status(final Board board,
+                             final Long memberId,
+                             final Long boardId) {
 
             //given
-            final Long memberId = 1L;
-            final Long boardId = 1L;
-
-            final Member member = new Member(
-                    "게시글작성성공@gmail.com",
-                    "test1234",
-                    "test1234",
-                    "01000000000",
-                    false,
-                    Role.GENERAL,
-                    "www.naver.com",
-                    Part.BACKEND,
-                    "wisoft",
-                    "공부는 동엽이처럼");
-            final Board board = new Board(
-                    "title",
-                    "content",
-                    member
-            );
-
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
             given(likeRepository.countByBoardId(any())).willReturn(1);
 
             //when
-            final GetLikeResponse response = likeService.getLikeStatus(memberId, boardId);
+            final var response = likeService.getLikeStatus(memberId, boardId);
 
             //then
             assertThat(response).isNotNull();
         }
 
-        @Test
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("존재하지 않는 게시글에 대해 좋아요를 조회하면 에러가 발생한다.")
-        void get_like_status_fail() throws Exception {
+        void get_like_status_fail(final Long memberId,
+                                  final Long boardId) {
 
             //given
-            final Long memberId = 10L;
-            final Long boardId = 10L;
-
             given(boardRepository.findById(any())).willReturn(Optional.empty());
 
             //when
 
             //then
-            assertThatThrownBy(
-                    () -> likeService.getLikeStatus(memberId, boardId)
-            ).isInstanceOf(BoardNotFoundException.class);
+            assertThrows(BoardNotFoundException.class,
+                    () -> likeService.getLikeStatus(memberId, boardId));
         }
     }
 }

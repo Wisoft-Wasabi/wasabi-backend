@@ -8,6 +8,7 @@ import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +46,9 @@ class LikeControllerTest {
     @MockBean
     private AuthorizationExtractor extractor;
 
+    @SpyBean
+    private ResponseAspect responseAspect;
+
     @Nested
     @DisplayName("좋아요 등록")
     class RegisterLike {
@@ -62,10 +67,11 @@ class LikeControllerTest {
 
 
             //when
-            final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer" + token)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/likes")
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer" + token)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isCreated());
@@ -84,10 +90,11 @@ class LikeControllerTest {
             given(likeService.registerLike(any(), any())).willThrow(new LikeNotFoundException());
 
             // when
-            final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/likes")
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .content(objectMapper.writeValueAsString(request)));
 
             // then
             result.andExpect(status().isNotFound());
@@ -113,9 +120,10 @@ class LikeControllerTest {
             given(likeService.cancelLike(any(), any())).willReturn(response);
 
             // when
-            final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer " + token));
+            final var result = mockMvc.perform(
+                    delete("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header("Authorization", "Bearer " + token));
 
             // then
             result.andExpect(status().isOk());
@@ -135,9 +143,10 @@ class LikeControllerTest {
             given(likeService.cancelLike(any(), any())).willThrow(exception);
 
             // when
-            final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer " + token));
+            final var result = mockMvc.perform(
+                    delete("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header("Authorization", "Bearer " + token));
 
             // then
             result.andExpect(status().isNotFound());
@@ -161,9 +170,10 @@ class LikeControllerTest {
             given(likeService.getLikeStatus(any(), any())).willReturn(response);
 
             //when
-            final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer" + token));
+            final var result = mockMvc.perform(
+                    get("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header("Authorization", "Bearer" + token));
 
             //then
             result.andExpect(status().isOk());
@@ -182,9 +192,10 @@ class LikeControllerTest {
             given(likeService.getLikeStatus(any(), any())).willThrow(new LikeNotFoundException());
 
             //when
-            final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer" + token));
+            final var result = mockMvc.perform(
+                    get("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header("Authorization", "Bearer" + token));
 
             //then
             result.andExpect(status().isNotFound());
