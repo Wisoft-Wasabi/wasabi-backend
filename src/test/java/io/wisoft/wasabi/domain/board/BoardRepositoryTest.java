@@ -7,6 +7,7 @@ import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.member.Member;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -177,6 +180,7 @@ class BoardRepositoryTest {
             assertSoftly(softAssertions -> {
                 softAssertions.assertThat(result.getContent()).isNotEmpty();
                 softAssertions.assertThat(result.getContent().size()).isEqualTo(boards.size());
+
             });
         }
 

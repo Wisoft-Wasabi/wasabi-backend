@@ -1,5 +1,6 @@
 package io.wisoft.wasabi.global.config.common.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.wisoft.wasabi.domain.member.Role;
@@ -20,7 +21,7 @@ public class JwtTokenProvider {
     @Value("${jwt.issuer}")
     private String issuer;
 
-    public String createAccessToken(final Long memberId, final String name, final Role role) {
+    public String createAccessToken(final Long memberId, final String name, final Role role, final boolean activation) {
         final Date now = new Date();
         final Date validity = new Date(now.getTime() + this.accessTokenValidityInMilliseconds);
 
@@ -30,6 +31,7 @@ public class JwtTokenProvider {
                 .claim("memberId", memberId)
                 .claim("memberName", name)
                 .claim("memberRole", role)
+                .claim("memberActivation", activation)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, secretKey.getBytes())
@@ -44,4 +46,14 @@ public class JwtTokenProvider {
                 .getBody()
                 .get("memberId", Long.class);
     }
+
+    public Role decodeRole(final String accessToken) {
+       final Claims claims = Jwts.parser()
+                .setSigningKey(secretKey.getBytes())
+                .parseClaimsJws(accessToken)
+                .getBody();
+
+        return Role.valueOf(claims.get("memberRole", String.class));
+    }
+
 }

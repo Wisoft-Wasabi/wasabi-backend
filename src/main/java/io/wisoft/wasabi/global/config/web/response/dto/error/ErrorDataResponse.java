@@ -1,6 +1,6 @@
 package io.wisoft.wasabi.global.config.web.response.dto.error;
 
-import io.wisoft.wasabi.global.exception.ErrorType;
+import io.wisoft.wasabi.global.config.web.response.ResponseType;
 
 public class ErrorDataResponse {
     private String errorCode;
@@ -17,10 +17,10 @@ public class ErrorDataResponse {
         return errorMessage;
     }
 
-    public static ErrorDataResponse newInstance(final ErrorType errorType) {
+    public static ErrorDataResponse newInstance(final ResponseType responseType) {
         ErrorDataResponse dataResponse = new ErrorDataResponse();
-        dataResponse.errorCode = errorType.getErrorCode();
-        dataResponse.errorMessage = errorType.getErrorMessage();
+        dataResponse.errorCode = responseType.getCode();
+        dataResponse.errorMessage = responseType.getMessage();
         return dataResponse;
     }
 

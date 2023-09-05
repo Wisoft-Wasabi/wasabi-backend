@@ -26,7 +26,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -141,7 +141,7 @@ class AuthServiceTest {
 
             given(memberRepository.findMemberByEmail(request.email())).willReturn(Optional.of(member));
             given(encryptHelper.isMatch(any(), any())).willReturn(true);
-            given(jwtTokenProvider.createAccessToken(any(), any(), any())).willReturn(ACCESS_TOKEN);
+            given(jwtTokenProvider.createAccessToken(eq(member.getId()), eq(member.getName()), eq(member.getRole()), anyBoolean())).willReturn(ACCESS_TOKEN);
 
             final var mockResponse = new LoginResponse(
                     member.getName(),
@@ -151,7 +151,7 @@ class AuthServiceTest {
                     TOKEN_TYPE
             );
 
-            given(memberMapper.mapToLoginResponse(member, ACCESS_TOKEN)).willReturn(mockResponse);
+            given(memberMapper.entityToLoginResponse(member, ACCESS_TOKEN)).willReturn(mockResponse);
 
             //when
             final var response = authService.login(request);

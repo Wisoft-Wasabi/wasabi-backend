@@ -24,7 +24,6 @@ public class MemberIntegrationTest extends IntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-
     private MemberRepository memberRepository;
 
     @Autowired
@@ -45,7 +44,7 @@ public class MemberIntegrationTest extends IntegrationTest {
             // given
             final Member savedMember = memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), member.getName(), member.getRole(), true);
 
             final var request = new UpdateMemberInfoRequest(
                     "name",
@@ -108,7 +107,7 @@ public class MemberIntegrationTest extends IntegrationTest {
             //given
             memberRepository.save(member);
 
-            final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole());
+            final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole(), true);
 
             //when
             final var perform = mockMvc.perform(get("/members")
