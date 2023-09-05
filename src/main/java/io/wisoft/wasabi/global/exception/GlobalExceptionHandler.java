@@ -1,7 +1,10 @@
 package io.wisoft.wasabi.global.exception;
 
-import io.wisoft.wasabi.global.config.web.response.CommonResponse;
+import io.wisoft.wasabi.global.config.web.response.Response;
+import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import io.wisoft.wasabi.global.config.web.response.dto.error.ErrorDataResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -15,8 +18,10 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<CommonResponse> handlerMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
+    public ResponseEntity<Response<?>> handlerMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
         final List<String> globalErrors = ex.getGlobalErrors().stream()
                 .map(ObjectError::getDefaultMessage)
                 .toList();
@@ -31,23 +36,31 @@ public class GlobalExceptionHandler {
 
         final String message = String.join(", ", allErrors);
 
-        return buildResponse(ErrorType.dtoInvalid(message));
+        return buildResponse(ResponseType.dtoInvalid(message));
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<CommonResponse> handleBusinessException(final BusinessException ex) {
+    public ResponseEntity<Response<?>> handleBusinessException(final BusinessException ex) {
+
+        logger.info("\n [Error] BusinessException : HttpStatus : {}, ErrorCode : {}, ErrorType : {}", ex.getErrorType().getHttpStatusCode(), ex.getErrorType().getErrorCode(), ex.getErrorType());
+
         return buildResponse(ex.getErrorType());
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<CommonResponse> handleRuntimeException(final RuntimeException ex) {
-        return buildResponse(ErrorType.UNCAUGHT_ERROR);
+    public ResponseEntity<Response<?>> handleRuntimeException(final RuntimeException ex) {
+
+        logger.info("\n [Error] RuntimeException : ErrorMessage : {}  Path: {}", ex.getMessage(), ex.fillInStackTrace());
+        
+        return buildResponse(ResponseType.UNCAUGHT_ERROR);
     }
 
-    private ResponseEntity<CommonResponse> buildResponse(final ErrorType errorType) {
-        final ErrorDataResponse errorDataResponse = ErrorDataResponse.newInstance(errorType);
-        final CommonResponse response = CommonResponse.newInstance(errorDataResponse);
-
-        return ResponseEntity.status(errorType.getHttpStatusCode()).body(response);
+    private ResponseEntity<Response<?>> buildResponse(final ResponseType responseType) {
+        return ResponseEntity.ofNullable(
+            Response.of(
+                responseType,
+                null
+            )
+        );
     }
 }

@@ -1,0 +1,14 @@
+[32m[INFO][m 2023-08-28 01:29:13.836 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.0.Final
+[32m[INFO][m 2023-08-28 01:29:14.042 [Test worker] INFO  io.wisoft.wasabi.domain.board.BoardControllerTest - Starting BoardControllerTest using Java 17.0.3 with PID 31310 (started by leeseunghee in /home/leeseunghee/development/mdd_project/wasabi-backend)
+[32m[INFO][m 2023-08-28 01:29:14.060 [Test worker] INFO  io.wisoft.wasabi.domain.board.BoardControllerTest - The following 4 profiles are active: "jwt", "bcrypt", "dev", "dev-db"
+[32m[INFO][m 2023-08-28 01:29:17.679 [Test worker] INFO  org.springframework.boot.test.mock.web.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+[32m[INFO][m 2023-08-28 01:29:17.680 [Test worker] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Initializing Servlet ''
+[32m[INFO][m 2023-08-28 01:29:17.692 [Test worker] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Completed initialization in 4 ms
+[32m[INFO][m 2023-08-28 01:29:17.753 [Test worker] INFO  io.wisoft.wasabi.domain.board.BoardControllerTest - Started BoardControllerTest in 5.563 seconds (process running for 11.709)
+[32m[INFO][m 2023-08-28 01:29:51.723 [background-preinit] INFO  org.hibernate.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.0.Final
+[32m[INFO][m 2023-08-28 01:29:51.784 [Test worker] INFO  io.wisoft.wasabi.domain.board.BoardControllerTest - Starting BoardControllerTest using Java 17.0.3 with PID 14863 (started by leeseunghee in /home/leeseunghee/development/mdd_project/wasabi-backend)
+[32m[INFO][m 2023-08-28 01:29:51.792 [Test worker] INFO  io.wisoft.wasabi.domain.board.BoardControllerTest - The following 4 profiles are active: "jwt", "bcrypt", "dev", "dev-db"
+[32m[INFO][m 2023-08-28 01:29:54.168 [Test worker] INFO  org.springframework.boot.test.mock.web.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+[32m[INFO][m 2023-08-28 01:29:54.169 [Test worker] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Initializing Servlet ''
+[32m[INFO][m 2023-08-28 01:29:54.178 [Test worker] INFO  org.springframework.test.web.servlet.TestDispatcherServlet - Completed initialization in 4 ms
+[32m[INFO][m 2023-08-28 01:29:54.219 [Test worker] INFO  io.wisoft.wasabi.domain.board.BoardControllerTest - Started BoardControllerTest in 3.816 seconds (process running for 8.836)

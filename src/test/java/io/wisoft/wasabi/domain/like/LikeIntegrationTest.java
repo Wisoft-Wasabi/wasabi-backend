@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -41,7 +42,7 @@ public class LikeIntegrationTest extends IntegrationTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
+    @Spy
     private ObjectMapper objectMapper;
 
     private Member member;
@@ -62,6 +63,7 @@ public class LikeIntegrationTest extends IntegrationTest {
                 Part.BACKEND,
                 "wisoft",
                 "공부는 동엽이처럼");
+
         memberRepository.save(member);
 
         board = new Board(
@@ -69,6 +71,7 @@ public class LikeIntegrationTest extends IntegrationTest {
                 "content",
                 member
         );
+
         boardRepository.save(board);
     }
 
@@ -84,7 +87,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             final var request = new RegisterLikeRequest(board.getId());
@@ -109,7 +113,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             final var request = new RegisterLikeRequest(100000L);
@@ -142,7 +147,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             // when
@@ -162,7 +168,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final String token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             // when
@@ -188,7 +195,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final var token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             //when
@@ -208,7 +216,8 @@ public class LikeIntegrationTest extends IntegrationTest {
             final var token = jwtTokenProvider.createAccessToken(
                     member.getId(),
                     member.getName(),
-                    member.getRole()
+                    member.getRole(),
+                    false
             );
 
             //when

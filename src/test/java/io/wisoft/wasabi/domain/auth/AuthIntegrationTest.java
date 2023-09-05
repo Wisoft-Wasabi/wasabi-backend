@@ -35,6 +35,7 @@ public class AuthIntegrationTest extends IntegrationTest {
     @Autowired
     private MemberRepository memberRepository;
 
+
     @Nested
     @DisplayName("회원 가입")
     class SignUp {
@@ -55,7 +56,7 @@ public class AuthIntegrationTest extends IntegrationTest {
 
             //then
             result.andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.data.data.name").value(request.name()));
+                    .andExpect(jsonPath("$.data.name").value(request.name()));
         }
     }
 

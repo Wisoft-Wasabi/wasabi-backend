@@ -21,7 +21,6 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-
     @Transactional
     public UpdateMemberInfoResponse updateMemberInfo(final Long memberId, final UpdateMemberInfoRequest request) {
 

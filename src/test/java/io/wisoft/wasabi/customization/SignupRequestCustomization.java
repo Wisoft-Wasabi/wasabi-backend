@@ -25,7 +25,7 @@ public class SignupRequestCustomization implements Customizer {
                 .append("@gmail.com")
                 .toString();
 
-        final String password =  new StringBuilder()
+        final String password = new StringBuilder()
                 .append("pass")
                 .append(random.nextInt(1_000_000))
                 .append("123")
@@ -45,7 +45,7 @@ public class SignupRequestCustomization implements Customizer {
                 "referenceUrl",
                 Part.BACKEND,
                 "wisoft",
-                "호롱이 먹여  살리기"
+                "호롱이 먹여 살리기"
         );
     }
 }
