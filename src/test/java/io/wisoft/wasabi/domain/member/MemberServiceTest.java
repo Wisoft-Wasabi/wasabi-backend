@@ -4,10 +4,8 @@ import autoparams.AutoSource;
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoRequest;
 import io.wisoft.wasabi.domain.member.exception.MemberNotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.InjectMocks;
@@ -18,6 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -57,9 +56,9 @@ class MemberServiceTest {
             memberService.updateMemberInfo(member.getId(), request);
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(member.getUpdatedAt()).isAfter(member.getCreatedAt());
-                softly.assertThat(member.getPart()).isEqualTo(Part.BACKEND);
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(member.getUpdatedAt()).isAfter(member.getCreatedAt());
+                softAssertions.assertThat(member.getPart()).isEqualTo(Part.BACKEND);
             });
         }
 
@@ -83,27 +82,21 @@ class MemberServiceTest {
             memberService.updateMemberInfo(member.getId(), request);
 
             // then
-            assertSoftly(softly -> softly.assertThat(member.getPart()).isEqualTo(Part.UNDEFINED));
+            assertThat(member.getPart()).isEqualTo(Part.UNDEFINED);
         }
 
-        @Test
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("존재하지 않는 사용자의 개인 정보 수정 접근시 예외가 발생한다.")
-        void update_info_fail() {
+        void update_info_fail(final UpdateMemberInfoRequest request) {
 
             // given
-            final var request = new UpdateMemberInfoRequest(
-                    "name",
-                    "phoneNumber",
-                    "referenceUrl",
-                    Part.BACKEND,
-                    "organization",
-                    "motto");
 
             // when
 
             // then
-            assertSoftly(softly -> softly.assertThatThrownBy(() -> memberService.updateMemberInfo(1000L, request))
-                    .isInstanceOf(MemberNotFoundException.class));
+            assertThrows(MemberNotFoundException.class,
+                    () -> memberService.updateMemberInfo(1000L, request));
         }
     }
 
@@ -114,10 +107,9 @@ class MemberServiceTest {
         @AutoSource
         @ParameterizedTest
         @DisplayName("자신의 개인 정보 조회에 성공한다.")
-        void read_member_info_success(final Member member) throws Exception {
+        void read_member_info_success(final Member member, final Long memberId) {
 
             //given
-            final Long memberId = 1L;
             given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
             final var mockResponse = new ReadMemberInfoResponse(
@@ -136,25 +128,24 @@ class MemberServiceTest {
             final var response = memberService.getMemberInfo(memberId);
 
             //then
-            assertThat(response.name()).isEqualTo(mockResponse.name());
-            assertThat(response.email()).isEqualTo(mockResponse.email());
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(response.name()).isEqualTo(mockResponse.name());
+                softAssertions.assertThat(response.email()).isEqualTo(mockResponse.email());
+            });
         }
 
         @AutoSource
         @ParameterizedTest
         @DisplayName("토큰에 실린 id가 유효하지 않을 경우, 정보 조회에 실패한다.")
-        void read_member_info_fail(final Member member) throws Exception {
+        void read_member_info_fail(final Long invalidId) {
 
             //given
-            final Long invalidId = 100000L;
             given(memberRepository.findById(any())).willThrow(new MemberNotFoundException());
 
             //when
 
             //then
-            Assertions.assertThrows(MemberNotFoundException.class, () -> {
-                memberService.getMemberInfo(invalidId);
-            });
+            assertThrows(MemberNotFoundException.class, () -> memberService.getMemberInfo(invalidId));
         }
     }
 }
