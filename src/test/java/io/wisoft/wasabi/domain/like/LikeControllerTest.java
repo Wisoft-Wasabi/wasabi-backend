@@ -8,6 +8,7 @@ import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +46,9 @@ class LikeControllerTest {
     @MockBean
     private AuthorizationExtractor extractor;
 
+    @SpyBean
+    private ResponseAspect responseAspect;
+
     @Nested
     @DisplayName("좋아요 등록")
     class RegisterLike {
@@ -53,7 +58,7 @@ class LikeControllerTest {
         void register_like() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
 
             final var request = new RegisterLikeRequest(1L);
 
@@ -76,7 +81,7 @@ class LikeControllerTest {
         void register_like_fail() throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
 
             final var request = new RegisterLikeRequest(1L);
 
@@ -98,7 +103,7 @@ class LikeControllerTest {
     @DisplayName("좋아요 취소")
     class CancelLike {
 
-//        @Test
+        //        @Test
         @DisplayName("요청 시 정상적으로 응답된다.")
         @ParameterizedTest
         @AutoSource
@@ -108,13 +113,13 @@ class LikeControllerTest {
         ) throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             given(likeService.cancelLike(any(), any())).willReturn(response);
 
             // when
             final var result = mockMvc.perform(delete("/likes")
-                            .param("boardId", String.valueOf(boardId))
+                    .param("boardId", String.valueOf(boardId))
                     .header("Authorization", "Bearer " + token));
 
             // then
@@ -130,7 +135,7 @@ class LikeControllerTest {
         ) throws Exception {
 
             // given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             given(likeService.cancelLike(any(), any())).willThrow(exception);
 
@@ -153,7 +158,7 @@ class LikeControllerTest {
         void get_like_status() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             final Long boardId = 1L;
 
@@ -174,7 +179,7 @@ class LikeControllerTest {
         void get_like_status_fail() throws Exception {
 
             //given
-            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL);
+            final String token = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
 
             final Long boardId = 10L;
 

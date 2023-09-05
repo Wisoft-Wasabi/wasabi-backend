@@ -4,7 +4,6 @@ import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
-import org.hibernate.annotations.DynamicInsert;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -91,6 +90,10 @@ public class Member extends BaseTimeEntity {
         this.part = part;
         this.organization = organization;
         this.motto = motto;
+    }
+
+    public void activate() {
+        this.activation = true;
     }
 
     protected Member() {

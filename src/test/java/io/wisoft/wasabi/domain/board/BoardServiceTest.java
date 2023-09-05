@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.board;
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
+import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
@@ -236,8 +237,8 @@ class BoardServiceTest {
             final var response3 = myLikeBoards.getContent().get(2);
 
             softly.assertThat(myLikeBoards.getSize()).isEqualTo(3);
-            softly.assertThat(response1.createAt()).isAfter(response2.createAt());
-            softly.assertThat(response2.createAt()).isAfter(response3.createAt());
+            softly.assertThat(response1.createdAt()).isAfter(response2.createdAt());
+            softly.assertThat(response2.createdAt()).isAfter(response3.createdAt());
         });
     }
 }
