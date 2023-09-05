@@ -18,6 +18,7 @@ import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,6 +28,7 @@ import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -78,6 +80,8 @@ class BoardControllerTest {
     @Spy
     private BoardMapper boardMapper;
 
+    @SpyBean
+    private ResponseAspect responseAspect;
 
     @Nested
     @DisplayName("게시글 작성")

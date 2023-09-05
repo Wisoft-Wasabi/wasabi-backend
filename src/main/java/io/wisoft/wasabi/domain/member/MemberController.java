@@ -1,8 +1,11 @@
 package io.wisoft.wasabi.domain.member;
 
+import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoRequest;
+import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
 import io.wisoft.wasabi.global.config.common.annotation.MemberId;
-import io.wisoft.wasabi.global.config.web.response.CommonResponse;
+import io.wisoft.wasabi.global.config.web.response.Response;
+import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +24,27 @@ public class MemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<CommonResponse> updateMemberInfo(@MemberId final Long memberId,
-                                                           @RequestBody @Valid final UpdateMemberInfoRequest request) {
+    public ResponseEntity<Response<UpdateMemberInfoResponse>> updateMemberInfo(@MemberId final Long memberId,
+                                                                               @RequestBody @Valid final UpdateMemberInfoRequest request) {
 
-        final var updateMemberInfoResponse = memberService.updateMemberInfo(memberId, request);
-        return ResponseEntity.ok(CommonResponse.newInstance(updateMemberInfoResponse));
+        final UpdateMemberInfoResponse data = memberService.updateMemberInfo(memberId, request);
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.MEMBER_UPDATE_INFO_SUCCESS,
+                data
+            )
+        );
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse> getMemberInfo(@MemberId final Long memberId) {
+    public ResponseEntity<Response<ReadMemberInfoResponse>> getMemberInfo(@MemberId final Long memberId) {
 
-        final var readMemberInfoResponse = memberService.getMemberInfo(memberId);
-        return ResponseEntity.ok(CommonResponse.newInstance(readMemberInfoResponse));
+        final ReadMemberInfoResponse data = memberService.getMemberInfo(memberId);
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.READ_MEMBER_INFO_SUCCESS,
+                data
+            )
+        );
     }
 }
