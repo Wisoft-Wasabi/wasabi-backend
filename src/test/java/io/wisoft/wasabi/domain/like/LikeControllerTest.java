@@ -67,10 +67,11 @@ class LikeControllerTest {
 
 
             //when
-            final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer" + token)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/likes")
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer" + token)
+                            .content(objectMapper.writeValueAsString(request)));
 
             //then
             result.andExpect(status().isCreated());
@@ -89,10 +90,11 @@ class LikeControllerTest {
             given(likeService.registerLike(any(), any())).willThrow(new LikeNotFoundException());
 
             // when
-            final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .content(objectMapper.writeValueAsString(request)));
+            final var result = mockMvc.perform(
+                    post("/likes")
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + token)
+                            .content(objectMapper.writeValueAsString(request)));
 
             // then
             result.andExpect(status().isNotFound());
@@ -118,9 +120,10 @@ class LikeControllerTest {
             given(likeService.cancelLike(any(), any())).willReturn(response);
 
             // when
-            final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer " + token));
+            final var result = mockMvc.perform(
+                    delete("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header("Authorization", "Bearer " + token));
 
             // then
             result.andExpect(status().isOk());
@@ -140,9 +143,10 @@ class LikeControllerTest {
             given(likeService.cancelLike(any(), any())).willThrow(exception);
 
             // when
-            final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer " + token));
+            final var result = mockMvc.perform(
+                    delete("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header("Authorization", "Bearer " + token));
 
             // then
             result.andExpect(status().isNotFound());
@@ -166,9 +170,10 @@ class LikeControllerTest {
             given(likeService.getLikeStatus(any(), any())).willReturn(response);
 
             //when
-            final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer" + token));
+            final var result = mockMvc.perform(
+                    get("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header("Authorization", "Bearer" + token));
 
             //then
             result.andExpect(status().isOk());
@@ -187,9 +192,10 @@ class LikeControllerTest {
             given(likeService.getLikeStatus(any(), any())).willThrow(new LikeNotFoundException());
 
             //when
-            final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer" + token));
+            final var result = mockMvc.perform(
+                    get("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header("Authorization", "Bearer" + token));
 
             //then
             result.andExpect(status().isNotFound());
