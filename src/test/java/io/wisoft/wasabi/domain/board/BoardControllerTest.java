@@ -33,14 +33,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -117,9 +114,11 @@ class BoardControllerTest {
     @Nested
     @DisplayName("게시글 조회")
     class ReadBoard {
-        @Test
+
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("요청이 성공적으로 수행되어, 게시글 조회에 성공한다.")
-        void read_board_success() throws Exception {
+        void read_board_success(final ReadBoardResponse.Writer writer) throws Exception {
 
             //given
             final Long boardId = 1L;
@@ -128,7 +127,7 @@ class BoardControllerTest {
                     1L,
                     "title",
                     "content",
-                    "test-member-name",
+                    writer,
                     LocalDateTime.now(),
                     0,
                     1,
