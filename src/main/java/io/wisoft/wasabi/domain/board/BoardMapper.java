@@ -35,7 +35,14 @@ public class BoardMapper {
                 board.getId(),
                 board.getTitle(),
                 board.getContent(),
-                board.getMember().getName(),
+                new ReadBoardResponse.Writer(
+                        board.getMember().getEmail(),
+                        board.getMember().getName(),
+                        board.getMember().getReferenceUrl(),
+                        board.getMember().getPart(),
+                        board.getMember().getOrganization(),
+                        board.getMember().getMotto()
+                ),
                 board.getCreatedAt(),
                 board.getLikes().size(),
                 board.getViews(),
