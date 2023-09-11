@@ -60,8 +60,7 @@ public class BoardMapper {
                 board.getMember().getName(),
                 board.getCreatedAt(),
                 board.getLikes().size(),
-                board.getViews(),
-                false
+                board.getViews()
         ));
     }
 
