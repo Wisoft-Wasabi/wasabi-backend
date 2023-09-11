@@ -48,6 +48,9 @@ class BoardServiceTest {
     private BoardRepository boardRepository;
 
     @Mock
+    private BoardQueryRepository boardQueryRepository;
+
+    @Mock
     private LikeRepository likeRepository;
 
     @Spy
@@ -122,10 +125,19 @@ class BoardServiceTest {
             board2.increaseView();
 
             final var boards = new SliceImpl<>(List.of(board2, board1));
-            given(boardRepository.findAllByOrderByViewsDesc(pageable)).willReturn(boards);
+            final var boardList = boards.map(board -> new SortBoardResponse(
+                    board.getId(),
+                    board.getTitle(),
+                    board.getMember().getName(),
+                    board.getCreatedAt(),
+                    board.getLikes().size(),
+                    board.getViews()
+            ));
+
+            given(boardQueryRepository.boardList(pageable, BoardSortType.VIEWS)).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getSortedBoards("views", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("views", pageable);
 
             //then
             final var mostViewedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
@@ -146,10 +158,19 @@ class BoardServiceTest {
 
             //given
             final var boards = new SliceImpl<>(List.of(board3, board2, board1));
-            given(boardRepository.findAllByOrderByCreatedAtDesc(pageable)).willReturn(boards);
+            final var boardList = boards.map(board -> new SortBoardResponse(
+                    board.getId(),
+                    board.getTitle(),
+                    board.getMember().getName(),
+                    board.getCreatedAt(),
+                    board.getLikes().size(),
+                    board.getViews()
+            ));
+
+            given(boardQueryRepository.boardList(pageable, BoardSortType.LATEST)).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getSortedBoards("latest", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("latest", pageable);
 
             //then
             final var latestBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
@@ -173,10 +194,19 @@ class BoardServiceTest {
             likeRepository.save(like);
 
             final var boards = new SliceImpl<>(List.of(board2, board1));
-            given(boardRepository.findAllByOrderByLikesDesc(pageable)).willReturn(boards);
+            final var boardList = boards.map(board -> new SortBoardResponse(
+                    board.getId(),
+                    board.getTitle(),
+                    board.getMember().getName(),
+                    board.getCreatedAt(),
+                    board.getLikes().size(),
+                    board.getViews()
+            ));
+
+            given(boardQueryRepository.boardList(pageable, BoardSortType.LIKES)).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getSortedBoards("likes", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("likes", pageable);
 
             //then
             final var mostLikedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
@@ -184,7 +214,6 @@ class BoardServiceTest {
                 softAssertions.assertThat(mostLikedBoard.id()).isEqualTo(board2.getId());
                 softAssertions.assertThat(mostLikedBoard.title()).isEqualTo(board2.getTitle());
             });
-
         }
 
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글 목록이 최신순으로 조회된다.")
