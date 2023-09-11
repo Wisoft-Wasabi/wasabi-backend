@@ -53,18 +53,6 @@ public class BoardMapper {
         );
     }
 
-    public Slice<SortBoardResponse> entityToSortBoardResponse(final Slice<Board> boards) {
-        return boards.map(board -> new SortBoardResponse(
-                board.getId(),
-                board.getTitle(),
-                board.getMember().getName(),
-                board.getCreatedAt(),
-                board.getLikes().size(),
-                board.getViews(),
-                false
-        ));
-    }
-
     public Slice<MyBoardsResponse> entityToMyBoardsResponse(final Slice<Board> myBoards) {
 
         return myBoards.map(board -> new MyBoardsResponse(

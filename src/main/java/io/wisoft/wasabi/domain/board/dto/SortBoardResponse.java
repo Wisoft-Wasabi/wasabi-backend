@@ -7,7 +7,6 @@ public record SortBoardResponse(
         String title,
         String writer,
         LocalDateTime createdAt,
-        int likeCount,
-        int views,
-        boolean isLike) {
+        long likeCount,
+        int views) {
 }

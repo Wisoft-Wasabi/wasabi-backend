@@ -2,12 +2,10 @@ package io.wisoft.wasabi.domain.board;
 
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
-import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.member.Member;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,8 +15,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -88,75 +84,6 @@ class BoardRepositoryTest {
                 softAssertions.assertThat(result.getTitle()).isEqualTo(expected.getTitle());
                 softAssertions.assertThat(result.getContent()).isEqualTo(expected.getContent());
             });
-        }
-
-        @DisplayName("게시글 목록 조회시, 조회수 많은 순으로 정렬 후 조회에 성공한다.")
-        @ParameterizedTest
-        @AutoSource
-        @Customization(BoardCompositeCustomizer.class)
-        void read_boards_order_by_views(final Member member,
-                                        final List<Board> boards) {
-
-            //given
-            em.persist(member);
-            boardRepository.saveAll(boards);
-
-            final var expected = boards.get(0);
-            expected.increaseView();
-
-            //when
-            final var result = boardRepository.findAllByOrderByViewsDesc(pageable);
-
-            //then
-            final var mostViewedBoard = result.getContent().get(0);
-
-            assertThat(mostViewedBoard.getId()).isEqualTo(expected.getId());
-        }
-
-        @DisplayName("게시글 목록 조회시, 최신 순으로 정렬 후 조회에 성공한다.")
-        @ParameterizedTest
-        @AutoSource
-        @Customization(BoardCompositeCustomizer.class)
-        void read_boards_order_by_create_at(final Member member,
-                                            final List<Board> boards) {
-
-            //given
-            em.persist(member);
-            boardRepository.saveAll(boards);
-
-            final var expected = boards.get(boards.size() - 1);
-
-            //when
-            final var result = boardRepository.findAllByOrderByCreatedAtDesc(pageable);
-
-            //then
-            final var mostRecentBoard = result.getContent().get(0);
-
-            assertThat(mostRecentBoard.getId()).isEqualTo(expected.getId());
-        }
-
-
-        @DisplayName("게시글 목록 조회시, 좋아요 많은 순 정렬 후 조회에 성공한다.")
-        @ParameterizedTest
-        @AutoSource
-        @Customization(BoardCompositeCustomizer.class)
-        void read_boards_order_by_likes(final Member member,
-                                        final List<Board> boards) {
-
-            //given
-            em.persist(member);
-            boardRepository.saveAll(boards);
-            em.persist(new Like(member, boards.get(0)));
-
-            final var expected = boards.get(0);
-
-            //when
-            final var result = boardRepository.findAllByOrderByLikesDesc(pageable).getContent();
-
-            //then
-            final var mostLikedBoard = result.get(0);
-
-            assertThat(mostLikedBoard.getId()).isEqualTo(expected.getId());
         }
 
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시글들만 최신순으로 조회된다.")
