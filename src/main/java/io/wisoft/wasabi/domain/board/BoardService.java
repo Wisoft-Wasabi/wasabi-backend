@@ -10,7 +10,7 @@ public interface BoardService<T> {
 
     ReadBoardResponse readBoard(final Long boardId, final Long accessId);
 
-    Slice<SortBoardResponse> getSortedBoards(final String sortBy,final Pageable pageable);
+    Slice<SortBoardResponse> getBoardList(final String sortBy, final Pageable pageable);
 
     Slice<MyBoardsResponse> getMyBoards(final Long memberId, final Pageable pageable);
 

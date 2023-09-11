@@ -23,16 +23,19 @@ public class BoardServiceImpl<T> implements BoardService<T> {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final LikeRepository likeRepository;
+    private final BoardQueryRepository boardQueryRepository;
     private final BoardMapper boardMapper;
 
 
     public BoardServiceImpl(final BoardRepository boardRepository,
                             final MemberRepository memberRepository,
                             final LikeRepository likeRepository,
+                            final BoardQueryRepository boardQueryRepository,
                             final BoardMapper boardMapper) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
         this.likeRepository = likeRepository;
+        this.boardQueryRepository = boardQueryRepository;
         this.boardMapper = boardMapper;
     }
 
@@ -83,22 +86,14 @@ public class BoardServiceImpl<T> implements BoardService<T> {
     }
 
     @Override
-    public Slice<SortBoardResponse> getSortedBoards(final String sortBy, final Pageable pageable) {
+    public Slice<SortBoardResponse> getBoardList(final String sortBy,
+                                                 final Pageable pageable) {
 
         final BoardSortType sortType = validateSortType(sortBy.toUpperCase());
-        final Slice<Board> boardSlice = sort(sortType, pageable);
 
         logger.info("[Result] {}를 기준으로 정렬한 게시글 목록 조회", sortBy);
-        return boardMapper.entityToSortBoardResponse(boardSlice);
-    }
 
-    private Slice<Board> sort(final BoardSortType sortType, final Pageable pageable) {
-        return switch (sortType) {
-            case LATEST -> boardRepository.findAllByOrderByCreatedAtDesc(pageable);
-            case VIEWS -> boardRepository.findAllByOrderByViewsDesc(pageable);
-            case LIKES -> boardRepository.findAllByOrderByLikesDesc(pageable);
-            case DEFAULT -> boardRepository.findDefaultBoards(pageable);
-        };
+        return this.boardQueryRepository.boardList(pageable, sortType);
     }
 
     private BoardSortType validateSortType(final String sortBy) {
