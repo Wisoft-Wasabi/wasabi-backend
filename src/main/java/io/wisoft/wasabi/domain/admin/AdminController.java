@@ -5,6 +5,8 @@ import io.wisoft.wasabi.domain.admin.dto.response.ApproveMemberResponse;
 import io.wisoft.wasabi.domain.admin.dto.response.MembersResponse;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.aop.UserRole;
+import io.wisoft.wasabi.global.config.web.response.Response;
+import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
@@ -22,17 +24,28 @@ public class AdminController {
 
     @GetMapping("/members")
     @UserRole(Role.ADMIN)
-    public ResponseEntity<CommonResponse> getUnapprovedMembers(@PageableDefault(size = 10) final Pageable pageable) {
-        final Slice<MembersResponse> members = adminService.getUnapprovedMembers(pageable);
+    public ResponseEntity<Response<Slice<MembersResponse>>> getUnapprovedMembers(@PageableDefault(size = 10) final Pageable pageable) {
+        final Slice<MembersResponse> data = adminService.getUnapprovedMembers(pageable);
 
-        return ResponseEntity.ok(CommonResponse.newInstance(members));
+        return ResponseEntity.ofNullable(
+                Response.of(
+                        ResponseType.READ_MEMBER_UN_APPROVE_SUCCESS,
+                        data
+                )
+        );
 
     }
 
     @PatchMapping("/members")
     @UserRole(Role.ADMIN)
-    public ResponseEntity<CommonResponse> approveMember(@RequestBody final ApproveMemberRequest request) {
-        final ApproveMemberResponse member = adminService.approveMember(request);
-        return ResponseEntity.ok(CommonResponse.newInstance(member));
+    public ResponseEntity<Response<ApproveMemberResponse>> approveMember(@RequestBody final ApproveMemberRequest request) {
+        final ApproveMemberResponse data = adminService.approveMember(request);
+
+        return ResponseEntity.ofNullable(
+                Response.of(
+                        ResponseType.MEMBER_APPROVE_SUCCESS,
+                        data
+                )
+        );
     }
 }

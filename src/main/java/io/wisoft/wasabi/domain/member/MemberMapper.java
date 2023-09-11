@@ -33,7 +33,7 @@ public class MemberMapper {
                 request.name(),
                 request.phoneNumber(),
                 false,
-                Role.GENERAL,
+                Role.ADMIN,
                 request.referenceUrl(),
                 request.part(),
                 request.organization(),
