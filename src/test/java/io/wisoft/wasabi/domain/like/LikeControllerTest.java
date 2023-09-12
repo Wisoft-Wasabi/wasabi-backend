@@ -72,6 +72,7 @@ class LikeControllerTest {
                     .header("Authorization", "Bearer" + accessToken)
                     .content(objectMapper.writeValueAsString(request)));
 
+
             //then
             result.andExpect(status().isCreated());
         }
@@ -93,6 +94,7 @@ class LikeControllerTest {
                     .contentType(APPLICATION_JSON)
                     .header("Authorization", "Bearer " + accessToken)
                     .content(objectMapper.writeValueAsString(request)));
+
 
 
             // then
@@ -122,6 +124,7 @@ class LikeControllerTest {
             final var result = mockMvc.perform(delete("/likes")
                     .param("boardId", String.valueOf(boardId))
                     .header("Authorization", "Bearer " + accessToken));
+
 
             // then
             result.andExpect(status().isOk());
@@ -191,6 +194,7 @@ class LikeControllerTest {
             final var result = mockMvc.perform(get("/likes")
                     .param("boardId", String.valueOf(boardId))
                     .header("Authorization", "Bearer" + accessToken));
+
 
 
             //then
