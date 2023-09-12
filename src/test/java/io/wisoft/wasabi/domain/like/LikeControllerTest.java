@@ -73,6 +73,7 @@ class LikeControllerTest {
                             .header("Authorization", "Bearer" + token)
                             .content(objectMapper.writeValueAsString(request)));
 
+
             //then
             result.andExpect(status().isCreated());
         }
@@ -95,6 +96,7 @@ class LikeControllerTest {
                             .contentType(APPLICATION_JSON)
                             .header("Authorization", "Bearer " + token)
                             .content(objectMapper.writeValueAsString(request)));
+
 
             // then
             result.andExpect(status().isNotFound());
@@ -124,6 +126,7 @@ class LikeControllerTest {
                     delete("/likes")
                             .param("boardId", String.valueOf(boardId))
                             .header("Authorization", "Bearer " + token));
+
 
             // then
             result.andExpect(status().isOk());
@@ -196,6 +199,7 @@ class LikeControllerTest {
                     get("/likes")
                             .param("boardId", String.valueOf(boardId))
                             .header("Authorization", "Bearer" + token));
+
 
             //then
             result.andExpect(status().isNotFound());

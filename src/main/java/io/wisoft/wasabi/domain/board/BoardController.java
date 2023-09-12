@@ -6,14 +6,11 @@ import io.wisoft.wasabi.global.config.common.annotation.MemberId;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/boards")
@@ -32,10 +29,10 @@ public class BoardController<T> {
 
         final WriteBoardResponse data = boardService.writeBoard(request, memberId);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.BOARD_WRITE_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.BOARD_WRITE_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -45,24 +42,24 @@ public class BoardController<T> {
 
         final ReadBoardResponse data = boardService.readBoard(boardId, accessId);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.BOARD_READ_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.BOARD_READ_SUCCESS,
+                        data
+                )
         );
     }
 
     @GetMapping
-    public ResponseEntity<Response<Slice<SortBoardResponse>>> sortedBoards(
+    public ResponseEntity<Response<Slice<SortBoardResponse>>> boardList(
             @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
             @PageableDefault(size = 2) final Pageable pageable) {
 
-        final Slice<SortBoardResponse> data = boardService.getSortedBoards(sortBy, pageable);
+        final Slice<SortBoardResponse> data = boardService.getBoardList(sortBy, pageable);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.BOARD_SORTED_LIST_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.BOARD_SORTED_LIST_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -71,10 +68,10 @@ public class BoardController<T> {
         final Slice<MyBoardsResponse> data = boardService.getMyBoards(memberId, pageable);
 
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.MY_BOARD_LIST_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.MY_BOARD_LIST_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -83,10 +80,10 @@ public class BoardController<T> {
         final Slice<MyLikeBoardsResponse> data = boardService.getMyLikeBoards(memberId, pageable);
 
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.MY_LIKE_BOARD_LIST_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.MY_LIKE_BOARD_LIST_SUCCESS,
+                        data
+                )
         );
     }
 

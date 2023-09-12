@@ -5,10 +5,7 @@ import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
-import io.wisoft.wasabi.domain.board.dto.MyBoardsResponse;
-import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
+import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.like.LikeService;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
@@ -33,14 +30,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -117,9 +111,11 @@ class BoardControllerTest {
     @Nested
     @DisplayName("게시글 조회")
     class ReadBoard {
-        @Test
+
+        @ParameterizedTest
+        @AutoSource
         @DisplayName("요청이 성공적으로 수행되어, 게시글 조회에 성공한다.")
-        void read_board_success() throws Exception {
+        void read_board_success(final ReadBoardResponse.Writer writer) throws Exception {
 
             //given
             final Long boardId = 1L;
@@ -128,7 +124,7 @@ class BoardControllerTest {
                     1L,
                     "title",
                     "content",
-                    "test-member-name",
+                    writer,
                     LocalDateTime.now(),
                     0,
                     1,
@@ -159,10 +155,18 @@ class BoardControllerTest {
             //given
             board2.increaseView();
 
-            final var boards = boardMapper.entityToSortBoardResponse(
-                    new SliceImpl<>(List.of(board2, board1)));
+            final var boards = new SliceImpl<>(List.of(board2, board1));
 
-            given(boardService.getSortedBoards(any(), any())).willReturn(boards);
+            final var boardList = boards.map(board -> new SortBoardResponse(
+                    board.getId(),
+                    board.getTitle(),
+                    board.getMember().getName(),
+                    board.getCreatedAt(),
+                    board.getLikes().size(),
+                    board.getViews()
+            ));
+
+            given(boardService.getBoardList(any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
@@ -181,11 +185,18 @@ class BoardControllerTest {
         void read_boards_order_by_created_at(final Board board1,
                                              final Board board2) throws Exception {
             //given
-            final var boards = boardMapper.entityToSortBoardResponse(
-                    new SliceImpl<>(List.of(board2, board1))
-            );
+            final var boards = new SliceImpl<>(List.of(board2, board1));
 
-            given(boardService.getSortedBoards(any(), any())).willReturn(boards);
+            final var boardList = boards.map(board -> new SortBoardResponse(
+                    board.getId(),
+                    board.getTitle(),
+                    board.getMember().getName(),
+                    board.getCreatedAt(),
+                    board.getLikes().size(),
+                    board.getViews()
+            ));
+
+            given(boardService.getBoardList(any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
@@ -196,7 +207,6 @@ class BoardControllerTest {
 
             //then
             result.andExpect(status().isOk());
-
         }
 
         @DisplayName("게시글 좋아요 순 정렬 후 조회시, 좋아요가 가장 많은 게시글이 먼저 조회된다.")
@@ -210,11 +220,18 @@ class BoardControllerTest {
             //given
             likeService.registerLike(member.getId(), new RegisterLikeRequest(board1.getId()));
 
-            final var boards = boardMapper.entityToSortBoardResponse(
-                    new SliceImpl<>(List.of(board2, board1))
-            );
+            final var boards = new SliceImpl<>(List.of(board2, board1));
 
-            given(boardService.getSortedBoards(any(), any())).willReturn(boards);
+            final var boardList = boards.map(board -> new SortBoardResponse(
+                    board.getId(),
+                    board.getTitle(),
+                    board.getMember().getName(),
+                    board.getCreatedAt(),
+                    board.getLikes().size(),
+                    board.getViews()
+            ));
+
+            given(boardService.getBoardList(any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(

@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Response<?>> handleBusinessException(final BusinessException ex) {
 
-        logger.info("\n [Error] BusinessException : HttpStatus : {}, ErrorCode : {}, ErrorType : {}", ex.getErrorType().getHttpStatusCode(), ex.getErrorType().getErrorCode(), ex.getErrorType());
+        logger.info("\n [Error] BusinessException : HttpStatus : {}, ErrorCode : {}, ErrorType : {}", ex.getErrorType().getStatus(), ex.getErrorType().getCode(), ex.getErrorType());
 
         return buildResponse(ex.getErrorType());
     }
@@ -51,16 +51,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Response<?>> handleRuntimeException(final RuntimeException ex) {
 
         logger.info("\n [Error] RuntimeException : ErrorMessage : {}  Path: {}", ex.getMessage(), ex.fillInStackTrace());
-        
+
         return buildResponse(ResponseType.UNCAUGHT_ERROR);
     }
 
     private ResponseEntity<Response<?>> buildResponse(final ResponseType responseType) {
         return ResponseEntity.ofNullable(
-            Response.of(
-                responseType,
-                null
-            )
+                Response.of(
+                        responseType,
+                        null
+                )
         );
     }
 }
