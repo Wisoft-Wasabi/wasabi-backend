@@ -44,7 +44,6 @@ public class GlobalExceptionHandler {
 
         logger.info("\n [Error] BusinessException : HttpStatus : {}, ErrorCode : {}, ErrorType : {}", ex.getErrorType().getStatus(), ex.getErrorType().getCode(), ex.getErrorType());
 
-
         return buildResponse(ex.getErrorType());
     }
 
