@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Response<?>> handleBusinessException(final BusinessException ex) {
 
-        logger.info("\n [Error] BusinessException : HttpStatus : {}, ErrorCode : {}, ErrorType : {}", ex.getErrorType().getHttpStatusCode(), ex.getErrorType().getErrorCode(), ex.getErrorType());
+        logger.info("\n [Error] BusinessException : HttpStatus : {}, ErrorCode : {}, ErrorType : {}", ex.getErrorType().getStatus(), ex.getErrorType().getCode(), ex.getErrorType());
 
         return buildResponse(ex.getErrorType());
     }

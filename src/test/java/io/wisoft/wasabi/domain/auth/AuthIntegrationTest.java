@@ -89,6 +89,7 @@ public class AuthIntegrationTest extends IntegrationTest {
                     request.organization(),
                     request.motto()
             );
+
             memberRepository.save(member);
 
             final var loginRequest = new LoginRequest(request.email(), request.password());
