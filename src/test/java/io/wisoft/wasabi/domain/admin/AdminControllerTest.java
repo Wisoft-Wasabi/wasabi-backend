@@ -7,6 +7,7 @@ import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.aop.UserRoleAspect;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,26 +33,20 @@ public class AdminControllerTest {
     @SpyBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockBean
+    @SpyBean
     private AdminRoleResolver adminRoleResolver;
 
     @MockBean
-    private AnyoneResolver anyoneResolver;
-
-    @MockBean
-    private MemberIdResolver memberIdResolver;
-
-    @MockBean
     private MemberRepository memberRepository;
-
-    @MockBean
-    private MemberMapper memberMapper;
 
     @SpyBean
     private AuthorizationExtractor authorizationExtractor;
 
     @SpyBean
     private UserRoleAspect userRoleAspect;
+
+    @SpyBean
+    private ResponseAspect responseAspect;
 
 
     @Nested

@@ -72,6 +72,11 @@ public class LikeServiceImpl implements LikeService {
 
     public GetLikeResponse getLikeStatus(final Long memberId, final Long boardId) {
 
+        final boolean isExistsBoard = boardRepository.existsById(boardId);
+        if (!isExistsBoard) {
+            throw BoardExceptionExecutor.BoardNotFound();
+        }
+
         final boolean isLike = generateIsLike(memberId, boardId);
 
         final int likeCount = likeRepository.countByBoardId(boardId);
