@@ -22,4 +22,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             " WHERE likes.member.id = :id" +
             " ORDER BY board.createdAt DESC")
     Slice<Board> findAllMyLikeBoards(@Param("id") final Long memberId, final Pageable pageable);
+
+    @Query("SELECT EXISTS(SELECT board FROM Board board WHERE board.id = :id)")
+    boolean existsById(@Param("id") final Long id);
 }

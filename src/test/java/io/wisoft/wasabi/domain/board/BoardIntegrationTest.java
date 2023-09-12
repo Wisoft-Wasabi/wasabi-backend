@@ -166,9 +166,6 @@ class BoardIntegrationTest extends IntegrationTest {
                     member
             );
             boardRepository.save(board);
-            board.increaseView();
-
-            System.out.println("board.getId() = " + board.getId());
 
             //when
             final var result = mockMvc.perform(get("/boards/{boardId}", board.getId())

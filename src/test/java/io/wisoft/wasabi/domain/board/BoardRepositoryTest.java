@@ -8,6 +8,7 @@ import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.member.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -169,6 +171,43 @@ class BoardRepositoryTest {
             });
         }
 
+    }
+
+    @Nested
+    @DisplayName("게시글 존재 확인")
+    class ExistsBoard {
+
+        @DisplayName("게시글이 존재하면 참의 결과가 조회된다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(BoardCompositeCustomizer.class)
+        void check_exists_board(final Member member,
+                                final Board board) {
+
+            // given
+            em.persist(member);
+            boardRepository.save(board);
+
+            // when
+            final var result = boardRepository.existsById(board.getId());
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @DisplayName("존재하지 않는 게시글에 대해서는 거짓의 결과가 조회된다.")
+        @ParameterizedTest
+        @AutoSource
+        void check_not_exists_board(@Min(1) final Long boardId) {
+
+            // given
+
+            // when
+            final var result = boardRepository.existsById(boardId);
+
+            // then
+            assertThat(result).isFalse();
+        }
     }
 }
 

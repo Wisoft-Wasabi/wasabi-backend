@@ -38,13 +38,13 @@ class MemberControllerTest {
     @MockBean
     private MemberService memberService;
 
-    @MockBean
+    @SpyBean
     private MemberIdResolver memberIdResolver;
 
-    @MockBean
+    @SpyBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockBean
+    @SpyBean
     private AuthorizationExtractor extractor;
 
     @SpyBean

@@ -160,7 +160,7 @@ class LikeServiceTest {
                              final Long boardId) {
 
             //given
-            given(boardRepository.findById(any())).willReturn(Optional.of(board));
+            given(boardRepository.existsById(any())).willReturn(true);
             given(likeRepository.countByBoardId(any())).willReturn(1);
 
             //when
@@ -177,7 +177,7 @@ class LikeServiceTest {
                                   final Long boardId) {
 
             //given
-            given(boardRepository.findById(any())).willReturn(Optional.empty());
+            given(boardRepository.existsById(any())).willReturn(false);
 
             //when
 
