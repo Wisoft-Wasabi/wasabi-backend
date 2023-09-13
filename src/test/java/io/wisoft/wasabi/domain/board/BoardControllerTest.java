@@ -13,6 +13,7 @@ import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -54,6 +55,9 @@ class BoardControllerTest {
 
     @MockBean
     private MemberIdResolver memberIdResolver;
+
+    @MockBean
+    private AdminInterceptor adminInterceptor;
 
     @MockBean
     private AnyoneResolver anyoneResolver;
