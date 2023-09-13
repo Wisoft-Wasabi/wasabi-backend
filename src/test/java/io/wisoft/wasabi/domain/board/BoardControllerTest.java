@@ -10,7 +10,6 @@ import io.wisoft.wasabi.domain.like.LikeService;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Role;
-import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
@@ -58,9 +57,6 @@ class BoardControllerTest {
 
     @MockBean
     private AnyoneResolver anyoneResolver;
-
-    @MockBean
-    private AdminRoleResolver adminRoleResolver;
 
     @Spy
     private ObjectMapper objectMapper;
@@ -294,7 +290,7 @@ class BoardControllerTest {
         void read_my_like_boards(final List<Board> boards) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL,true);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
 

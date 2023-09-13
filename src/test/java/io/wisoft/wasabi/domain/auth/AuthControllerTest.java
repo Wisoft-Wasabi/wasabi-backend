@@ -11,7 +11,6 @@ import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
 import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Part;
-import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
@@ -52,9 +51,6 @@ class AuthControllerTest {
 
     @SpyBean
     private ResponseAspect responseAspect;
-
-    @MockBean
-    private AdminRoleResolver adminRoleResolver;
 
     @Spy
     private ObjectMapper objectMapper;
