@@ -1,9 +1,10 @@
-package io.wisoft.wasabi.domain.tag.persistence;
+package io.wisoft.wasabi.domain.tag;
 
-import io.wisoft.wasabi.domain.used.persistence.Used;
+import io.wisoft.wasabi.domain.board.Board;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,11 +24,19 @@ public class Tag {
     private String name;
 
     @OneToMany(mappedBy = "tag")
-    private Set<Used> useds = new HashSet<>();
+    private Set<Board> boards;
 
-    public static Tag createTag(final String name) {
-        final Tag tag = new Tag();
-        tag.name = name;
-        return tag;
+    public Tag(final String name) {
+        this.name = name;
+        this.boards = new HashSet<>();
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void addBoard(final Board board) {
+        this.boards.add(board);
+    }
+
 }

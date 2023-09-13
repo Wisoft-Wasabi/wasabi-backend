@@ -4,7 +4,7 @@ import autoparams.customization.Customizer;
 import autoparams.generator.ObjectContainer;
 import autoparams.generator.ObjectGenerationContext;
 import autoparams.generator.ObjectGenerator;
-import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
+import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
 import io.wisoft.wasabi.domain.member.Part;
 
 import java.util.Random;

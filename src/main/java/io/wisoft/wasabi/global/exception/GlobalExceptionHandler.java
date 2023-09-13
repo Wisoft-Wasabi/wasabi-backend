@@ -2,7 +2,6 @@ package io.wisoft.wasabi.global.exception;
 
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
-import io.wisoft.wasabi.global.config.web.response.dto.error.ErrorDataResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
