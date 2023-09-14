@@ -1,10 +1,8 @@
 package io.wisoft.wasabi.domain.board.dto;
 
 import io.wisoft.wasabi.domain.member.Part;
-import io.wisoft.wasabi.domain.tag.persistence.Tag;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record ReadBoardResponse(
         Long id,
@@ -15,7 +13,7 @@ public record ReadBoardResponse(
         int likeCount,
         int views,
         boolean isLike,
-        List<Tag> tags) {
+        String tag) {
 
     public record Writer(
             String email,

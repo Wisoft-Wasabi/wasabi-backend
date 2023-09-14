@@ -25,7 +25,7 @@ public class BoardController<T> {
 
     @PostMapping
     public ResponseEntity<Response<WriteBoardResponse>> writeBoard(@RequestBody @Valid final WriteBoardRequest request,
-                                                                   @MemberId final Long memberId) {
+                                                                   @MemberId final Long memberId) throws ClassNotFoundException {
 
         final WriteBoardResponse data = boardService.writeBoard(request, memberId);
         return ResponseEntity.ofNullable(

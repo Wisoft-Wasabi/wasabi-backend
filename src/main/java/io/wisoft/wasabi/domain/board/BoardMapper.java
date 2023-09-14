@@ -2,9 +2,11 @@ package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.used.persistence.Used;
+import io.wisoft.wasabi.domain.tag.Tag;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class BoardMapper {
@@ -47,9 +49,7 @@ public class BoardMapper {
                 board.getLikes().size(),
                 board.getViews(),
                 isLike,
-                board.getUsages().stream()
-                        .map(Used::getTag)
-                        .toList()
+                String.valueOf(board.getTag())
         );
     }
 

@@ -13,6 +13,8 @@ import io.wisoft.wasabi.domain.like.exception.LikeNotFoundException;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberNotFoundException;
+import io.wisoft.wasabi.domain.tag.Tag;
+import io.wisoft.wasabi.domain.tag.TagRepository;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,6 +47,9 @@ class LikeServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
+    private TagRepository tagRepository;
+
+    @Mock
     private BoardRepository boardRepository;
 
     @Mock
@@ -62,13 +67,14 @@ class LikeServiceTest {
             //given
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
+
             final var board = new Board(
                     "title",
                     "content",
                     member
             );
-            given(boardRepository.findById(any())).willReturn(Optional.of(board));
 
+            given(boardRepository.findById(any())).willReturn(Optional.of(board));
             final var request = new RegisterLikeRequest(board.getId());
 
             final var like = likeMapper.registerLikeRequestToEntity(member, board);
