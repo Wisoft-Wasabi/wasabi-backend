@@ -85,7 +85,7 @@ class BoardControllerTest {
             final var request = new WriteBoardRequest(
                     "title",
                     "content",
-                    new String[]{"tags"},
+                    "tag",
                     new String[]{"imageUrls"});
 
             final var response = new WriteBoardResponse(

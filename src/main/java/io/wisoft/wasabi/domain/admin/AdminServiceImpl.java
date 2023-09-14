@@ -1,8 +1,8 @@
 package io.wisoft.wasabi.domain.admin;
 
-import io.wisoft.wasabi.domain.admin.dto.request.ApproveMemberRequest;
-import io.wisoft.wasabi.domain.admin.dto.response.ApproveMemberResponse;
-import io.wisoft.wasabi.domain.admin.dto.response.MembersResponse;
+import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
+import io.wisoft.wasabi.domain.admin.dto.ApproveMemberResponse;
+import io.wisoft.wasabi.domain.admin.dto.MembersResponse;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberMapper;
 import io.wisoft.wasabi.domain.member.MemberRepository;

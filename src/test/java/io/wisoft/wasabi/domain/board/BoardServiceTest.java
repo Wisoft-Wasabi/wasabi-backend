@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.board;
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
+import io.wisoft.wasabi.customization.NotSaveTagCustomization;
 import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
@@ -10,6 +11,8 @@ import io.wisoft.wasabi.domain.like.LikeMapper;
 import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.tag.Tag;
+import io.wisoft.wasabi.domain.tag.TagRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +34,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
@@ -48,6 +53,9 @@ class BoardServiceTest {
     private BoardRepository boardRepository;
 
     @Mock
+    private TagRepository tagRepository;
+
+    @Mock
     private BoardQueryRepository boardQueryRepository;
 
     @Mock
@@ -60,10 +68,11 @@ class BoardServiceTest {
     @DisplayName("게시글 작성")
     class WriteBoard {
 
-        @DisplayName("요청시 정상적으로 저장되어야 한다.")
+        @DisplayName("요청시 태그가 이미 존재한다면 조회한 태그를 이용해 게시글을 저장한다.")
         @ParameterizedTest
         @AutoSource
-        void write_board(final Member member) {
+        @Customization(NotSaveTagCustomization.class)
+        void write_board_with_tag(final Member member, final Tag tag) {
 
             // given
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
@@ -71,7 +80,62 @@ class BoardServiceTest {
             final var request = new WriteBoardRequest(
                     "title",
                     "content",
-                    new String[]{"tags"},
+                    "tag",
+                    new String[]{"imageUrls"});
+
+            given(tagRepository.findByName(any())).willReturn(Optional.of(tag));
+            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            given(boardRepository.save(any())).willReturn(board);
+
+            // when
+            final var response = boardServiceImpl.writeBoard(request, 1L);
+
+            // then
+            assertThat(response.title()).isEqualTo("title");
+            verify(tagRepository, times(0)).save(any());
+            assertNotNull(response);
+        }
+
+        @DisplayName("요청시 저장된 태그가 없다면 태그가 저장된 후 게시글을 저장한다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(NotSaveTagCustomization.class)
+        void write_board_with_none_tag(final Member member, final Tag tag) {
+
+            // given
+            given(memberRepository.findById(any())).willReturn(Optional.of(member));
+
+            final var request = new WriteBoardRequest(
+                    "title",
+                    "content",
+                    "not-exist-tag",
+                    new String[]{"imageUrls"});
+
+            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            given(tagRepository.save(any())).willReturn(tag);
+            given(boardRepository.save(any())).willReturn(board);
+
+            // when
+            final var response = boardServiceImpl.writeBoard(request, 1L);
+
+            // then
+            assertThat(response.title()).isEqualTo("title");
+            verify(tagRepository, times(1)).save(any());
+            assertNotNull(response);
+        }
+
+        @DisplayName("요청시 태그가 유효하지 않은 값이면 null로 저장된다.")
+        @ParameterizedTest
+        @AutoSource
+        void write_board_with_null(final Member member) {
+
+            // given
+            given(memberRepository.findById(any())).willReturn(Optional.of(member));
+
+            final var request = new WriteBoardRequest(
+                    "title",
+                    "content",
+                    null,
                     new String[]{"imageUrls"});
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
@@ -81,7 +145,10 @@ class BoardServiceTest {
             final var response = boardServiceImpl.writeBoard(request, 1L);
 
             // then
-            assertThat(response.title()).isEqualTo("title");
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(response.title()).isEqualTo("title");
+                softAssertions.assertThat(board.getTag()).isEqualTo(null);
+            });
             assertNotNull(response);
         }
     }
@@ -101,7 +168,7 @@ class BoardServiceTest {
             final var request = new WriteBoardRequest(
                     "title",
                     "content",
-                    new String[]{"tags"},
+                    "tag",
                     new String[]{"imageUrls"});
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);

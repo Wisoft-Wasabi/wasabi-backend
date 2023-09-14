@@ -1,7 +1,6 @@
 package io.wisoft.wasabi.domain.member;
 
 import autoparams.AutoSource;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
@@ -14,7 +13,6 @@ import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
-
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

@@ -8,6 +8,7 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.Part;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.domain.tag.TagRepository;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,9 @@ public class LikeIntegrationTest extends IntegrationTest {
 
     @Autowired
     private LikeRepository likeRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;

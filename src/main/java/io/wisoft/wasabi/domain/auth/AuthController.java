@@ -1,9 +1,9 @@
 package io.wisoft.wasabi.domain.auth;
 
-import io.wisoft.wasabi.domain.auth.dto.request.LoginRequest;
-import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
-import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
-import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
+import io.wisoft.wasabi.domain.auth.dto.LoginRequest;
+import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
+import io.wisoft.wasabi.domain.auth.dto.LoginResponse;
+import io.wisoft.wasabi.domain.auth.dto.SignupResponse;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;

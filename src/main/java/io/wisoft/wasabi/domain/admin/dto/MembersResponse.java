@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.domain.admin.dto.response;
+package io.wisoft.wasabi.domain.admin.dto;
 
 public record MembersResponse(
         Long id,

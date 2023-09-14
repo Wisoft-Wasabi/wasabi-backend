@@ -3,13 +3,11 @@ package io.wisoft.wasabi.domain.board;
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
-import io.wisoft.wasabi.domain.member.Member;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BoardTest {
 

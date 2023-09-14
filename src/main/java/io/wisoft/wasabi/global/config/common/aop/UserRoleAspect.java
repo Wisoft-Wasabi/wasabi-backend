@@ -26,14 +26,14 @@ public class UserRoleAspect {
     }
 
     @Around("@annotation(userRole)")
-    public Object checkUserRole(ProceedingJoinPoint joinPoint, final UserRole userRole) throws Throwable {
+    public Object checkUserRole(final ProceedingJoinPoint joinPoint, final UserRole userRole) throws Throwable {
 
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        final ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         // TODO : 다른 Error 처리 방식 고안
         if(attributes == null) {
             throw new RuntimeException();
         }
-        HttpServletRequest request = attributes.getRequest();
+        final HttpServletRequest request = attributes.getRequest();
 
         final String token = extractor.extract(request, "Bearer");
 
