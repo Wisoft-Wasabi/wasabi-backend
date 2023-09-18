@@ -26,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,7 +84,6 @@ class BoardServiceTest {
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
 
             given(tagRepository.save(any())).willReturn(tag);
-            given(board.getTag()).willReturn(tag);
             given(boardRepository.save(any())).willReturn(board);
 
 
@@ -95,7 +93,6 @@ class BoardServiceTest {
             // then
             assertThat(response.title()).isEqualTo("title");
             assertThat(tag.getName()).isEqualTo("tag");
-            assertThat(board.getTag()).isEqualTo("tag");
             assertNotNull(response);
         }
 
@@ -203,10 +200,10 @@ class BoardServiceTest {
                     board.getViews()
             ));
 
-            given(boardQueryRepository.boardList(pageable, BoardSortType.VIEWS)).willReturn(boardList);
+            given(boardQueryRepository.boardList(pageable, BoardSortType.VIEWS, "tag")).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getBoardList("views", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("views", pageable, "tag");
 
             //then
             final var mostViewedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
@@ -236,10 +233,10 @@ class BoardServiceTest {
                     board.getViews()
             ));
 
-            given(boardQueryRepository.boardList(pageable, BoardSortType.LATEST)).willReturn(boardList);
+            given(boardQueryRepository.boardList(pageable, BoardSortType.LATEST, "tag")).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getBoardList("latest", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("latest", pageable, "tag");
 
             //then
             final var latestBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
@@ -272,10 +269,10 @@ class BoardServiceTest {
                     board.getViews()
             ));
 
-            given(boardQueryRepository.boardList(pageable, BoardSortType.LIKES)).willReturn(boardList);
+            given(boardQueryRepository.boardList(pageable, BoardSortType.LIKES, "tag")).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getBoardList("likes", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("likes", pageable, "tag");
 
             //then
             final var mostLikedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);

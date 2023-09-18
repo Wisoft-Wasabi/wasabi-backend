@@ -4,12 +4,14 @@ import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
+import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
 import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.like.LikeService;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.domain.tag.Tag;
 import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
@@ -166,7 +168,7 @@ class BoardControllerTest {
                     board.getViews()
             ));
 
-            given(boardService.getBoardList(any(), any())).willReturn(boardList);
+            given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
@@ -196,7 +198,7 @@ class BoardControllerTest {
                     board.getViews()
             ));
 
-            given(boardService.getBoardList(any(), any())).willReturn(boardList);
+            given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
@@ -231,7 +233,7 @@ class BoardControllerTest {
                     board.getViews()
             ));
 
-            given(boardService.getBoardList(any(), any())).willReturn(boardList);
+            given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
@@ -303,6 +305,34 @@ class BoardControllerTest {
             // when
             final var result = mockMvc.perform(
                     get("/boards/my-like")
+                            .contentType(APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+
+            // then
+            result.andExpect(status().isOk());
+        }
+    }
+
+    @Nested
+    @DisplayName("게시글 태그 검색")
+    class SearchBoard {
+        @DisplayName("게시글 태그 검색 목록 조회시, 해당 태그가 포함된 게시글만 최신순으로 조회된다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(BoardCompositeCustomizer.class)
+        void search_boards_by_tag(final Tag tag, final List<Board> boards) throws Exception{
+
+            // given
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL,true);
+
+            given(boardService.getBoardList(any(), any(), any())).willReturn(new SliceImpl<>(boards));
+
+            // when
+            final var result = mockMvc.perform(
+                    get("/boards?sortBy=latest&keyword=")
+                            .param("page", String.valueOf(0))
+                            .param("size", String.valueOf(3))
+                            .param("keyword", tag.getName())
                             .contentType(APPLICATION_JSON)
                             .header("Authorization", "Bearer " + accessToken));
 

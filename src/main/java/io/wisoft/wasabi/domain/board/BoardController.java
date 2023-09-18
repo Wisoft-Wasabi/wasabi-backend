@@ -52,9 +52,10 @@ public class BoardController<T> {
     @GetMapping
     public ResponseEntity<Response<Slice<SortBoardResponse>>> boardList(
             @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
-            @PageableDefault(size = 2) final Pageable pageable) {
+            @PageableDefault(size = 2) final Pageable pageable,
+            @RequestParam(required = false) final String keyword) {
 
-        final Slice<SortBoardResponse> data = boardService.getBoardList(sortBy, pageable);
+        final Slice<SortBoardResponse> data = boardService.getBoardList(sortBy, pageable, keyword);
         return ResponseEntity.ofNullable(
                 Response.of(
                         ResponseType.BOARD_SORTED_LIST_SUCCESS,
