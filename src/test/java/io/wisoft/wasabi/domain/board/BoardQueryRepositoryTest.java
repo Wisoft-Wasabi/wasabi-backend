@@ -128,12 +128,11 @@ class BoardQueryRepositoryTest {
 
             // given
             em.persist(member);
-            boardRepository.saveAll(boards);
             em.persist(tag);
 
             final var expected = boards.get(0);
             expected.setTag(tag);
-            em.persist(expected);
+            boardRepository.saveAll(boards);
 
             final String keyword = tag.getName();
 

@@ -91,9 +91,11 @@ class BoardServiceTest {
             final var response = boardServiceImpl.writeBoard(request, 1L);
 
             // then
-            assertThat(response.title()).isEqualTo("title");
-            assertThat(tag.getName()).isEqualTo("tag");
-            assertNotNull(response);
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(response.title()).isEqualTo("title");
+                softAssertions.assertThat(tag.getName()).isEqualTo("tag");
+            });
+
         }
 
         @DisplayName("요청시 저장된 태그가 없다면 태그가 저장된 후 게시글을 저장한다.")
@@ -119,9 +121,10 @@ class BoardServiceTest {
             final var response = boardServiceImpl.writeBoard(request, 1L);
 
             // then
-            assertThat(response.title()).isEqualTo("title");
-            assertThat(request.tag()).isEqualTo("tag");
-            assertNotNull(response);
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(response.title()).isEqualTo("title");
+                softAssertions.assertThat(tag.getName()).isEqualTo("tag");
+            });
         }
 
         @DisplayName("요청시 태그가 유효하지 않은 값이면 null로 저장된다.")
@@ -146,9 +149,10 @@ class BoardServiceTest {
             final var response = boardServiceImpl.writeBoard(request, 1L);
 
             // then
-            assertThat(response.title()).isEqualTo("title");
-            assertThat(board.getTag()).isEqualTo(null);
-            assertNotNull(response);
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(response.title()).isEqualTo("title");
+                softAssertions.assertThat(board.getTag()).isEqualTo(null);
+            });
         }
     }
 
