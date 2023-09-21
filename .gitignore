@@ -353,7 +353,6 @@ docker/
 /src/main/resources/schema.sql
 
 # submodule
-wasabi-config/
 src/main/resources/application-*.yml
 appspec.yml
 scripts/*
