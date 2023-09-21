@@ -1,8 +1,10 @@
 name: wasabi-backend CI/CD
 
 on:
+  push:
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
 env:
   PROJECT_NAME: wasabi-backend
@@ -10,19 +12,28 @@ env:
   CODE_DEPLOY_APP_NAME: wasabi-public-codedeploy
   DEPLOYMENT_GROUP_NAME: wasabi-public-codedeploy-group
 
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
+
+    - name: Checkout 
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.ACCESS_TOKEN }}
+        submodules: true
+        ssh-key: ${{ secrets.SSH_KEY }}
+
+    - name: Copy yml file
+      run: |
+        cp ./wasabi-config/application-*.yml ./wasabi-backend/src/main/resources/
+        cp ./wasabi-config/scripts ./wasabi-backend/
+        cp ./wasabi-config/appspec.yml ./wasabi-backend/
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -30,6 +41,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
       ### run: ./gradlew build -x test
+
       
       
       ############## CD
