@@ -1,0 +1,3 @@
+[submodule "wasabi-config"]
+	path = wasabi-config
+	url = git@github.com:Wisoft-Wasabi/wasabi-config.git
