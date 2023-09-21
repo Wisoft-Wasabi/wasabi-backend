@@ -1,15 +1,16 @@
 package io.wisoft.wasabi.global.config.web;
 
-import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.web.filter.LogFilter;
+import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -18,24 +19,22 @@ import java.util.List;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    private final AdminInterceptor adminInterceptor;
     private final MemberIdResolver memberIdResolver;
     private final AnyoneResolver anyoneResolver;
-    private final AdminRoleResolver adminRoleResolver;
 
-
-    public WebMvcConfig(final MemberIdResolver memberIdResolver,
-                        final AnyoneResolver anyoneResolver,
-                        final AdminRoleResolver adminRoleResolver) {
+    public WebMvcConfig(final AdminInterceptor adminInterceptor,
+                        final MemberIdResolver memberIdResolver,
+                        final AnyoneResolver anyoneResolver) {
+        this.adminInterceptor = adminInterceptor;
         this.memberIdResolver = memberIdResolver;
         this.anyoneResolver = anyoneResolver;
-        this.adminRoleResolver = adminRoleResolver;
     }
 
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(memberIdResolver);
         resolvers.add(anyoneResolver);
-        resolvers.add(adminRoleResolver);
     }
 
     @Bean
@@ -51,4 +50,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 
+    @Override
+    public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(adminInterceptor)
+                .addPathPatterns("/admin/**");
+    }
 }

@@ -87,7 +87,6 @@ public class Board extends BaseTimeEntity {
     public Tag getTag() {
         return tag;
     }
-
     public Set<Like> getLikes() {
         return likes;
     }

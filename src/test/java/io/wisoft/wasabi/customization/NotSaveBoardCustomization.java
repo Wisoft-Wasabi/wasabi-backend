@@ -6,6 +6,7 @@ import autoparams.generator.ObjectGenerationContext;
 import autoparams.generator.ObjectGenerator;
 import io.wisoft.wasabi.customization.container.MemberStaticContainer;
 import io.wisoft.wasabi.domain.board.Board;
+import io.wisoft.wasabi.domain.tag.Tag;
 
 public class NotSaveBoardCustomization implements Customizer {
 

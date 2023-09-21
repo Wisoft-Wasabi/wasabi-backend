@@ -34,8 +34,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
@@ -83,17 +81,21 @@ class BoardServiceTest {
                     "tag",
                     new String[]{"imageUrls"});
 
-            given(tagRepository.findByName(any())).willReturn(Optional.of(tag));
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
+
+            given(tagRepository.save(any())).willReturn(tag);
             given(boardRepository.save(any())).willReturn(board);
+
 
             // when
             final var response = boardServiceImpl.writeBoard(request, 1L);
 
             // then
-            assertThat(response.title()).isEqualTo("title");
-            verify(tagRepository, times(0)).save(any());
-            assertNotNull(response);
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(response.title()).isEqualTo("title");
+                softAssertions.assertThat(tag.getName()).isEqualTo("tag");
+            });
+
         }
 
         @DisplayName("요청시 저장된 태그가 없다면 태그가 저장된 후 게시글을 저장한다.")
@@ -104,24 +106,25 @@ class BoardServiceTest {
 
             // given
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
+            given(tagRepository.save(any())).willReturn(tag);
 
             final var request = new WriteBoardRequest(
                     "title",
                     "content",
-                    "not-exist-tag",
+                    "tag",
                     new String[]{"imageUrls"});
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
-            given(tagRepository.save(any())).willReturn(tag);
             given(boardRepository.save(any())).willReturn(board);
 
             // when
             final var response = boardServiceImpl.writeBoard(request, 1L);
 
             // then
-            assertThat(response.title()).isEqualTo("title");
-            verify(tagRepository, times(1)).save(any());
-            assertNotNull(response);
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(response.title()).isEqualTo("title");
+                softAssertions.assertThat(tag.getName()).isEqualTo("tag");
+            });
         }
 
         @DisplayName("요청시 태그가 유효하지 않은 값이면 null로 저장된다.")
@@ -138,6 +141,7 @@ class BoardServiceTest {
                     null,
                     new String[]{"imageUrls"});
 
+
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
 
@@ -149,7 +153,6 @@ class BoardServiceTest {
                 softAssertions.assertThat(response.title()).isEqualTo("title");
                 softAssertions.assertThat(board.getTag()).isEqualTo(null);
             });
-            assertNotNull(response);
         }
     }
 
@@ -201,10 +204,10 @@ class BoardServiceTest {
                     board.getViews()
             ));
 
-            given(boardQueryRepository.boardList(pageable, BoardSortType.VIEWS)).willReturn(boardList);
+            given(boardQueryRepository.boardList(pageable, BoardSortType.VIEWS, "tag")).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getBoardList("views", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("views", pageable, "tag");
 
             //then
             final var mostViewedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
@@ -234,10 +237,10 @@ class BoardServiceTest {
                     board.getViews()
             ));
 
-            given(boardQueryRepository.boardList(pageable, BoardSortType.LATEST)).willReturn(boardList);
+            given(boardQueryRepository.boardList(pageable, BoardSortType.LATEST, "tag")).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getBoardList("latest", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("latest", pageable, "tag");
 
             //then
             final var latestBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
@@ -270,10 +273,10 @@ class BoardServiceTest {
                     board.getViews()
             ));
 
-            given(boardQueryRepository.boardList(pageable, BoardSortType.LIKES)).willReturn(boardList);
+            given(boardQueryRepository.boardList(pageable, BoardSortType.LIKES, "tag")).willReturn(boardList);
 
             //when
-            final var sortedBoards = boardServiceImpl.getBoardList("likes", pageable);
+            final var sortedBoards = boardServiceImpl.getBoardList("likes", pageable, "tag");
 
             //then
             final var mostLikedBoard = (SortBoardResponse) sortedBoards.getContent().get(0);
@@ -336,4 +339,3 @@ class BoardServiceTest {
         }
     }
 }
-

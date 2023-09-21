@@ -55,5 +55,4 @@ public class JwtTokenProvider {
 
         return Role.valueOf(claims.get("memberRole", String.class));
     }
-
 }

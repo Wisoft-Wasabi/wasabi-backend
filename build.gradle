@@ -79,3 +79,17 @@ clean {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+task copySettingFiles(type: Copy) {
+    copy {
+        from './wasabi-config'
+        include "application-*.yml", "*.sql"
+        into './src/main/resources'
+    }
+
+    copy {
+        from './wasabi-config'
+        include "appspec.yml", "scripts/*"
+        into './'
+    }
+}

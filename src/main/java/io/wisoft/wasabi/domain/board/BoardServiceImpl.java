@@ -106,13 +106,14 @@ public class BoardServiceImpl<T> implements BoardService<T> {
 
     @Override
     public Slice<SortBoardResponse> getBoardList(final String sortBy,
-                                                 final Pageable pageable) {
+                                                 final Pageable pageable,
+                                                 final String keyword) {
 
         final BoardSortType sortType = validateSortType(sortBy.toUpperCase());
 
         logger.info("[Result] {}를 기준으로 정렬한 게시글 목록 조회", sortBy);
 
-        return this.boardQueryRepository.boardList(pageable, sortType);
+        return this.boardQueryRepository.boardList(pageable, sortType, keyword);
     }
 
     private BoardSortType validateSortType(final String sortBy) {

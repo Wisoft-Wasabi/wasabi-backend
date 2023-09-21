@@ -25,7 +25,7 @@ public class BoardController<T> {
 
     @PostMapping
     public ResponseEntity<Response<WriteBoardResponse>> writeBoard(@RequestBody @Valid final WriteBoardRequest request,
-                                                                   @MemberId final Long memberId) {
+                                                                   @MemberId final Long memberId) throws ClassNotFoundException {
 
         final WriteBoardResponse data = boardService.writeBoard(request, memberId);
         return ResponseEntity.ofNullable(
@@ -52,9 +52,10 @@ public class BoardController<T> {
     @GetMapping
     public ResponseEntity<Response<Slice<SortBoardResponse>>> boardList(
             @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
-            @PageableDefault(size = 2) final Pageable pageable) {
+            @PageableDefault(size = 2) final Pageable pageable,
+            @RequestParam(required = false) final String keyword) {
 
-        final Slice<SortBoardResponse> data = boardService.getBoardList(sortBy, pageable);
+        final Slice<SortBoardResponse> data = boardService.getBoardList(sortBy, pageable, keyword);
         return ResponseEntity.ofNullable(
                 Response.of(
                         ResponseType.BOARD_SORTED_LIST_SUCCESS,

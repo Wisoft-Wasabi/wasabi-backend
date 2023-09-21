@@ -3,8 +3,6 @@ package io.wisoft.wasabi.domain.admin;
 import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
 import io.wisoft.wasabi.domain.admin.dto.ApproveMemberResponse;
 import io.wisoft.wasabi.domain.admin.dto.MembersResponse;
-import io.wisoft.wasabi.domain.member.Role;
-import io.wisoft.wasabi.global.config.common.aop.UserRole;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +21,6 @@ public class AdminController {
     }
 
     @GetMapping("/members")
-    @UserRole(Role.ADMIN)
     public ResponseEntity<Response<Slice<MembersResponse>>> getUnapprovedMembers(@PageableDefault(size = 10) final Pageable pageable) {
         final Slice<MembersResponse> data = adminService.getUnapprovedMembers(pageable);
 
@@ -33,11 +30,9 @@ public class AdminController {
                         data
                 )
         );
-
     }
 
     @PatchMapping("/members")
-    @UserRole(Role.ADMIN)
     public ResponseEntity<Response<ApproveMemberResponse>> approveMember(@RequestBody final ApproveMemberRequest request) {
         final ApproveMemberResponse data = adminService.approveMember(request);
 
