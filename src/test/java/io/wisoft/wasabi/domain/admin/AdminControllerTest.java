@@ -3,11 +3,8 @@ package io.wisoft.wasabi.domain.admin;
 import autoparams.AutoSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.admin.dto.request.ApproveMemberRequest;
-import io.wisoft.wasabi.domain.member.*;
-import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
-import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
-import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
-import io.wisoft.wasabi.global.config.common.aop.UserRoleAspect;
+import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
@@ -39,17 +36,12 @@ public class AdminControllerTest {
     @SpyBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @SpyBean
-    private AdminRoleResolver adminRoleResolver;
-
     @MockBean
     private MemberRepository memberRepository;
 
     @SpyBean
     private AuthorizationExtractor authorizationExtractor;
 
-    @SpyBean
-    private UserRoleAspect userRoleAspect;
     @Spy
     private ObjectMapper objectMapper;
 

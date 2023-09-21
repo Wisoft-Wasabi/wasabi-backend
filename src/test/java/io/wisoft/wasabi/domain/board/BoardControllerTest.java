@@ -12,10 +12,10 @@ import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.tag.Tag;
-import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -59,10 +59,10 @@ class BoardControllerTest {
     private MemberIdResolver memberIdResolver;
 
     @MockBean
-    private AnyoneResolver anyoneResolver;
+    private AdminInterceptor adminInterceptor;
 
     @MockBean
-    private AdminRoleResolver adminRoleResolver;
+    private AnyoneResolver anyoneResolver;
 
     @Spy
     private ObjectMapper objectMapper;
@@ -296,7 +296,7 @@ class BoardControllerTest {
         void read_my_like_boards(final List<Board> boards) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL,true);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
 
