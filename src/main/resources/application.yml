@@ -16,3 +16,4 @@ logging.level:
 
 logging:
   config: classpath:application-log-dev.yml
+  
