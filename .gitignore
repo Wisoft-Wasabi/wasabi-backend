@@ -351,3 +351,8 @@ gradle-app.setting
 # docker
 docker/
 /src/main/resources/schema.sql
+
+# submodule
+src/main/resources/application-*.yml
+appspec.yml
+scripts/*
