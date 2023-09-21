@@ -1,8 +1,8 @@
 package io.wisoft.wasabi.domain.member;
 
+import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.like.Like;
-import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;

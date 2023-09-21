@@ -5,16 +5,16 @@ import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.customization.SignupRequestCustomization;
-import io.wisoft.wasabi.domain.auth.dto.request.LoginRequest;
-import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
-import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
-import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
+import io.wisoft.wasabi.domain.auth.dto.LoginRequest;
+import io.wisoft.wasabi.domain.auth.dto.LoginResponse;
+import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
+import io.wisoft.wasabi.domain.auth.dto.SignupResponse;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Part;
-import io.wisoft.wasabi.global.config.common.annotation.AdminRoleResolver;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,11 +50,11 @@ class AuthControllerTest {
     @MockBean
     private AnyoneResolver anyoneResolver;
 
+    @MockBean
+    private AdminInterceptor adminInterceptor;
+
     @SpyBean
     private ResponseAspect responseAspect;
-
-    @MockBean
-    private AdminRoleResolver adminRoleResolver;
 
     @Spy
     private ObjectMapper objectMapper;

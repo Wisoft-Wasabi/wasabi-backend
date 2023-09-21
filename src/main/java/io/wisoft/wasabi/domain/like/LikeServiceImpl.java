@@ -3,18 +3,18 @@ package io.wisoft.wasabi.domain.like;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
-import io.wisoft.wasabi.domain.board.exception.BoardNotFoundException;
+import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
+import io.wisoft.wasabi.domain.like.dto.GetLikeResponse;
+import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
+import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
 import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.domain.like.dto.*;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)

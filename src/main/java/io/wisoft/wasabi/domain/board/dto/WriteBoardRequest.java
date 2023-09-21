@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 public record WriteBoardRequest(
         @NotBlank String title,
         @NotBlank String content,
-        @Nullable String[] tags,
+        @Nullable String tag,
         @Nullable String[] imageUrls
 ) {
 }
