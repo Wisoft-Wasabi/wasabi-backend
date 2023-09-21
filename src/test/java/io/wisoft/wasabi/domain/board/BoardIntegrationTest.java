@@ -11,6 +11,7 @@ import io.wisoft.wasabi.domain.like.LikeMapper;
 import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.tag.Tag;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
@@ -59,7 +60,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
     @MockBean
     private AnyoneResolver anyoneResolver;
-    
+
     @Nested
     @DisplayName("게시글 작성")
     class WriteBoard {
@@ -77,7 +78,7 @@ class BoardIntegrationTest extends IntegrationTest {
             final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
                     "content",
-                    new String[]{"tags"},
+                    "tag",
                     new String[]{"imageUrls"});
 
             final String json = objectMapper.writeValueAsString(request);
@@ -104,7 +105,7 @@ class BoardIntegrationTest extends IntegrationTest {
             final WriteBoardRequest request = new WriteBoardRequest(
                     "title",
                     "content",
-                    new String[]{"tags"},
+                    "tag",
                     new String[]{"imageUrls"});
 
             final String json = objectMapper.writeValueAsString(request);
@@ -131,7 +132,7 @@ class BoardIntegrationTest extends IntegrationTest {
             final WriteBoardRequest request = new WriteBoardRequest(
                     "    ",
                     null,
-                    new String[]{"tags"},
+                    "tag",
                     new String[]{"imageUrls"});
 
             final String json = objectMapper.writeValueAsString(request);
