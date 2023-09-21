@@ -2,7 +2,7 @@ package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.used.persistence.Used;
+import io.wisoft.wasabi.domain.tag.Tag;
 import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.BatchSize;
@@ -36,8 +36,9 @@ public class Board extends BaseTimeEntity {
     @OneToMany(mappedBy = "board")
     private Set<Like> likes = new HashSet<>();
 
-    @OneToMany(mappedBy = "board")
-    private Set<Used> useds = new HashSet<>();
+    @JoinColumn(name="tag_id")
+    @ManyToOne(fetch = LAZY)
+    private Tag tag;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
     private Set<BoardImage> boardImages = new HashSet<>();
@@ -64,7 +65,6 @@ public class Board extends BaseTimeEntity {
         this.views++;
     }
 
-
     /* getter */
     public Long getId() { return id; }
 
@@ -76,12 +76,10 @@ public class Board extends BaseTimeEntity {
         return member;
     }
 
+    public Tag getTag() { return tag; }
+
     public Set<Like> getLikes() {
         return likes;
-    }
-
-    public Set<Used> getUsages() {
-        return useds;
     }
 
     public Set<BoardImage> getBoardImages() {
@@ -90,4 +88,8 @@ public class Board extends BaseTimeEntity {
 
     public int getViews() { return views; }
 
+    void setTag(final Tag tag) {
+        this.tag = tag;
+        tag.addBoard(this);
+    }
 }
