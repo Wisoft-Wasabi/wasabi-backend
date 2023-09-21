@@ -1,6 +1,5 @@
 package io.wisoft.wasabi.domain.member;
 
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;

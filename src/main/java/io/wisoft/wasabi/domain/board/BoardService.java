@@ -6,7 +6,7 @@ import org.springframework.data.domain.Slice;
 
 public interface BoardService<T> {
 
-    WriteBoardResponse writeBoard(final WriteBoardRequest request, final Long memberId) throws ClassNotFoundException;
+    WriteBoardResponse writeBoard(final WriteBoardRequest request, final Long memberId);
 
     ReadBoardResponse readBoard(final Long boardId, final Long accessId);
 

@@ -1,15 +1,13 @@
 package io.wisoft.wasabi.domain.member;
 
-import io.wisoft.wasabi.domain.admin.dto.request.ApproveMemberRequest;
-import io.wisoft.wasabi.domain.admin.dto.response.ApproveMemberResponse;
-import io.wisoft.wasabi.domain.admin.dto.response.MembersResponse;
-import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
-import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
-import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
+import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
+import io.wisoft.wasabi.domain.admin.dto.ApproveMemberResponse;
+import io.wisoft.wasabi.domain.admin.dto.MembersResponse;
+import io.wisoft.wasabi.domain.auth.dto.LoginResponse;
+import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
+import io.wisoft.wasabi.domain.auth.dto.SignupResponse;
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
-
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
-
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Slice;

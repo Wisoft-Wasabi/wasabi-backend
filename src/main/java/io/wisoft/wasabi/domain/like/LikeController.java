@@ -11,8 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.CREATED;
-
 @RestController
 @RequestMapping("/likes")
 public class LikeController {

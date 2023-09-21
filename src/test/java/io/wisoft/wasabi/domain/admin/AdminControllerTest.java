@@ -2,7 +2,7 @@ package io.wisoft.wasabi.domain.admin;
 
 import autoparams.AutoSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.domain.admin.dto.request.ApproveMemberRequest;
+import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;

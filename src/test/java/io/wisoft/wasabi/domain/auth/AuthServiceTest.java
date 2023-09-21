@@ -1,10 +1,10 @@
 package io.wisoft.wasabi.domain.auth;
 
 import autoparams.AutoSource;
-import io.wisoft.wasabi.domain.auth.dto.request.LoginRequest;
-import io.wisoft.wasabi.domain.auth.dto.request.SignupRequest;
-import io.wisoft.wasabi.domain.auth.dto.response.LoginResponse;
-import io.wisoft.wasabi.domain.auth.dto.response.SignupResponse;
+import io.wisoft.wasabi.domain.auth.dto.LoginRequest;
+import io.wisoft.wasabi.domain.auth.dto.LoginResponse;
+import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
+import io.wisoft.wasabi.domain.auth.dto.SignupResponse;
 import io.wisoft.wasabi.domain.auth.exception.LoginFailException;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberMapper;

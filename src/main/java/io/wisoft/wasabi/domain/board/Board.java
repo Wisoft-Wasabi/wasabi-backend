@@ -1,14 +1,15 @@
 package io.wisoft.wasabi.domain.board;
 
+import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.tag.Tag;
-import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -36,7 +37,7 @@ public class Board extends BaseTimeEntity {
     @OneToMany(mappedBy = "board")
     private Set<Like> likes = new HashSet<>();
 
-    @JoinColumn(name="tag_id")
+    @JoinColumn(name = "tag_id")
     @ManyToOne(fetch = LAZY)
     private Tag tag;
 
@@ -48,7 +49,8 @@ public class Board extends BaseTimeEntity {
         member.getBoards().add(this);
     }
 
-    protected Board() {}
+    protected Board() {
+    }
 
     public Board(
             final String title,
@@ -66,18 +68,25 @@ public class Board extends BaseTimeEntity {
     }
 
     /* getter */
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getContent() { return content; }
+    public String getContent() {
+        return content;
+    }
 
     public Member getMember() {
         return member;
     }
 
-    public Tag getTag() { return tag; }
-
+    public Tag getTag() {
+        return tag;
+    }
     public Set<Like> getLikes() {
         return likes;
     }
@@ -86,7 +95,9 @@ public class Board extends BaseTimeEntity {
         return boardImages;
     }
 
-    public int getViews() { return views; }
+    public int getViews() {
+        return views;
+    }
 
     void setTag(final Tag tag) {
         this.tag = tag;

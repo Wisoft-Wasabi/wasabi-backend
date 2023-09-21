@@ -33,7 +33,7 @@ public class AnyoneResolver implements HandlerMethodArgumentResolver {
                                   final NativeWebRequest webRequest,
                                   final WebDataBinderFactory binderFactory) throws Exception {
 
-        final HttpServletRequest request = (HttpServletRequest)  webRequest.getNativeRequest();
+        final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         final String token = extractor.extract(request, "Bearer");
 
         if (!StringUtils.hasText(token)) {

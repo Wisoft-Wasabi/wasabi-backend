@@ -2,11 +2,8 @@ package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.tag.Tag;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class BoardMapper {

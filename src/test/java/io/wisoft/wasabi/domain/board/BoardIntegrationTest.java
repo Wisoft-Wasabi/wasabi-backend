@@ -7,7 +7,6 @@ import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.like.Like;
-import io.wisoft.wasabi.domain.like.LikeMapper;
 import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
@@ -15,12 +14,10 @@ import io.wisoft.wasabi.domain.tag.Tag;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Slice;
@@ -36,7 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class BoardIntegrationTest extends IntegrationTest {
 
