@@ -27,12 +27,6 @@ jobs:
       with:
         token: ${{ secrets.ACCESS_TOKEN }}
         submodules: true
-
-    - name: Copy yml file
-      run: |
-        cp ./wasabi-config/application-*.yml ./wasabi-backend/src/main/resources/
-        cp ./wasabi-config/scripts ./wasabi-backend/
-        cp ./wasabi-config/appspec.yml ./wasabi-backend/
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
