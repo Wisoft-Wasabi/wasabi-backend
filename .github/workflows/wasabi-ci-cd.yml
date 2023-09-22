@@ -27,6 +27,9 @@ jobs:
       with:
         token: ${{ secrets.ACCESS_TOKEN }}
         submodules: true
+
+    - name: Print Submodule files list
+      run: ls -al wasabi-config
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
