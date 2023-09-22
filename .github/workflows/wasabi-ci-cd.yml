@@ -27,7 +27,6 @@ jobs:
       with:
         token: ${{ secrets.ACCESS_TOKEN }}
         submodules: true
-        ssh-key: ${{ secrets.SSH_KEY }}
 
     - name: Copy yml file
       run: |
