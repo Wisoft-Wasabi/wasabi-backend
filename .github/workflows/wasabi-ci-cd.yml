@@ -1,10 +1,8 @@
 name: wasabi-backend CI/CD
 
 on:
-  push:
-    branches: [ "develop" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "main" ]
 
 env:
   PROJECT_NAME: wasabi-backend
@@ -27,19 +25,12 @@ jobs:
       with:
         token: ${{ secrets.ACCESS_TOKEN }}
         submodules: true
-        ssh-key: ${{ secrets.SSH_KEY }}
-
-    - name: Copy yml file
-      run: |
-        cp ./wasabi-config/application-*.yml ./wasabi-backend/src/main/resources/
-        cp ./wasabi-config/scripts ./wasabi-backend/
-        cp ./wasabi-config/appspec.yml ./wasabi-backend/
         
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build --info
       ### run: ./gradlew build -x test
 
       
