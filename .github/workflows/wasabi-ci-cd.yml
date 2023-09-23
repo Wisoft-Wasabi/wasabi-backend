@@ -1,10 +1,8 @@
 name: wasabi-backend CI/CD
 
 on:
-  push:
-    branches: [ "develop" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "main" ]
 
 env:
   PROJECT_NAME: wasabi-backend

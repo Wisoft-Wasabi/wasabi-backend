@@ -93,3 +93,7 @@ task copySettingFiles(type: Copy) {
         into './'
     }
 }
+
+jar {
+    enabled = false
+}
