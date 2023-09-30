@@ -32,7 +32,13 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew clean build
 
-      
+    - name: Remove application-dev.yml from src/resource
+      run: rm -f src/resource/application-dev.yml
+      shell: bash
+
+    - name: Remove application-log-dev.yml from src/resource
+      run: rm -f src/resource/application-log-dev.yml
+      shell: bash
       
       ############## CD
       
