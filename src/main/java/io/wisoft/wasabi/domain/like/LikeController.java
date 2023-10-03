@@ -1,9 +1,7 @@
 package io.wisoft.wasabi.domain.like;
 
-import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
-import io.wisoft.wasabi.domain.like.dto.GetLikeResponse;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
+import io.wisoft.wasabi.domain.like.dto.*;
+import io.wisoft.wasabi.global.config.common.annotation.Anyone;
 import io.wisoft.wasabi.global.config.common.annotation.MemberId;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
@@ -22,15 +20,27 @@ public class LikeController {
     }
 
     @PostMapping
-    public ResponseEntity<Response<RegisterLikeResponse>> registerLike(@MemberId final Long memberId,
-                                                                       @RequestBody @Valid final RegisterLikeRequest request) {
+    public ResponseEntity<Response<?>> registerLike(@Anyone final Object accessId,
+                                                    @RequestBody @Valid final RegisterLikeRequest request) {
 
-        final RegisterLikeResponse data = likeService.registerLike(memberId, request);
+        // accessId = sessionId 일 경우 -> 비회원 좋아요
+        if (accessId instanceof String) {
+            final RegisterAnonymousLikeResponse data = likeService.registerAnonymousLike((String) accessId, request);
+            return ResponseEntity.ofNullable(
+                    Response.of(
+                            ResponseType.LIKE_REGISTER_SUCCESS,
+                            data
+                    )
+            );
+        }
+
+        // accessId = memberId 일 경우 -> 회원 좋아요
+        final RegisterLikeResponse data = likeService.registerLike((Long) accessId, request);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.LIKE_REGISTER_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.LIKE_REGISTER_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -40,10 +50,10 @@ public class LikeController {
 
         final CancelLikeResponse data = likeService.cancelLike(memberId, boardId);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.LIKE_CANCEL_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.LIKE_CANCEL_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -53,10 +63,10 @@ public class LikeController {
 
         final GetLikeResponse data = likeService.getLikeStatus(memberId, boardId);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.GET_LIKE_STATUS_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.GET_LIKE_STATUS_SUCCESS,
+                        data
+                )
         );
     }
 }

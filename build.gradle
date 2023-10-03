@@ -46,6 +46,9 @@ dependencies {
     // mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     // log4j2
     implementation 'org.springframework.boot:spring-boot-starter-log4j2'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'

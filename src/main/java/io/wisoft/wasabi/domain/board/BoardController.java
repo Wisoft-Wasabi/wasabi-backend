@@ -38,7 +38,7 @@ public class BoardController<T> {
 
     @GetMapping("/{boardId}")
     public ResponseEntity<Response<ReadBoardResponse>> readBoard(@PathVariable final Long boardId,
-                                                                 @Anyone final Long accessId) {
+                                                                 @Anyone final T accessId) {
 
         final ReadBoardResponse data = boardService.readBoard(boardId, accessId);
         return ResponseEntity.ofNullable(

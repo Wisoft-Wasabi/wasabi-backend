@@ -28,7 +28,7 @@ public class BoardMapper {
     }
 
 
-    ReadBoardResponse entityToReadBoardResponse(final Board board, final boolean isLike) {
+    ReadBoardResponse entityToReadBoardResponse(final Board board, final boolean isLike, final Integer totalLikeCount) {
 
         return new ReadBoardResponse(
                 board.getId(),
@@ -43,7 +43,7 @@ public class BoardMapper {
                         board.getMember().getMotto()
                 ),
                 board.getCreatedAt(),
-                board.getLikes().size(),
+                totalLikeCount,
                 board.getViews(),
                 isLike,
                 String.valueOf(board.getTag())

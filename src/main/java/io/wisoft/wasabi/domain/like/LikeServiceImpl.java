@@ -3,16 +3,14 @@ package io.wisoft.wasabi.domain.like;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.board.BoardRepository;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
-import io.wisoft.wasabi.domain.like.dto.CancelLikeResponse;
-import io.wisoft.wasabi.domain.like.dto.GetLikeResponse;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
+import io.wisoft.wasabi.domain.like.dto.*;
 import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +23,18 @@ public class LikeServiceImpl implements LikeService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final LikeMapper likeMapper;
+    private final StringRedisTemplate redis;
 
     public LikeServiceImpl(final LikeRepository likeRepository,
                            final MemberRepository memberRepository,
                            final BoardRepository boardRepository,
-                           final LikeMapper likeMapper) {
+                           final LikeMapper likeMapper,
+                           final StringRedisTemplate redis) {
         this.likeRepository = likeRepository;
         this.memberRepository = memberRepository;
         this.boardRepository = boardRepository;
         this.likeMapper = likeMapper;
+        this.redis = redis;
     }
 
     @Transactional
@@ -52,6 +53,20 @@ public class LikeServiceImpl implements LikeService {
         logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 등록", memberId, board.getId());
 
         return likeMapper.entityToRegisterLikeResponse(like);
+    }
+
+    @Override
+    public RegisterAnonymousLikeResponse registerAnonymousLike(final String sessionId, final RegisterLikeRequest request) {
+
+        final Board board = boardRepository.findById(request.boardId())
+                .orElseThrow(BoardExceptionExecutor::BoardNotFound);
+
+        // redis에 저장
+        redis.opsForValue().set(String.valueOf(board.getId()), sessionId);
+
+        // 회원 좋아요는 응답으로 Like Id를 주는데, 비회원 좋아요는 레디스에 저장하기 때문에 Id가 없다.
+        // TODO: 응답을 어떻게 줄 지 생각해보기
+        return likeMapper.entityToRegisterAnonymousLikeResponse(null);
     }
 
     @Override

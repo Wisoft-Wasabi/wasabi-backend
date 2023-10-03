@@ -12,11 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -29,6 +32,7 @@ public class BoardServiceImpl<T> implements BoardService<T> {
     private final TagRepository tagRepository;
     private final BoardQueryRepository boardQueryRepository;
     private final BoardMapper boardMapper;
+    private final StringRedisTemplate redis;
 
 
     public BoardServiceImpl(final BoardRepository boardRepository,
@@ -36,13 +40,15 @@ public class BoardServiceImpl<T> implements BoardService<T> {
                             final LikeRepository likeRepository,
                             final TagRepository tagRepository,
                             final BoardQueryRepository boardQueryRepository,
-                            final BoardMapper boardMapper) {
+                            final BoardMapper boardMapper,
+                            final StringRedisTemplate redis) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
         this.likeRepository = likeRepository;
         this.tagRepository = tagRepository;
         this.boardQueryRepository = boardQueryRepository;
         this.boardMapper = boardMapper;
+        this.redis = redis;
     }
 
 
@@ -86,22 +92,34 @@ public class BoardServiceImpl<T> implements BoardService<T> {
     }
 
     @Transactional
-    public ReadBoardResponse readBoard(final Long boardId, final Long accessId) {
+    public ReadBoardResponse readBoard(final Long boardId, final T accessId) {
 
         final Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
-        /**
-         * TODO: 비회원일 경우 처리해주기
-         */
+        boolean isLike = false;
 
-        // 회원일 경우
-        final boolean isLike = likeRepository.findByMemberIdAndBoardId((Long) accessId, boardId).isPresent();
+        // Redis에서 Key가 boardId인 정보들 조회
+        final List<String> anonymousLikes = redis.opsForValue().multiGet(Collections.singleton(String.valueOf(boardId)));
+
+        // 비회원 좋아요 여부 확인
+        if (accessId instanceof String && anonymousLikes != null) {
+            // 회원 좋아요 여부 확인
+            isLike = anonymousLikes.contains(accessId);
+        } else {
+            isLike = likeRepository.findByMemberIdAndBoardId((Long) accessId, boardId).isPresent();
+        }
+
+        // 회원 + 비회원 총 좋아요 개수 계산
+        final Integer totalLikeCount = board.getLikes().size() + anonymousLikes.size();
+
+        // 게시글 좋아요 증가
         board.increaseView();
 
+        // TODO : 주석 수정하기
         logger.info("[Result] {}번 회원의 {}번 게시글 조회", accessId, boardId);
-        return boardMapper.entityToReadBoardResponse(board, isLike);
-        
+        return boardMapper.entityToReadBoardResponse(board, isLike, totalLikeCount);
+
     }
 
     @Override
