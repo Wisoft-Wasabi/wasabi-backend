@@ -46,7 +46,7 @@ public class BoardMapper {
                 board.getLikes().size(),
                 board.getViews(),
                 isLike,
-                String.valueOf(board.getTag())
+                board.getTag().getName()
         );
     }
 

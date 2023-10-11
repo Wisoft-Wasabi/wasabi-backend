@@ -13,15 +13,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByEmail(final String email);
 
-    // Query 를 안짜는 방식
-    Slice<Member> findMembersByActivationIsFalse(final Pageable pageable);
-
     @Query("SELECT member FROM Member member WHERE member.activation = false")
     Slice<Member> findMemberByUnactivated(final Pageable pageable);
-
-    @Modifying
-    @Query("UPDATE Member m SET m.activation = :newActivation WHERE m.id = :memberId")
-    void updateActivationStatus(final Long memberId, final boolean newActivation);
-
 
 }
