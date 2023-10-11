@@ -6,7 +6,8 @@ import org.springframework.util.StringUtils;
 
 @JsonDeserialize(using = PartDeserializer.class)
 public enum Part {
-    BACKEND("Backend"), FRONTEND("Frontend"), UNDEFINED("Undefined");
+    BACKEND("Backend"), FRONTEND("Frontend"), MOBILE("Mobile"), INFRA("Infra"),
+    DBA("Dba"), DEVELOPER("Developer"), UNDEFINED("Undefined");
 
     private final String value;
 
