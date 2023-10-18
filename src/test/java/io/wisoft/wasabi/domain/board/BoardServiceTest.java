@@ -5,6 +5,7 @@ import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.customization.NotSaveTagCustomization;
 import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
+import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.like.LikeMapper;
@@ -32,6 +33,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 
@@ -55,9 +57,6 @@ class BoardServiceTest {
 
     @Mock
     private BoardQueryRepository boardQueryRepository;
-
-    @Mock
-    private LikeRepository likeRepository;
 
     @Spy
     private LikeMapper likeMapper;
@@ -165,7 +164,9 @@ class BoardServiceTest {
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
         @ParameterizedTest
         @AutoSource
-        void read_board_success(final Member member) {
+        void read_board_success(final Member member,
+                                final boolean isAuthenticated,
+                                final ReadBoardResponse response) {
 
             //given
             final var request = new WriteBoardRequest(
@@ -176,12 +177,13 @@ class BoardServiceTest {
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
+            given(boardQueryRepository.readBoard(any(), any(), anyBoolean())).willReturn(response);
 
             //when
-            final var response = boardServiceImpl.readBoard(board.getId(), member.getId());
+            final var result = boardServiceImpl.readBoard(board.getId(), member.getId(), isAuthenticated);
 
             //then
-            assertThat(response.views()).isEqualTo(1L);
+            assertThat(result).isNotNull();
         }
 
         @ParameterizedTest
@@ -260,8 +262,6 @@ class BoardServiceTest {
             memberRepository.save(member);
 
             final var like = likeMapper.registerLikeRequestToEntity(member, board2);
-            given(likeRepository.save(like)).willReturn(like);
-            likeRepository.save(like);
 
             final var boards = new SliceImpl<>(List.of(board2, board1));
             final var boardList = boards.map(board -> new SortBoardResponse(

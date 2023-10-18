@@ -20,12 +20,11 @@ import java.util.Arrays;
 
 @Service
 @Transactional(readOnly = true)
-public class BoardServiceImpl<T> implements BoardService<T> {
+public class BoardServiceImpl implements BoardService {
 
     private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
-    private final LikeRepository likeRepository;
     private final TagRepository tagRepository;
     private final BoardQueryRepository boardQueryRepository;
     private final BoardMapper boardMapper;
@@ -33,19 +32,17 @@ public class BoardServiceImpl<T> implements BoardService<T> {
 
     public BoardServiceImpl(final BoardRepository boardRepository,
                             final MemberRepository memberRepository,
-                            final LikeRepository likeRepository,
                             final TagRepository tagRepository,
                             final BoardQueryRepository boardQueryRepository,
                             final BoardMapper boardMapper) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
-        this.likeRepository = likeRepository;
         this.tagRepository = tagRepository;
         this.boardQueryRepository = boardQueryRepository;
         this.boardMapper = boardMapper;
     }
 
-
+    @Override
     @Transactional
     public WriteBoardResponse writeBoard(final WriteBoardRequest request, final Long memberId) {
 
@@ -85,23 +82,17 @@ public class BoardServiceImpl<T> implements BoardService<T> {
         }
     }
 
+    @Override
     @Transactional
-    public ReadBoardResponse readBoard(final Long boardId, final Long accessId) {
+    public ReadBoardResponse readBoard(final Long boardId, final Long accessId, final boolean isAuthenticated) {
 
         final Board board = boardRepository.findById(boardId)
                 .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
-        /**
-         * TODO: 비회원일 경우 처리해주기
-         */
-
-        // 회원일 경우
-        final boolean isLike = likeRepository.findByMemberIdAndBoardId((Long) accessId, boardId).isPresent();
         board.increaseView();
 
         logger.info("[Result] {}번 회원의 {}번 게시글 조회", accessId, boardId);
-        return boardMapper.entityToReadBoardResponse(board, isLike);
-        
+        return boardQueryRepository.readBoard(boardId, accessId, isAuthenticated);
     }
 
     @Override

@@ -3,10 +3,15 @@ package io.wisoft.wasabi.domain.board;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.like.QLike;
+import io.wisoft.wasabi.domain.like.anonymous.QAnonymousLike;
 import io.wisoft.wasabi.domain.member.QMember;
 import io.wisoft.wasabi.domain.tag.QTag;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +30,7 @@ public class BoardQueryRepository {
     private final QMember member = QMember.member;
     private final QLike like = QLike.like;
     private final QTag tag = QTag.tag;
+    private final QAnonymousLike anonymousLike = QAnonymousLike.anonymousLike;
 
     public BoardQueryRepository(final JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
@@ -59,6 +65,57 @@ public class BoardQueryRepository {
         }
 
         return new SliceImpl<>(result, pageable, hasNext);
+    }
+
+    public ReadBoardResponse readBoard(final Long boardId, final Long accessId, final boolean isAuthenticated) {
+
+        final ConstructorExpression<ReadBoardResponse.Writer> writer =
+            Projections.constructor(
+                ReadBoardResponse.Writer.class,
+                member.email,
+                member.name,
+                member.referenceUrl,
+                member.part,
+                member.organization,
+                member.motto
+            );
+
+        final ConstructorExpression<ReadBoardResponse> readBoardResponse =
+            Projections.constructor(
+                ReadBoardResponse.class,
+                board.id,
+                board.title,
+                board.content,
+                writer,
+                board.createdAt,
+                like.count().add(anonymousLike.count()),
+                board.views,
+                isLike(boardId, accessId, isAuthenticated),
+                tag.name
+            );
+
+        return jpaQueryFactory
+            .query()
+            .select(readBoardResponse)
+            .from(board)
+            .join(member).on(board.member.eq(member))
+            .leftJoin(like).on(like.board.eq(board))
+            .leftJoin(anonymousLike).on(anonymousLike.board.eq(board))
+            .leftJoin(tag).on(board.tag.eq(tag))
+            .where(board.id.eq(boardId))
+            .fetchFirst();
+    }
+
+    private BooleanExpression isLike(final Long boardId, final Long accessId, final boolean isAuthenticated) {
+        return isAuthenticated
+            ? JPAExpressions
+                .selectFrom(like)
+                .where(like.member.id.eq(accessId).and(like.board.id.eq(boardId)))
+                .exists()
+            : JPAExpressions
+                .selectFrom(anonymousLike)
+                .where(anonymousLike.sessionId.eq(accessId).and(anonymousLike.board.id.eq(boardId)))
+                .exists();
     }
 
     private JPAQuery<SortBoardResponse> getQueryByTagKeyword(final String keyword,
