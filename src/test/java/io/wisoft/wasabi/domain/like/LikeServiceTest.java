@@ -53,6 +53,9 @@ class LikeServiceTest {
     @Mock
     private LikeRepository likeRepository;
 
+    @Mock
+    private LikeQueryRepository likeQueryRepository;
+
     @Nested
     @DisplayName("좋아요 등록")
     class RegisterLike {
@@ -159,13 +162,12 @@ class LikeServiceTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("요청이 성공적으로 수행되어 정상적으로 조회되어야 한다.")
-        void get_like_status(final Board board,
-                             final Long memberId,
+        void get_like_status(final Long memberId,
                              final Long boardId) {
 
             //given
             given(boardRepository.existsById(any())).willReturn(true);
-            given(likeRepository.countByBoardId(any())).willReturn(1);
+            given(likeQueryRepository.countByBoardId(any())).willReturn(1L);
 
             //when
             final var response = likeService.getLikeStatus(memberId, boardId);

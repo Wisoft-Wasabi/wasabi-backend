@@ -10,7 +10,7 @@ public record ReadBoardResponse(
         String content,
         Writer writer,
         LocalDateTime createdAt,
-        int likeCount,
+        long likeCount,
         int views,
         boolean isLike,
         String tag) {

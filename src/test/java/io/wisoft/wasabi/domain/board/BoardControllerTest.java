@@ -14,6 +14,7 @@ import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.tag.Tag;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
+import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
@@ -27,12 +28,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,15 +57,18 @@ class BoardControllerTest {
     private LikeService likeService;
 
     @MockBean
-    private JwtTokenProvider jwtTokenProvider;
-
-    @MockBean
     private MemberIdResolver memberIdResolver;
 
     @MockBean
     private AdminInterceptor adminInterceptor;
 
-    @MockBean
+    @SpyBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @SpyBean
+    private AuthorizationExtractor extractor;
+
+    @SpyBean
     private AnyoneResolver anyoneResolver;
 
     @Spy
@@ -85,24 +92,24 @@ class BoardControllerTest {
             final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             final var request = new WriteBoardRequest(
-                    "title",
-                    "content",
-                    "tag",
-                    new String[]{"imageUrls"});
+                "title",
+                "content",
+                "tag",
+                new String[]{"imageUrls"});
 
             final var response = new WriteBoardResponse(
-                    1L,
-                    "title",
-                    "writer"
+                1L,
+                "title",
+                "writer"
             );
             given(boardService.writeBoard(any(), any())).willReturn(response);
 
             // when
             final var perform = mockMvc.perform(
-                    post("/boards")
-                            .contentType(APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken)
-                            .content(objectMapper.writeValueAsString(request)));
+                post("/boards")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request)));
 
             // then
             perform.andExpect(status().isCreated());
@@ -120,27 +127,31 @@ class BoardControllerTest {
         void read_board_success(final ReadBoardResponse.Writer writer) throws Exception {
 
             //given
+            final UUID sessionId = UUID.randomUUID();
+            final MockHttpSession session = new MockHttpSession(null, sessionId.toString());
+
             final Long boardId = 1L;
 
             final var response = new ReadBoardResponse(
-                    1L,
-                    "title",
-                    "content",
-                    writer,
-                    LocalDateTime.now(),
-                    0,
-                    1,
-                    false,
-                    null
+                1L,
+                "title",
+                "content",
+                writer,
+                LocalDateTime.now(),
+                0,
+                1,
+                false,
+                null
             );
 
-            given(boardService.readBoard(any(), any())).willReturn(response);
+            given(boardService.readBoard(any(), any(), anyBoolean())).willReturn(response);
 
             //when
             final var result = mockMvc.perform(
-                    get("/boards/{boardId}", boardId)
-                            .contentType(APPLICATION_JSON)
-                            .accept(APPLICATION_JSON));
+                get("/boards/{boardId}", boardId)
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
+                    .session(session));
 
             //then
             result.andExpect(status().isOk());
@@ -151,8 +162,8 @@ class BoardControllerTest {
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 조회수 가장 많은 게시글이 먼저 조회된다.")
         @Customization(NotSaveBoardCustomization.class)
         void read_boards_order_by_views(
-                final Board board1,
-                final Board board2) throws Exception {
+            final Board board1,
+            final Board board2) throws Exception {
 
             //given
             board2.increaseView();
@@ -160,21 +171,21 @@ class BoardControllerTest {
             final var boards = new SliceImpl<>(List.of(board2, board1));
 
             final var boardList = boards.map(board -> new SortBoardResponse(
-                    board.getId(),
-                    board.getTitle(),
-                    board.getMember().getName(),
-                    board.getCreatedAt(),
-                    board.getLikes().size(),
-                    board.getViews()
+                board.getId(),
+                board.getTitle(),
+                board.getMember().getName(),
+                board.getCreatedAt(),
+                board.getLikes().size(),
+                board.getViews()
             ));
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
-                    get("/boards?sortBy=views")
-                            .contentType(APPLICATION_JSON)
-                            .accept(APPLICATION_JSON));
+                get("/boards?sortBy=views")
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON));
 
             //then
             result.andExpect(status().isOk());
@@ -190,21 +201,21 @@ class BoardControllerTest {
             final var boards = new SliceImpl<>(List.of(board2, board1));
 
             final var boardList = boards.map(board -> new SortBoardResponse(
-                    board.getId(),
-                    board.getTitle(),
-                    board.getMember().getName(),
-                    board.getCreatedAt(),
-                    board.getLikes().size(),
-                    board.getViews()
+                board.getId(),
+                board.getTitle(),
+                board.getMember().getName(),
+                board.getCreatedAt(),
+                board.getLikes().size(),
+                board.getViews()
             ));
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
-                    get("/boards?sortBy=latest")
-                            .contentType(APPLICATION_JSON)
-                            .accept(APPLICATION_JSON)
+                get("/boards?sortBy=latest")
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
             );
 
             //then
@@ -216,30 +227,30 @@ class BoardControllerTest {
         @AutoSource
         @Customization(NotSaveBoardCustomization.class)
         void read_boards_order_by_likes(
-                final Board board1,
-                final Board board2,
-                final Member member) throws Exception {
+            final Board board1,
+            final Board board2,
+            final Member member) throws Exception {
             //given
             likeService.registerLike(member.getId(), new RegisterLikeRequest(board1.getId()));
 
             final var boards = new SliceImpl<>(List.of(board2, board1));
 
             final var boardList = boards.map(board -> new SortBoardResponse(
-                    board.getId(),
-                    board.getTitle(),
-                    board.getMember().getName(),
-                    board.getCreatedAt(),
-                    board.getLikes().size(),
-                    board.getViews()
+                board.getId(),
+                board.getTitle(),
+                board.getMember().getName(),
+                board.getCreatedAt(),
+                board.getLikes().size(),
+                board.getViews()
             ));
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
-                    get("/boards?sortBy=likes")
-                            .contentType(APPLICATION_JSON)
-                            .accept(APPLICATION_JSON)
+                get("/boards?sortBy=likes")
+                    .contentType(APPLICATION_JSON)
+                    .accept(APPLICATION_JSON)
             );
 
             //then
@@ -250,7 +261,7 @@ class BoardControllerTest {
         @ParameterizedTest
         @AutoSource
         void read_my_boards(
-                final List<MyBoardsResponse> boardsResponses
+            final List<MyBoardsResponse> boardsResponses
         ) throws Exception {
 
             // given
@@ -260,11 +271,11 @@ class BoardControllerTest {
 
             // when
             final var result = mockMvc.perform(
-                    get("/boards/my-board")
-                            .param("page", String.valueOf(0))
-                            .param("size", String.valueOf(3))
-                            .contentType(APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken)
+                get("/boards/my-board")
+                    .param("page", String.valueOf(0))
+                    .param("size", String.valueOf(3))
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken)
             );
 
             // then
@@ -282,8 +293,8 @@ class BoardControllerTest {
 
             // when
             final var result = mockMvc.perform(
-                    get("/boards/my-like")
-                            .contentType(APPLICATION_JSON));
+                get("/boards/my-like")
+                    .contentType(APPLICATION_JSON));
 
             // then
             result.andExpect(status().isUnauthorized());
@@ -304,9 +315,9 @@ class BoardControllerTest {
 
             // when
             final var result = mockMvc.perform(
-                    get("/boards/my-like")
-                            .contentType(APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                get("/boards/my-like")
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
 
             // then
             result.andExpect(status().isOk());
@@ -320,21 +331,21 @@ class BoardControllerTest {
         @ParameterizedTest
         @AutoSource
         @Customization(BoardCompositeCustomizer.class)
-        void search_boards_by_tag(final Tag tag, final List<Board> boards) throws Exception{
+        void search_boards_by_tag(final Tag tag, final List<SortBoardResponse> boards) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL,true);
+            final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(new SliceImpl<>(boards));
 
             // when
             final var result = mockMvc.perform(
-                    get("/boards?sortBy=latest&keyword=")
-                            .param("page", String.valueOf(0))
-                            .param("size", String.valueOf(3))
-                            .param("keyword", tag.getName())
-                            .contentType(APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                get("/boards?sortBy=latest&keyword=")
+                    .param("page", String.valueOf(0))
+                    .param("size", String.valueOf(3))
+                    .param("keyword", tag.getName())
+                    .contentType(APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
 
             // then
             result.andExpect(status().isOk());

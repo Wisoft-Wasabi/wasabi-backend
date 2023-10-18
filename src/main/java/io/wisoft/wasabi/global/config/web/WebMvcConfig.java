@@ -3,11 +3,14 @@ package io.wisoft.wasabi.global.config.web;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.web.filter.LogFilter;
+import io.wisoft.wasabi.global.config.web.filter.SessionFilter;
 import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -38,8 +41,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean<LogFilter> filterRegistrationBean() {
+    public FilterRegistrationBean<LogFilter> logFilter() {
         return new FilterRegistrationBean<>(new LogFilter());
+    }
+
+    @Bean
+    public FilterRegistrationBean<SessionFilter> sessionFilter() {
+        return new FilterRegistrationBean<>(new SessionFilter());
+    }
+
+    @Bean
+    public RedisSerializer<Object> springSessionDefaultRedisSerializer() {
+        return new GenericJackson2JsonRedisSerializer();
     }
 
     @Override

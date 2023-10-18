@@ -22,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @Import(QueryDslTestConfig.class)
 @ActiveProfiles("test")
@@ -43,6 +44,28 @@ class BoardQueryRepositoryTest {
     class ReadBoard {
 
         private final Pageable pageable = PageRequest.of(0, 3);
+
+        @DisplayName("게시글 상세 조회시, 정상적으로 조회에 성공한다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(BoardCompositeCustomizer.class)
+        void read_board_detail(final Member member,
+                               final Board board,
+                               final boolean isAuthenticated) {
+
+            // given
+            em.persist(member);
+            em.persist(board);
+
+            // when
+            final var result = boardQueryRepository.readBoard(board.getId(), member.getId(), isAuthenticated);
+
+            // then
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result).isNotNull();
+                softAssertions.assertThat(result.id()).isEqualTo(board.getId());
+            });
+        }
 
         @DisplayName("게시글 목록 조회시, 조회수 많은 순으로 졍렬 후 조회에 성공한다.")
         @ParameterizedTest
