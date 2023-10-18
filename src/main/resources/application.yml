@@ -1,18 +1,13 @@
 server:
-  servlet:
-    context-path: /api
   port: 8080
 
 spring:
   profiles:
-    active: dev
     include: jwt, bcrypt
     group:
-      dev: dev-db
-      test: test-db
+      dev: log-dev
+      prod: log-prod
+      test: test
 
 logging.level:
   org.hibernate.SQL: debug
-
-logging:
-  config: classpath:application-log-dev.yml

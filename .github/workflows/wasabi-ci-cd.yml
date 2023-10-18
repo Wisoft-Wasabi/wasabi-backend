@@ -32,8 +32,10 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew clean build
 
-      
-      
+    - name: Remove *-dev.yml from src/resource
+      run: rm -f src/resource/*-dev.yml
+      shell: bash
+
       ############## CD
       
       
