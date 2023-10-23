@@ -356,3 +356,6 @@ docker/
 src/main/resources/application-*.yml
 appspec.yml
 scripts/*
+
+# jar.zip
+jar/*
