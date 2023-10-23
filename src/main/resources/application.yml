@@ -4,6 +4,7 @@ server:
 spring:
   profiles:
     include: jwt, bcrypt
+#    active: local
     group:
       dev: log-dev
       prod: log-prod
