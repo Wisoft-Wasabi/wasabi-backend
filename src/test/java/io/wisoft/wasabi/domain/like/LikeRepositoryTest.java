@@ -90,7 +90,9 @@ class LikeRepositoryTest {
                          final Board board) {
 
             // given
-            likeRepository.save(init(member, board));
+            final Like like = init(member, board);
+
+            likeRepository.save(like);
 
             // when
             final int result = likeRepository.deleteByMemberIdAndBoardId(

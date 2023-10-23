@@ -20,12 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.validation.constraints.Min;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = LikeController.class)
@@ -37,8 +42,11 @@ class LikeControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockBean(name = "likeService")
     private LikeService likeService;
+
+    @MockBean(name = "anonymousLikeService")
+    private LikeService anonymousLikeService;
 
     @MockBean
     private MemberIdResolver memberIdResolver;
@@ -71,12 +79,36 @@ class LikeControllerTest {
 
             //when
             final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer" + accessToken)
-                    .content(objectMapper.writeValueAsString(request)));
+                .contentType(APPLICATION_JSON)
+                .header("Authorization", "Bearer" + accessToken)
+                .content(objectMapper.writeValueAsString(request)));
 
 
             //then
+            result.andExpect(status().isCreated());
+        }
+
+        @DisplayName("비회원 요청 시 정상적으로 등록되어야 한다.")
+        @ParameterizedTest
+        @AutoSource
+        void register_anonymous_like(final RegisterLikeRequest request,
+                                     final RegisterLikeResponse response) throws Exception {
+
+            // given
+            final UUID sessionId = UUID.randomUUID();
+            final MockHttpSession session = new MockHttpSession(null, sessionId.toString());
+
+            given(anonymousLikeService.registerLike(any(), any())).willReturn(response);
+
+            final String content = objectMapper.writeValueAsString(request);
+
+            // when
+            final var result = mockMvc.perform(post("/likes")
+                .contentType(APPLICATION_JSON)
+                .content(content)
+                .session(session));
+
+            // then
             result.andExpect(status().isCreated());
         }
 
@@ -94,10 +126,9 @@ class LikeControllerTest {
 
             // when
             final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request)));
-
+                .contentType(APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken)
+                .content(objectMapper.writeValueAsString(request)));
 
 
             // then
@@ -109,13 +140,12 @@ class LikeControllerTest {
     @DisplayName("좋아요 취소")
     class CancelLike {
 
-        //        @Test
         @DisplayName("요청 시 정상적으로 응답된다.")
         @ParameterizedTest
         @AutoSource
         void cancel_like(
-                final Long boardId,
-                final CancelLikeResponse response
+            final Long boardId,
+            final CancelLikeResponse response
         ) throws Exception {
 
             // given
@@ -125,9 +155,30 @@ class LikeControllerTest {
 
             // when
             final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer " + accessToken));
+                .param("boardId", String.valueOf(boardId))
+                .header("Authorization", "Bearer " + accessToken));
 
+
+            // then
+            result.andExpect(status().isOk());
+        }
+
+        @DisplayName("비회원 좋아요 취소 요청 시 정상적으로 취소된다.")
+        @ParameterizedTest
+        @AutoSource
+        void cancel_anonymous_like(@Min(1) final Long boardId,
+                                   final CancelLikeResponse response) throws Exception {
+
+            // given
+            final UUID sessionId = UUID.randomUUID();
+            final MockHttpSession session = new MockHttpSession(null, sessionId.toString());
+
+            given(anonymousLikeService.cancelLike(any(), any())).willReturn(response);
+
+            // when
+            final var result = mockMvc.perform(delete("/likes")
+                .param("boardId", String.valueOf(boardId))
+                .session(session));
 
             // then
             result.andExpect(status().isOk());
@@ -137,8 +188,8 @@ class LikeControllerTest {
         @ParameterizedTest
         @AutoSource
         void cancel_like_fail(
-                final Long boardId,
-                final LikeNotFoundException exception
+            final Long boardId,
+            final LikeNotFoundException exception
         ) throws Exception {
 
             // given
@@ -148,8 +199,8 @@ class LikeControllerTest {
 
             // when
             final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer " + accessToken));
+                .param("boardId", String.valueOf(boardId))
+                .header("Authorization", "Bearer " + accessToken));
 
             // then
             result.andExpect(status().isNotFound());
@@ -174,8 +225,8 @@ class LikeControllerTest {
 
             //when
             final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer" + accessToken));
+                .param("boardId", String.valueOf(boardId))
+                .header("Authorization", "Bearer" + accessToken));
 
             //then
             result.andExpect(status().isOk());
@@ -195,9 +246,8 @@ class LikeControllerTest {
 
             //when
             final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header("Authorization", "Bearer" + accessToken));
-
+                .param("boardId", String.valueOf(boardId))
+                .header("Authorization", "Bearer" + accessToken));
 
 
             //then

@@ -29,8 +29,8 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
-    - name: Build with Gradle
-      run: ./gradlew clean build
+    - name: Build with Gradle in test profile
+      run: ./gradlew clean build -Dspring.profiles.active=test
 
     - name: Remove *-dev.yml from src/resource
       run: rm -f src/resource/*-dev.yml

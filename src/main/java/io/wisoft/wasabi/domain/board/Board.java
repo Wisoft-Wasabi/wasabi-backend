@@ -2,6 +2,7 @@ package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import io.wisoft.wasabi.domain.like.Like;
+import io.wisoft.wasabi.domain.like.anonymous.AnonymousLike;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.tag.Tag;
 import jakarta.persistence.*;
@@ -43,6 +44,9 @@ public class Board extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
     private Set<BoardImage> boardImages = new HashSet<>();
+
+    @OneToMany(mappedBy = "board")
+    private Set<AnonymousLike> anonymousLikes = new HashSet<>();
 
     private void setMember(final Member member) {
         this.member = member;
@@ -102,5 +106,13 @@ public class Board extends BaseTimeEntity {
     void setTag(final Tag tag) {
         this.tag = tag;
         tag.addBoard(this);
+    }
+
+    public void addAnonymousLike(final AnonymousLike anonymousLike) {
+        this.anonymousLikes.add(anonymousLike);
+    }
+
+    public void removeAnonymousLike(final AnonymousLike anonymousLike) {
+        this.anonymousLikes.remove(anonymousLike);
     }
 }

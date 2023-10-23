@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @Transactional(readOnly = true)
+@Service("likeService")
 public class LikeServiceImpl implements LikeService {
 
     private final Logger logger = LoggerFactory.getLogger(LikeServiceImpl.class);
@@ -25,21 +25,25 @@ public class LikeServiceImpl implements LikeService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final LikeMapper likeMapper;
+    private final LikeQueryRepository likeQueryRepository;
 
     public LikeServiceImpl(final LikeRepository likeRepository,
                            final MemberRepository memberRepository,
                            final BoardRepository boardRepository,
-                           final LikeMapper likeMapper) {
+                           final LikeMapper likeMapper,
+                           final LikeQueryRepository likeQueryRepository) {
         this.likeRepository = likeRepository;
         this.memberRepository = memberRepository;
         this.boardRepository = boardRepository;
         this.likeMapper = likeMapper;
+        this.likeQueryRepository = likeQueryRepository;
     }
 
+    @Override
     @Transactional
-    public RegisterLikeResponse registerLike(final Long memberId, final RegisterLikeRequest request) {
+    public RegisterLikeResponse registerLike(final Long accessId, final RegisterLikeRequest request) {
 
-        final Member member = memberRepository.findById(memberId)
+        final Member member = memberRepository.findById(accessId)
                 .orElseThrow(MemberExceptionExecutor::MemberNotFound);
 
         final Board board = boardRepository.findById(request.boardId())
@@ -49,7 +53,7 @@ public class LikeServiceImpl implements LikeService {
 
         likeRepository.save(like);
 
-        logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 등록", memberId, board.getId());
+        logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 등록", accessId, board.getId());
 
         return likeMapper.entityToRegisterLikeResponse(like);
     }
@@ -59,13 +63,10 @@ public class LikeServiceImpl implements LikeService {
     public CancelLikeResponse cancelLike(final Long memberId, final Long boardId) {
         final Like like = likeRepository.findByMemberIdAndBoardId(memberId, boardId)
                 .orElseThrow(LikeExceptionExecutor::LikeNotFound);
-        logger.debug("[{}-좋아요] 조회", like.getId());
 
         like.delete();
         likeRepository.deleteById(like.getId());
-        logger.info("[{}-회원]의 [{}-게시글]에 대한 좋아요 삭제", memberId, boardId);
-
-        logger.info("[{}-회원]의 [{}-게시글]에 대한 좋아요 삭제", memberId, boardId);
+        logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 삭제", memberId, boardId);
 
         return new CancelLikeResponse(like.getId());
     }
@@ -79,7 +80,7 @@ public class LikeServiceImpl implements LikeService {
 
         final boolean isLike = generateIsLike(memberId, boardId);
 
-        final int likeCount = likeRepository.countByBoardId(boardId);
+        final int likeCount = Math.toIntExact(likeQueryRepository.countByBoardId(boardId));
 
         logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 상태 조회", memberId, boardId);
 

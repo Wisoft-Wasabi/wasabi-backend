@@ -4,11 +4,11 @@ import io.wisoft.wasabi.domain.board.dto.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-public interface BoardService<T> {
+public interface BoardService {
 
     WriteBoardResponse writeBoard(final WriteBoardRequest request, final Long memberId);
 
-    ReadBoardResponse readBoard(final Long boardId, final Long accessId);
+    ReadBoardResponse readBoard(final Long boardId, final Long accessId, final boolean isAuthenticated);
 
     Slice<SortBoardResponse> getBoardList(final String sortBy, final Pageable pageable, final String keyword);
 

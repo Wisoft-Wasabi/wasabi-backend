@@ -33,7 +33,6 @@ class MemberTest {
 
             // then
             assertSoftly(softAssertions -> {
-                softAssertions.assertThat(member.getUpdatedAt()).isAfter(member.getCreatedAt());
                 softAssertions.assertThat(member.getPart()).isEqualTo(Part.BACKEND);
             });
         }

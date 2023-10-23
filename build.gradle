@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'io.wisoft'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
 
 java {
     sourceCompatibility = '17'
@@ -40,6 +40,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     //autoparams
     testImplementation 'io.github.autoparams:autoparams:1.1.1'
 
@@ -51,11 +54,20 @@ dependencies {
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
     implementation 'com.lmax:disruptor:3.4.2'
 
+    // Redis
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.session:spring-session-data-redis")
+
+
     // Query DSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // Test Container
+    testImplementation("org.testcontainers:testcontainers:1.19.0")
+    testImplementation("org.testcontainers:junit-jupiter:1.19.0")
 }
 
 // Q타입 클래스 생성 경로

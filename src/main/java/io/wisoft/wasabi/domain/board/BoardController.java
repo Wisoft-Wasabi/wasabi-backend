@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/boards")
-public class BoardController<T> {
+public class BoardController {
 
-    private final BoardService<T> boardService;
+    private final BoardService boardService;
 
-    public BoardController(final BoardService<T> boardService) {
+    public BoardController(final BoardService boardService) {
         this.boardService = boardService;
     }
 
 
     @PostMapping
     public ResponseEntity<Response<WriteBoardResponse>> writeBoard(@RequestBody @Valid final WriteBoardRequest request,
-                                                                   @MemberId final Long memberId) throws ClassNotFoundException {
+                                                                   @MemberId final Long memberId) {
 
         final WriteBoardResponse data = boardService.writeBoard(request, memberId);
         return ResponseEntity.ofNullable(
@@ -38,9 +38,10 @@ public class BoardController<T> {
 
     @GetMapping("/{boardId}")
     public ResponseEntity<Response<ReadBoardResponse>> readBoard(@PathVariable final Long boardId,
-                                                                 @Anyone final Long accessId) {
+                                                                 @Anyone final Long accessId,
+                                                                 @RequestAttribute(value = "isAuthenticated") final boolean isAuthenticated) {
 
-        final ReadBoardResponse data = boardService.readBoard(boardId, accessId);
+        final ReadBoardResponse data = boardService.readBoard(boardId, accessId, isAuthenticated);
         return ResponseEntity.ofNullable(
                 Response.of(
                         ResponseType.BOARD_READ_SUCCESS,

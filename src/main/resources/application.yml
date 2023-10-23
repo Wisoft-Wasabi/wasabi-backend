@@ -4,6 +4,7 @@ server:
 spring:
   profiles:
     include: jwt, bcrypt
+#    active: local
     group:
       dev: log-dev
       prod: log-prod
@@ -11,3 +12,17 @@ spring:
 
 logging.level:
   org.hibernate.SQL: debug
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: real
