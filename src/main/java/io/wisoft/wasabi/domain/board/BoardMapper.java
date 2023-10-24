@@ -27,6 +27,22 @@ public class BoardMapper {
         );
     }
 
+    BoardImage uploadImageRequestToEntity(final String fileName, final String storeImagePath) {
+
+        return new BoardImage(
+                fileName,
+                storeImagePath
+        );
+    }
+
+    UploadImageResponse entityToUploadImageResponse(final BoardImage boardImage) {
+
+        return new UploadImageResponse(
+                boardImage.getStoreImagePath(),
+                boardImage.getId()
+        );
+    }
+
 
     ReadBoardResponse entityToReadBoardResponse(final Board board, final boolean isLike) {
 

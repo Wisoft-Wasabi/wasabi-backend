@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardImageService boardImageService;
 
-    public BoardController(final BoardService boardService) {
+    public BoardController(final BoardService boardService,
+                           final BoardImageService boardImageService) {
         this.boardService = boardService;
+        this.boardImageService = boardImageService;
     }
 
 
@@ -89,4 +92,16 @@ public class BoardController {
         );
     }
 
+    @PostMapping("/image")
+    public ResponseEntity<Response<UploadImageResponse>> uploadImage(@ModelAttribute final UploadImageRequest request) {
+
+        final UploadImageResponse data = boardImageService.saveImage(request);
+
+        return ResponseEntity.ofNullable(
+                Response.of(
+                        ResponseType.BOARD_IMAGE_UPLOAD_SUCCESS,
+                        data
+                )
+        );
+    }
 }
