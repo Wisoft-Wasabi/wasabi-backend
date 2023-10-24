@@ -55,6 +55,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.session:spring-session-data-redis")
 
+    // S3 Image
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     // Query DSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
