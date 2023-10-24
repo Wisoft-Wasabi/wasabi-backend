@@ -9,7 +9,6 @@ import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.like.LikeMapper;
-import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.tag.Tag;
@@ -27,12 +26,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
@@ -58,6 +57,9 @@ class BoardServiceTest {
     @Mock
     private BoardQueryRepository boardQueryRepository;
 
+    @Mock
+    private BoardImageRepository boardImageRepository;
+
     @Spy
     private LikeMapper likeMapper;
 
@@ -78,13 +80,13 @@ class BoardServiceTest {
                     "title",
                     "content",
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
 
             given(tagRepository.save(any())).willReturn(tag);
             given(boardRepository.save(any())).willReturn(board);
-
 
             // when
             final var response = boardServiceImpl.writeBoard(request, 1L);
@@ -111,7 +113,8 @@ class BoardServiceTest {
                     "title",
                     "content",
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
@@ -138,7 +141,8 @@ class BoardServiceTest {
                     "title",
                     "content",
                     null,
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
@@ -173,7 +177,8 @@ class BoardServiceTest {
                     "title",
                     "content",
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
