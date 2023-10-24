@@ -27,9 +27,11 @@ public enum ResponseType {
     BOARD_SORTED_LIST_SUCCESS(HttpStatus.OK, "BOARD-S003", "Board Sorted List Success"),
     MY_BOARD_LIST_SUCCESS(HttpStatus.OK, "BOARD-S004", "My Board List Success"),
     MY_LIKE_BOARD_LIST_SUCCESS(HttpStatus.OK, "BOARD-S005", "My Like Board List Success"),
+    BOARD_IMAGE_UPLOAD_SUCCESS(HttpStatus.OK, "BOARD_S006", "Board Image Upload Success"),
 
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-F001", "Board Not Found"),
     SORT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOARD-F002", "Sort Type Invalid"),
+    BOARD_IMAGE_UPLOAD_FAIL(HttpStatus.BAD_REQUEST, "BOARD_F003", "Board Image Upload Fail"),
 
     /* 좋아요 - LIKE */
     LIKE_REGISTER_SUCCESS(HttpStatus.CREATED, "LIKE-S001", "Like Register Success"),
