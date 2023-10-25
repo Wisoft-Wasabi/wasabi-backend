@@ -9,7 +9,6 @@ import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
 import io.wisoft.wasabi.domain.like.LikeMapper;
-import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.tag.Tag;
@@ -30,9 +29,9 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.List;
 import java.util.Optional;
 
+import static io.wisoft.wasabi.domain.board.BoardListToSliceMapper.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
@@ -189,22 +188,13 @@ class BoardServiceTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("게시글 목록 조회수 순 정렬 조회시, 가장 조회수가 많은 게시물이 첫 번째로 보인다.")
-        void read_boards_order_by_views(
-                final Board board1,
-                final Board board2) {
+        @Customization(NotSaveBoardCustomization.class)
+        void read_boards_order_by_views(final Board board1, final Board board2) {
 
             //given
             board2.increaseView();
 
-            final var boards = new SliceImpl<>(List.of(board2, board1));
-            final var boardList = boards.map(board -> new SortBoardResponse(
-                    board.getId(),
-                    board.getTitle(),
-                    board.getMember().getName(),
-                    board.getCreatedAt(),
-                    board.getLikes().size(),
-                    board.getViews()
-            ));
+            final var boardList = createBoardList(board2,board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.VIEWS, "tag")).willReturn(boardList);
 
@@ -229,15 +219,7 @@ class BoardServiceTest {
                 final Board board3) {
 
             //given
-            final var boards = new SliceImpl<>(List.of(board3, board2, board1));
-            final var boardList = boards.map(board -> new SortBoardResponse(
-                    board.getId(),
-                    board.getTitle(),
-                    board.getMember().getName(),
-                    board.getCreatedAt(),
-                    board.getLikes().size(),
-                    board.getViews()
-            ));
+            final var boardList = createBoardList(board2,board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.LATEST, "tag")).willReturn(boardList);
 
@@ -261,17 +243,7 @@ class BoardServiceTest {
             given(memberRepository.save(member)).willReturn(member);
             memberRepository.save(member);
 
-            final var like = likeMapper.registerLikeRequestToEntity(member, board2);
-
-            final var boards = new SliceImpl<>(List.of(board2, board1));
-            final var boardList = boards.map(board -> new SortBoardResponse(
-                    board.getId(),
-                    board.getTitle(),
-                    board.getMember().getName(),
-                    board.getCreatedAt(),
-                    board.getLikes().size(),
-                    board.getViews()
-            ));
+            final var boardList = createBoardList(board2,board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.LIKES, "tag")).willReturn(boardList);
 
@@ -337,5 +309,15 @@ class BoardServiceTest {
                 softAssertions.assertThat(response2.createdAt()).isAfter(response3.createdAt());
             });
         }
+//        private Slice<SortBoardResponse> createBoardList(final Board... boards) {
+//            return new SliceImpl<>(Arrays.asList(boards)).map(board -> new SortBoardResponse(
+//                    board.getId(),
+//                    board.getTitle(),
+//                    board.getMember().getName(),
+//                    board.getCreatedAt(),
+//                    board.getLikes().size(),
+//                    board.getViews()
+//            ));
+//        }
     }
 }

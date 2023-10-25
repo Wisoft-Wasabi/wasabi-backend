@@ -42,6 +42,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static io.wisoft.wasabi.domain.board.BoardListToSliceMapper.*;
 
 
 @WebMvcTest(controllers = BoardController.class)
@@ -167,17 +168,7 @@ class BoardControllerTest {
 
             //given
             board2.increaseView();
-
-            final var boards = new SliceImpl<>(List.of(board2, board1));
-
-            final var boardList = boards.map(board -> new SortBoardResponse(
-                board.getId(),
-                board.getTitle(),
-                board.getMember().getName(),
-                board.getCreatedAt(),
-                board.getLikes().size(),
-                board.getViews()
-            ));
+            final var boardList = createBoardList(board2,board1);
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
@@ -198,16 +189,7 @@ class BoardControllerTest {
         void read_boards_order_by_created_at(final Board board1,
                                              final Board board2) throws Exception {
             //given
-            final var boards = new SliceImpl<>(List.of(board2, board1));
-
-            final var boardList = boards.map(board -> new SortBoardResponse(
-                board.getId(),
-                board.getTitle(),
-                board.getMember().getName(),
-                board.getCreatedAt(),
-                board.getLikes().size(),
-                board.getViews()
-            ));
+            final var boardList = createBoardList(board2,board1);
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
@@ -233,16 +215,7 @@ class BoardControllerTest {
             //given
             likeService.registerLike(member.getId(), new RegisterLikeRequest(board1.getId()));
 
-            final var boards = new SliceImpl<>(List.of(board2, board1));
-
-            final var boardList = boards.map(board -> new SortBoardResponse(
-                board.getId(),
-                board.getTitle(),
-                board.getMember().getName(),
-                board.getCreatedAt(),
-                board.getLikes().size(),
-                board.getViews()
-            ));
+            final var boardList = createBoardList(board2,board1);
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
