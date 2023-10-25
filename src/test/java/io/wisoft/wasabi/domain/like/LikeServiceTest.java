@@ -63,17 +63,11 @@ class LikeServiceTest {
         @ParameterizedTest
         @AutoSource
         @DisplayName("요청 시 정상적으로 등록되어야 한다.")
-        void register_like(final Member member) {
+        @Customization(NotSaveBoardCustomization.class)
+        void register_like(final Member member, final Board board) {
 
             //given
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
-
-
-            final var board = new Board(
-                    "title",
-                    "content",
-                    member
-            );
 
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
             final var request = new RegisterLikeRequest(board.getId());

@@ -11,7 +11,7 @@ import io.wisoft.wasabi.domain.tag.Tag;
 public class NotSaveBoardCustomization implements Customizer {
 
     @Override
-    public ObjectGenerator customize(ObjectGenerator generator) {
+    public ObjectGenerator customize(final ObjectGenerator generator) {
         return ((query, context) -> query.getType().equals(Board.class)
                 ? new ObjectContainer(factory(context))
                 : generator.generate(query, context));

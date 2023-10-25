@@ -37,7 +37,8 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public ApproveMemberResponse approveMember(final ApproveMemberRequest request) {
 
-        final Long memberId = memberMapper.approveMemberRequestToMemberId(request);
+//        final Long memberId = memberMapper.approveMemberRequestToMemberId(request);
+        final Long memberId = request.memberId();
 
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberExceptionExecutor::MemberNotFound);
