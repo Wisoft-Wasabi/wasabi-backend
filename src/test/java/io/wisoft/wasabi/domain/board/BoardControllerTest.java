@@ -32,6 +32,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,6 +54,9 @@ class BoardControllerTest {
 
     @MockBean
     private BoardService boardService;
+
+    @MockBean
+    private BoardImageService boardImageService;
 
     @MockBean
     private LikeService likeService;
@@ -96,7 +100,8 @@ class BoardControllerTest {
                 "title",
                 "content",
                 "tag",
-                new String[]{"imageUrls"});
+                new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final var response = new WriteBoardResponse(
                 1L,

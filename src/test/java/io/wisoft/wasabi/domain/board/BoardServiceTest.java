@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +58,9 @@ class BoardServiceTest {
     @Mock
     private BoardQueryRepository boardQueryRepository;
 
+    @Mock
+    private BoardImageRepository boardImageRepository;
+
     @Spy
     private LikeMapper likeMapper;
 
@@ -77,13 +81,13 @@ class BoardServiceTest {
                     "title",
                     "content",
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
 
             given(tagRepository.save(any())).willReturn(tag);
             given(boardRepository.save(any())).willReturn(board);
-
 
             // when
             final var response = boardServiceImpl.writeBoard(request, 1L);
@@ -110,7 +114,8 @@ class BoardServiceTest {
                     "title",
                     "content",
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
@@ -137,7 +142,8 @@ class BoardServiceTest {
                     "title",
                     "content",
                     null,
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
@@ -172,7 +178,8 @@ class BoardServiceTest {
                     "title",
                     "content",
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final var board = boardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.findById(any())).willReturn(Optional.of(board));

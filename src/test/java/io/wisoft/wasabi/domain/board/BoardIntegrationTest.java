@@ -10,8 +10,6 @@ import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.domain.tag.Tag;
-import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -19,20 +17,18 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -74,7 +70,8 @@ class BoardIntegrationTest extends IntegrationTest {
                     "title",
                     "content",
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final String json = objectMapper.writeValueAsString(request);
 
@@ -101,7 +98,8 @@ class BoardIntegrationTest extends IntegrationTest {
                     "title",
                     "content",
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final String json = objectMapper.writeValueAsString(request);
 
@@ -128,7 +126,8 @@ class BoardIntegrationTest extends IntegrationTest {
                     "    ",
                     null,
                     "tag",
-                    new String[]{"imageUrls"});
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final String json = objectMapper.writeValueAsString(request);
 

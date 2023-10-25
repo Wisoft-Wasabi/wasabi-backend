@@ -6,5 +6,11 @@ public class BoardExceptionExecutor {
         return new BoardNotFoundException();
     }
 
-    public static BoardSortTypeInvalidException BoardSortTypeInvalidException() { return new BoardSortTypeInvalidException(); }
+    public static BoardSortTypeInvalidException BoardSortTypeInvalidException() {
+        return new BoardSortTypeInvalidException();
+    }
+
+    public static BoardImageUploadFailException BoardImageUploadFail() {
+        return new BoardImageUploadFailException();
+    }
 }
