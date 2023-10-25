@@ -15,10 +15,10 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String profile() {
-        List<String> profiles = Arrays.asList(env.getActiveProfiles());
-        List<String> realProfiles = Arrays.asList("dev", "real1", "real2");
+        final List<String> profiles = Arrays.asList(env.getActiveProfiles());
+        final List<String> realProfiles = Arrays.asList("dev", "real1", "real2");
 
-        String defaultProfile = profiles.isEmpty() ? "default" : profiles.get(0);
+        final String defaultProfile = profiles.isEmpty() ? "default" : profiles.get(0);
 
         return profiles.stream()
                 .filter(realProfiles::contains)

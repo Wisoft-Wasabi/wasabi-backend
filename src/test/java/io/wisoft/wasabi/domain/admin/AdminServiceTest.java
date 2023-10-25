@@ -79,11 +79,11 @@ class AdminServiceTest {
         @ParameterizedTest
         @AutoSource
         void update_approve_activate_member(final Member member,
-                                            final ApproveMemberRequest request,
                                             final ApproveMemberResponse response) {
 
             // given
-            given(memberMapper.approveMemberRequestToMemberId(request)).willReturn(member.getId());
+            final ApproveMemberRequest request = new ApproveMemberRequest(member.getId());
+
             given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
             given(memberMapper.entityToApproveMemberResponses(member)).willReturn(response);
 

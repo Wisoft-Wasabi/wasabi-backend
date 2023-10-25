@@ -56,7 +56,7 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<Response<Slice<SortBoardResponse>>> boardList(
             @RequestParam(name = "sortBy", defaultValue = "default") final String sortBy,
-            @PageableDefault(size = 2) final Pageable pageable,
+            @PageableDefault(size = 6) final Pageable pageable,
             @RequestParam(required = false) final String keyword) {
 
         final Slice<SortBoardResponse> data = boardService.getBoardList(sortBy, pageable, keyword);
