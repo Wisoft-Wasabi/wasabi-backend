@@ -104,4 +104,17 @@ public class BoardController {
                 )
         );
     }
+
+    @DeleteMapping("/image")
+    public ResponseEntity<Response<DeleteImageResponse>> deleteImage(@RequestBody final DeleteImageRequest request) {
+
+        final DeleteImageResponse data = boardImageService.deleteImage(request);
+
+        return ResponseEntity.ofNullable(
+                Response.of(
+                        ResponseType.BOARD_IMAGE_DELETE_SUCCESS,
+                        data
+                )
+        );
+    }
 }

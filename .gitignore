@@ -358,8 +358,4 @@ appspec.yml
 scripts/*
 
 # jar.zip
-<<<<<<< HEAD
 jar/*
-=======
-jar/*
->>>>>>> ffd46d4 (feat: Nginx 무중단 배포 테스트(3))

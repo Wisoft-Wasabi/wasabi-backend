@@ -43,6 +43,10 @@ public class BoardMapper {
         );
     }
 
+    DeleteImageResponse entityToDeleteImageResponse(final Long imageId) {
+
+        return new DeleteImageResponse(imageId);
+    }
 
     ReadBoardResponse entityToReadBoardResponse(final Board board, final boolean isLike) {
 

@@ -39,6 +39,10 @@ public class BoardImage extends BaseTimeEntity {
         return id;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
     public String getStoreImagePath() {
         return storeImagePath;
     }
