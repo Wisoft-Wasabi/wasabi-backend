@@ -16,11 +16,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class MemberIdResolver implements HandlerMethodArgumentResolver {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthorizationExtractor extractor;
 
-    public MemberIdResolver(final JwtTokenProvider jwtTokenProvider, final AuthorizationExtractor extractor) {
+    public MemberIdResolver(final JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.extractor = extractor;
     }
 
     @Override
@@ -35,7 +33,7 @@ public class MemberIdResolver implements HandlerMethodArgumentResolver {
                                   final WebDataBinderFactory binderFactory) {
 
         final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        final String token = extractor.extract(request, "Bearer");
+        final String token = AuthorizationExtractor.extract(request, "Bearer");
 
         if (!StringUtils.hasText(token)) {
             throw AuthExceptionExecutor.UnAuthorized();

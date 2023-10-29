@@ -9,7 +9,6 @@ import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
 import io.wisoft.wasabi.domain.like.exception.LikeNotFoundException;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
-import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = LikeController.class)
@@ -53,9 +51,6 @@ class LikeControllerTest {
 
     @MockBean
     private JwtTokenProvider jwtTokenProvider;
-
-    @MockBean
-    private AuthorizationExtractor extractor;
 
     @SpyBean
     private ResponseAspect responseAspect;

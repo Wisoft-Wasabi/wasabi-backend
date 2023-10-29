@@ -12,20 +12,16 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 public class AdminInterceptor implements HandlerInterceptor {
-    private final AuthorizationExtractor authExtractor;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AdminInterceptor(
-            final AuthorizationExtractor authExtractor,
-            final JwtTokenProvider jwtTokenProvider) {
-        this.authExtractor = authExtractor;
+    public AdminInterceptor(final JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) {
 
-        final String accessToken = authExtractor.extract(request, "Bearer");
+        final String accessToken = AuthorizationExtractor.extract(request, "Bearer");
 
         if (!StringUtils.hasText(accessToken)) {
             throw AuthExceptionExecutor.UnAuthorized();

@@ -3,10 +3,8 @@ package io.wisoft.wasabi.global.config.common.annotation;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -18,11 +16,9 @@ import java.util.UUID;
 public class AnyoneResolver implements HandlerMethodArgumentResolver {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthorizationExtractor extractor;
 
-    public AnyoneResolver(final JwtTokenProvider jwtTokenProvider, final AuthorizationExtractor extractor) {
+    public AnyoneResolver(final JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.extractor = extractor;
     }
 
     @Override
@@ -45,7 +41,7 @@ public class AnyoneResolver implements HandlerMethodArgumentResolver {
             return accessId;
         }
 
-        final String token = extractor.extract(request, "Bearer");
+        final String token = AuthorizationExtractor.extract(request, "Bearer");
 
         return jwtTokenProvider.decodeAccessToken(token);
     }

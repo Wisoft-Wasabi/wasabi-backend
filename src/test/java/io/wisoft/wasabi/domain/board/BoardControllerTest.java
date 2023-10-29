@@ -14,7 +14,6 @@ import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.tag.Tag;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
-import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
@@ -36,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static io.wisoft.wasabi.domain.board.BoardListToSliceMapper.createBoardList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.given;
@@ -43,7 +43,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static io.wisoft.wasabi.domain.board.BoardListToSliceMapper.*;
 
 
 @WebMvcTest(controllers = BoardController.class)
@@ -69,9 +68,6 @@ class BoardControllerTest {
 
     @SpyBean
     private JwtTokenProvider jwtTokenProvider;
-
-    @SpyBean
-    private AuthorizationExtractor extractor;
 
     @SpyBean
     private AnyoneResolver anyoneResolver;

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.Role;
-import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
@@ -38,9 +37,6 @@ public class AdminControllerTest {
 
     @MockBean
     private MemberRepository memberRepository;
-
-    @SpyBean
-    private AuthorizationExtractor authorizationExtractor;
 
     @Spy
     private ObjectMapper objectMapper;
