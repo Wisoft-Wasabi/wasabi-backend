@@ -2,6 +2,7 @@ package io.wisoft.wasabi.global.config.web.interceptor;
 
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ public class AdminInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) {
 
-        final String accessToken = AuthorizationExtractor.extract(request, "Bearer");
+        final String accessToken = AuthorizationExtractor.extract(request, Const.TOKEN_TYPE);
 
         if (!StringUtils.hasText(accessToken)) {
             throw AuthExceptionExecutor.UnAuthorized();

@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.global.config.common.annotation;
 
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +34,7 @@ public class MemberIdResolver implements HandlerMethodArgumentResolver {
                                   final WebDataBinderFactory binderFactory) {
 
         final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        final String token = AuthorizationExtractor.extract(request, "Bearer");
+        final String token = AuthorizationExtractor.extract(request, Const.TOKEN_TYPE);
 
         if (!StringUtils.hasText(token)) {
             throw AuthExceptionExecutor.UnAuthorized();

@@ -8,6 +8,7 @@ import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.SignupResponse;
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class MemberMapper {
     }
 
     public LoginResponse entityToLoginResponse(final Member member, final String accessToken) {
-        final String tokenType = "bearer";
+        final String tokenType = Const.TOKEN_TYPE;
         final String name = member.getName();
         final Role role = member.getRole();
         final boolean activation = member.isActivation();

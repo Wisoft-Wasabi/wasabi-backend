@@ -1,5 +1,6 @@
 package io.wisoft.wasabi.global.config.common.annotation;
 
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +34,7 @@ public class AnyoneResolver implements HandlerMethodArgumentResolver {
                                   final WebDataBinderFactory binderFactory) throws Exception {
 
         final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        final boolean isAuthenticated = (boolean) request.getAttribute("isAuthenticated");
+        final boolean isAuthenticated = (boolean) request.getAttribute(Const.IS_AUTHENTICATED);
 
         if (!isAuthenticated) {
             final UUID sessionId = UUID.fromString(request.getSession().getId());
@@ -41,7 +42,7 @@ public class AnyoneResolver implements HandlerMethodArgumentResolver {
             return accessId;
         }
 
-        final String token = AuthorizationExtractor.extract(request, "Bearer");
+        final String token = AuthorizationExtractor.extract(request, Const.TOKEN_TYPE);
 
         return jwtTokenProvider.decodeAccessToken(token);
     }

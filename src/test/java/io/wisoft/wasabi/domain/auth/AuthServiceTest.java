@@ -11,6 +11,7 @@ import io.wisoft.wasabi.domain.member.MemberMapper;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.member.exception.EmailOverlapException;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -132,7 +133,7 @@ class AuthServiceTest {
         void login_success(final Member member) {
 
             //given
-            final var TOKEN_TYPE = "bearer";
+            final var TOKEN_TYPE = Const.TOKEN_TYPE;
             final var ACCESS_TOKEN = "accessToken";
             final var request = new LoginRequest(member.getEmail(), member.getPassword());
 
