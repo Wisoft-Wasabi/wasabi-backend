@@ -43,9 +43,6 @@ class BoardServiceTest {
     @InjectMocks
     private BoardServiceImpl boardServiceImpl;
 
-    @Spy
-    private BoardMapper boardMapper;
-
     @Mock
     private MemberRepository memberRepository;
 
@@ -84,7 +81,7 @@ class BoardServiceTest {
                     new String[]{"imageUrls"},
                     new ArrayList<>());
 
-            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
 
             given(tagRepository.save(any())).willReturn(tag);
             given(boardRepository.save(any())).willReturn(board);
@@ -117,7 +114,7 @@ class BoardServiceTest {
                     new String[]{"imageUrls"},
                     new ArrayList<>());
 
-            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
 
             // when
@@ -146,7 +143,7 @@ class BoardServiceTest {
                     new ArrayList<>());
 
 
-            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
 
             // when
@@ -181,7 +178,7 @@ class BoardServiceTest {
                     new String[]{"imageUrls"},
                     new ArrayList<>());
 
-            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
             given(boardQueryRepository.readBoard(any(), any(), anyBoolean())).willReturn(response);
 
@@ -201,7 +198,7 @@ class BoardServiceTest {
             //given
             board2.increaseView();
 
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.VIEWS, "tag")).willReturn(boardList);
 
@@ -226,7 +223,7 @@ class BoardServiceTest {
                 final Board board3) {
 
             //given
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.LATEST, "tag")).willReturn(boardList);
 
@@ -250,7 +247,7 @@ class BoardServiceTest {
             given(memberRepository.save(member)).willReturn(member);
             memberRepository.save(member);
 
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.LIKES, "tag")).willReturn(boardList);
 
@@ -316,15 +313,5 @@ class BoardServiceTest {
                 softAssertions.assertThat(response2.createdAt()).isAfter(response3.createdAt());
             });
         }
-//        private Slice<SortBoardResponse> createBoardList(final Board... boards) {
-//            return new SliceImpl<>(Arrays.asList(boards)).map(board -> new SortBoardResponse(
-//                    board.getId(),
-//                    board.getTitle(),
-//                    board.getMember().getName(),
-//                    board.getCreatedAt(),
-//                    board.getLikes().size(),
-//                    board.getViews()
-//            ));
-//        }
     }
 }

@@ -75,9 +75,6 @@ class BoardControllerTest {
     @Spy
     private ObjectMapper objectMapper;
 
-    @Spy
-    private BoardMapper boardMapper;
-
     @SpyBean
     private ResponseAspect responseAspect;
 
@@ -283,7 +280,7 @@ class BoardControllerTest {
             // given
             final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
-            final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
+            final var response = BoardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
 
             given(boardService.getMyLikeBoards(any(), any())).willReturn(response);
 
