@@ -24,18 +24,15 @@ public class LikeServiceImpl implements LikeService {
     private final LikeRepository likeRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
-    private final LikeMapper likeMapper;
     private final LikeQueryRepository likeQueryRepository;
 
     public LikeServiceImpl(final LikeRepository likeRepository,
                            final MemberRepository memberRepository,
                            final BoardRepository boardRepository,
-                           final LikeMapper likeMapper,
                            final LikeQueryRepository likeQueryRepository) {
         this.likeRepository = likeRepository;
         this.memberRepository = memberRepository;
         this.boardRepository = boardRepository;
-        this.likeMapper = likeMapper;
         this.likeQueryRepository = likeQueryRepository;
     }
 
@@ -49,13 +46,13 @@ public class LikeServiceImpl implements LikeService {
         final Board board = boardRepository.findById(request.boardId())
                 .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
-        final Like like = likeMapper.registerLikeRequestToEntity(member, board);
+        final Like like = LikeMapper.registerLikeRequestToEntity(member, board);
 
         likeRepository.save(like);
 
         logger.info("[Result] 회원 {} 의 {} 번 게시물 좋아요 등록", accessId, board.getId());
 
-        return likeMapper.entityToRegisterLikeResponse(like);
+        return LikeMapper.entityToRegisterLikeResponse(like);
     }
 
     @Override
