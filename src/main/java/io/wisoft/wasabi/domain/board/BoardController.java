@@ -93,7 +93,7 @@ public class BoardController {
     }
 
     @PostMapping("/image")
-    public ResponseEntity<Response<UploadImageResponse>> uploadImage(@ModelAttribute final UploadImageRequest request) {
+    public ResponseEntity<Response<UploadImageResponse>> uploadImage(@ModelAttribute @Valid final UploadImageRequest request) {
 
         final UploadImageResponse data = boardImageService.saveImage(request);
 

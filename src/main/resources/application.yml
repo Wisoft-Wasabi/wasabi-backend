@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    include: jwt, bcrypt, aws
+    include: jwt, bcrypt, aws, slack
 #    active: local
     group:
       dev: log-dev
