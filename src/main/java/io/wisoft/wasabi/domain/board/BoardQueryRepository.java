@@ -47,7 +47,7 @@ public class BoardQueryRepository {
                         board.title,
                         board.member.name,
                         board.createdAt,
-                        like.count(),
+                        like.count().add(anonymousLike.count()),
                         board.views
                 );
 
@@ -94,13 +94,8 @@ public class BoardQueryRepository {
                 tag.name
             );
 
-        return jpaQueryFactory
-            .query()
-            .select(readBoardResponse)
-            .from(board)
-            .join(member).on(board.member.eq(member))
-            .leftJoin(like).on(like.board.eq(board))
-            .leftJoin(anonymousLike).on(anonymousLike.board.eq(board))
+        return
+            getJpaQuery(readBoardResponse)
             .leftJoin(tag).on(board.tag.eq(tag))
             .where(board.id.eq(boardId))
             .fetchFirst();
@@ -129,15 +124,14 @@ public class BoardQueryRepository {
         return jpaQuery;
     }
 
-    private JPAQuery<SortBoardResponse> getJpaQuery(final ConstructorExpression<SortBoardResponse> boardResponse) {
+    private <T> JPAQuery<T> getJpaQuery(final ConstructorExpression<T> constructorExpression) {
         return jpaQueryFactory
                 .query()
-                .select(boardResponse)
+                .select(constructorExpression)
                 .from(board)
-                .join(member)
-                .on(board.member.eq(member))
-                .leftJoin(like)
-                .on(like.board.eq(board));
+                .join(member).on(board.member.eq(member))
+                .leftJoin(like).on(like.board.eq(board))
+                .leftJoin(anonymousLike).on(anonymousLike.board.eq(board));
     }
 
     private OrderSpecifier ordering(final BoardSortType sortType) {
