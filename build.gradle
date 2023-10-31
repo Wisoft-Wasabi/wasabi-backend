@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'io.wisoft'
-version = '0.0.1-SNAPSHOT-' + new Date().format("yyyyMMddHHmmss")
+version = '1.0.0-' + new Date().format("yyyyMMddHHmmss")
 
 java {
     sourceCompatibility = '17'
@@ -44,7 +44,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     //autoparams
-    testImplementation 'io.github.autoparams:autoparams:1.1.1'
+    testImplementation 'io.github.autoparams:autoparams:3.0.0'
 
     // mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -58,6 +58,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.session:spring-session-data-redis")
 
+    // S3 Image
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
     // Query DSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'

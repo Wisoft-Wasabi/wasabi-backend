@@ -2,7 +2,6 @@ package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
-import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,22 +23,22 @@ public class BoardServiceImpl implements BoardService {
 
     private final Logger logger = LoggerFactory.getLogger(BoardServiceImpl.class);
     private final BoardRepository boardRepository;
+    private final BoardImageRepository boardImageRepository;
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
     private final BoardQueryRepository boardQueryRepository;
-    private final BoardMapper boardMapper;
 
 
     public BoardServiceImpl(final BoardRepository boardRepository,
+                            final BoardImageRepository boardImageRepository,
                             final MemberRepository memberRepository,
                             final TagRepository tagRepository,
-                            final BoardQueryRepository boardQueryRepository,
-                            final BoardMapper boardMapper) {
+                            final BoardQueryRepository boardQueryRepository) {
         this.boardRepository = boardRepository;
+        this.boardImageRepository = boardImageRepository;
         this.memberRepository = memberRepository;
         this.tagRepository = tagRepository;
         this.boardQueryRepository = boardQueryRepository;
-        this.boardMapper = boardMapper;
     }
 
     @Override
@@ -49,16 +48,16 @@ public class BoardServiceImpl implements BoardService {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberExceptionExecutor::MemberNotFound);
 
-        final Board board = boardMapper.writeBoardRequestToEntity(request, member);
+        final Board board = BoardMapper.writeBoardRequestToEntity(request, member);
 
         saveTag(board, request.tag());
-
         boardRepository.save(board);
-        saveImages(board, request);
+
+        mappingBoardAndImage(request, board);
 
         logger.info("[Result] {}번 회원의 {}번 게시글 작성", memberId, board.getId());
 
-        return boardMapper.entityToWriteBoardResponse(board);
+        return BoardMapper.entityToWriteBoardResponse(board);
     }
 
     private void saveTag(final Board board,
@@ -71,15 +70,10 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
-    private void saveImages(final Board board, final WriteBoardRequest request) {
+    private void mappingBoardAndImage(final WriteBoardRequest request, final Board board) {
 
-        final String[] images = request.imageUrls();
-
-        if (images != null) {
-            Arrays.stream(images)
-                    .map(image -> BoardImage.createBoardImage(image, board))
-                    .toList();
-        }
+        final List<BoardImage> images = boardImageRepository.findAllBoardImagesById(request.imageIds());
+        images.forEach(image -> image.setBoard(board));
     }
 
     @Override
@@ -123,7 +117,7 @@ public class BoardServiceImpl implements BoardService {
 
         logger.info("[Result] {}번 회원의 자신이 작성한 게시글 목록 조회", memberId);
 
-        return boardMapper.entityToMyBoardsResponse(myBoards);
+        return BoardMapper.entityToMyBoardsResponse(myBoards);
     }
 
     @Override
@@ -133,6 +127,6 @@ public class BoardServiceImpl implements BoardService {
 
         logger.info("[Result] {}번 회원의 자신이 좋아요 한 게시글 목록 조회", memberId);
 
-        return boardMapper.entityToMyLikeBoardsResponse(myLikeBoards);
+        return BoardMapper.entityToMyLikeBoardsResponse(myLikeBoards);
     }
 }

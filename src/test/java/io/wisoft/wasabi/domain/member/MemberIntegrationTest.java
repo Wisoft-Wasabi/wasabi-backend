@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.member;
 import autoparams.AutoSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoRequest;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -60,7 +61,7 @@ public class MemberIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(patch("/members")
                     .contentType(APPLICATION_JSON)
-                    .header("Authorization", "bearer " + accessToken)
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
                     .content(json));
 
             // then
@@ -112,7 +113,7 @@ public class MemberIntegrationTest extends IntegrationTest {
             //when
             final var result = mockMvc.perform(get("/members")
                     .contentType(APPLICATION_JSON)
-                    .header("Authorization", "bearer " + accessToken));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             //then
             result.andExpect(status().isOk());

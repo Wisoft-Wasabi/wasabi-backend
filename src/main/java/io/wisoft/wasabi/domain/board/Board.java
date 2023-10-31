@@ -42,7 +42,7 @@ public class Board extends BaseTimeEntity {
     @ManyToOne(fetch = LAZY)
     private Tag tag;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "board")
     private Set<BoardImage> boardImages = new HashSet<>();
 
     @OneToMany(mappedBy = "board")

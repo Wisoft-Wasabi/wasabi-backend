@@ -12,9 +12,9 @@ import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.tag.Tag;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
-import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
@@ -32,9 +32,11 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static io.wisoft.wasabi.domain.board.BoardListToSliceMapper.createBoardList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.BDDMockito.given;
@@ -42,7 +44,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static io.wisoft.wasabi.domain.board.BoardListToSliceMapper.*;
 
 
 @WebMvcTest(controllers = BoardController.class)
@@ -53,6 +54,9 @@ class BoardControllerTest {
 
     @MockBean
     private BoardService boardService;
+
+    @MockBean
+    private BoardImageService boardImageService;
 
     @MockBean
     private LikeService likeService;
@@ -67,16 +71,10 @@ class BoardControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @SpyBean
-    private AuthorizationExtractor extractor;
-
-    @SpyBean
     private AnyoneResolver anyoneResolver;
 
     @Spy
     private ObjectMapper objectMapper;
-
-    @Spy
-    private BoardMapper boardMapper;
 
     @SpyBean
     private ResponseAspect responseAspect;
@@ -93,24 +91,25 @@ class BoardControllerTest {
             final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
             final var request = new WriteBoardRequest(
-                "title",
-                "content",
-                "tag",
-                new String[]{"imageUrls"});
+                    "title",
+                    "content",
+                    "tag",
+                    new String[]{"imageUrls"},
+                    new ArrayList<>());
 
             final var response = new WriteBoardResponse(
-                1L,
-                "title",
-                "writer"
+                    1L,
+                    "title",
+                    "writer"
             );
             given(boardService.writeBoard(any(), any())).willReturn(response);
 
             // when
             final var perform = mockMvc.perform(
-                post("/boards")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request)));
+                    post("/boards")
+                            .contentType(APPLICATION_JSON)
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
+                            .content(objectMapper.writeValueAsString(request)));
 
             // then
             perform.andExpect(status().isCreated());
@@ -134,25 +133,25 @@ class BoardControllerTest {
             final Long boardId = 1L;
 
             final var response = new ReadBoardResponse(
-                1L,
-                "title",
-                "content",
-                writer,
-                LocalDateTime.now(),
-                0,
-                1,
-                false,
-                null
+                    1L,
+                    "title",
+                    "content",
+                    writer,
+                    LocalDateTime.now(),
+                    0,
+                    1,
+                    false,
+                    null
             );
 
             given(boardService.readBoard(any(), any(), anyBoolean())).willReturn(response);
 
             //when
             final var result = mockMvc.perform(
-                get("/boards/{boardId}", boardId)
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
-                    .session(session));
+                    get("/boards/{boardId}", boardId)
+                            .contentType(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON)
+                            .session(session));
 
             //then
             result.andExpect(status().isOk());
@@ -163,20 +162,20 @@ class BoardControllerTest {
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 조회수 가장 많은 게시글이 먼저 조회된다.")
         @Customization(NotSaveBoardCustomization.class)
         void read_boards_order_by_views(
-            final Board board1,
-            final Board board2) throws Exception {
+                final Board board1,
+                final Board board2) throws Exception {
 
             //given
             board2.increaseView();
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
-                get("/boards?sortBy=views")
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON));
+                    get("/boards?sortBy=views")
+                            .contentType(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON));
 
             //then
             result.andExpect(status().isOk());
@@ -189,15 +188,15 @@ class BoardControllerTest {
         void read_boards_order_by_created_at(final Board board1,
                                              final Board board2) throws Exception {
             //given
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
-                get("/boards?sortBy=latest")
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
+                    get("/boards?sortBy=latest")
+                            .contentType(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON)
             );
 
             //then
@@ -209,21 +208,21 @@ class BoardControllerTest {
         @AutoSource
         @Customization(NotSaveBoardCustomization.class)
         void read_boards_order_by_likes(
-            final Board board1,
-            final Board board2,
-            final Member member) throws Exception {
+                final Board board1,
+                final Board board2,
+                final Member member) throws Exception {
             //given
             likeService.registerLike(member.getId(), new RegisterLikeRequest(board1.getId()));
 
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardService.getBoardList(any(), any(), any())).willReturn(boardList);
 
             //when
             final var result = mockMvc.perform(
-                get("/boards?sortBy=likes")
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON)
+                    get("/boards?sortBy=likes")
+                            .contentType(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON)
             );
 
             //then
@@ -234,7 +233,7 @@ class BoardControllerTest {
         @ParameterizedTest
         @AutoSource
         void read_my_boards(
-            final List<MyBoardsResponse> boardsResponses
+                final List<MyBoardsResponse> boardsResponses
         ) throws Exception {
 
             // given
@@ -244,11 +243,11 @@ class BoardControllerTest {
 
             // when
             final var result = mockMvc.perform(
-                get("/boards/my-board")
-                    .param("page", String.valueOf(0))
-                    .param("size", String.valueOf(3))
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + accessToken)
+                    get("/boards/my-board")
+                            .param("page", String.valueOf(0))
+                            .param("size", String.valueOf(3))
+                            .contentType(APPLICATION_JSON)
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
             );
 
             // then
@@ -266,8 +265,8 @@ class BoardControllerTest {
 
             // when
             final var result = mockMvc.perform(
-                get("/boards/my-like")
-                    .contentType(APPLICATION_JSON));
+                    get("/boards/my-like")
+                            .contentType(APPLICATION_JSON));
 
             // then
             result.andExpect(status().isUnauthorized());
@@ -282,15 +281,15 @@ class BoardControllerTest {
             // given
             final String accessToken = jwtTokenProvider.createAccessToken(1L, "writer", Role.GENERAL, true);
 
-            final var response = boardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
+            final var response = BoardMapper.entityToMyLikeBoardsResponse(new SliceImpl<>(boards));
 
             given(boardService.getMyLikeBoards(any(), any())).willReturn(response);
 
             // when
             final var result = mockMvc.perform(
-                get("/boards/my-like")
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + accessToken));
+                    get("/boards/my-like")
+                            .contentType(APPLICATION_JSON)
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             // then
             result.andExpect(status().isOk());
@@ -313,12 +312,12 @@ class BoardControllerTest {
 
             // when
             final var result = mockMvc.perform(
-                get("/boards?sortBy=latest&keyword=")
-                    .param("page", String.valueOf(0))
-                    .param("size", String.valueOf(3))
-                    .param("keyword", tag.getName())
-                    .contentType(APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + accessToken));
+                    get("/boards?sortBy=latest&keyword=")
+                            .param("page", String.valueOf(0))
+                            .param("size", String.valueOf(3))
+                            .param("keyword", tag.getName())
+                            .contentType(APPLICATION_JSON)
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             // then
             result.andExpect(status().isOk());

@@ -18,10 +18,6 @@ public class PasswordCheckValidator implements ConstraintValidator<PasswordCheck
         final String fieldValue = request.password();
         final String fieldMatchValue = request.checkPassword();
 
-        if (fieldValue != null && !fieldValue.equals(fieldMatchValue)) {
-            return false;
-        }
-
-        return true;
+        return fieldValue == null || fieldValue.equals(fieldMatchValue);
     }
 }

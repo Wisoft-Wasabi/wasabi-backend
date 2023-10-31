@@ -1,39 +1,45 @@
 package io.wisoft.wasabi.domain.board;
 
+import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardImage {
+public class BoardImage extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String url;
+    private String fileName;
 
+    @Column(nullable = false)
+    private String storeImagePath;
+
+    @JoinColumn(name = "board_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
+    protected BoardImage() {
+    }
 
-    private void setBoard(final Board board) {
+    public BoardImage(
+            final String fileName,
+            final String storeImagePath) {
+        this.fileName = fileName;
+        this.storeImagePath = storeImagePath;
+    }
+
+    void setBoard(final Board board) {
         this.board = board;
         board.getBoardImages().add(this);
     }
 
-    public static BoardImage createBoardImage(
-            final String url,
-            final Board board) {
+    public Long getId() {
+        return id;
+    }
 
-        final BoardImage boardImage = new BoardImage();
-        boardImage.url = url;
-        boardImage.setBoard(board);
-
-        return boardImage;
+    public String getStoreImagePath() {
+        return storeImagePath;
     }
 }

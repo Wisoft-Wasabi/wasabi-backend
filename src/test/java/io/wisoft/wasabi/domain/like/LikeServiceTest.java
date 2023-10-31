@@ -21,7 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -37,9 +36,6 @@ class LikeServiceTest {
 
     @InjectMocks
     private LikeServiceImpl likeService;
-
-    @Spy
-    private LikeMapper likeMapper;
 
     @Mock
     private MemberRepository memberRepository;
@@ -72,7 +68,7 @@ class LikeServiceTest {
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
             final var request = new RegisterLikeRequest(board.getId());
 
-            final var like = likeMapper.registerLikeRequestToEntity(member, board);
+            final var like = LikeMapper.registerLikeRequestToEntity(member, board);
             given(likeRepository.save(any())).willReturn(like);
 
             //when

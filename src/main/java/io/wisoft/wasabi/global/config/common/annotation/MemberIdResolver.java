@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.global.config.common.annotation;
 
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,11 +17,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class MemberIdResolver implements HandlerMethodArgumentResolver {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthorizationExtractor extractor;
 
-    public MemberIdResolver(final JwtTokenProvider jwtTokenProvider, final AuthorizationExtractor extractor) {
+    public MemberIdResolver(final JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.extractor = extractor;
     }
 
     @Override
@@ -35,7 +34,7 @@ public class MemberIdResolver implements HandlerMethodArgumentResolver {
                                   final WebDataBinderFactory binderFactory) {
 
         final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        final String token = extractor.extract(request, "Bearer");
+        final String token = AuthorizationExtractor.extract(request, Const.TOKEN_TYPE);
 
         if (!StringUtils.hasText(token)) {
             throw AuthExceptionExecutor.UnAuthorized();
