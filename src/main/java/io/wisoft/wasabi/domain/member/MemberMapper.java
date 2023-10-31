@@ -8,8 +8,8 @@ import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
 import io.wisoft.wasabi.domain.auth.dto.SignupResponse;
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +17,6 @@ import org.springframework.stereotype.Component;
 public class MemberMapper {
     private final EncryptHelper encryptHelper;
 
-    @Value("${bcrypt.secret.salt}")
-    private String salt;
 
     public MemberMapper(final EncryptHelper encryptHelper) {
         this.encryptHelper = encryptHelper;
@@ -27,7 +25,7 @@ public class MemberMapper {
     public Member signUpRequestToEntity(final SignupRequest request) {
         return new Member(
                 request.email(),
-                encryptHelper.encrypt(request.password(), salt),
+                encryptHelper.encrypt(request.password()),
                 request.name(),
                 request.phoneNumber(),
                 false,
@@ -51,7 +49,7 @@ public class MemberMapper {
     }
 
     public LoginResponse entityToLoginResponse(final Member member, final String accessToken) {
-        final String tokenType = "bearer";
+        final String tokenType = Const.TOKEN_TYPE;
         final String name = member.getName();
         final Role role = member.getRole();
         final boolean activation = member.isActivation();

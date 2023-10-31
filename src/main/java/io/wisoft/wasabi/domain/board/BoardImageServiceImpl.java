@@ -22,17 +22,14 @@ public class BoardImageServiceImpl implements BoardImageService {
 
     private final AmazonS3 amazonS3;
     private final BoardImageRepository boardImageRepository;
-    private final BoardMapper boardMapper;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     public BoardImageServiceImpl(final AmazonS3 amazonS3,
-                                 final BoardImageRepository boardImageRepository,
-                                 final BoardMapper boardMapper) {
+                                 final BoardImageRepository boardImageRepository) {
         this.amazonS3 = amazonS3;
         this.boardImageRepository = boardImageRepository;
-        this.boardMapper = boardMapper;
     }
 
     @Override
@@ -45,10 +42,10 @@ public class BoardImageServiceImpl implements BoardImageService {
 
         final String storeImagePath = uploadImage(request.image(), ext, changedImageName);
 
-        final BoardImage boardImage = boardMapper.uploadImageRequestToEntity(changedImageName, storeImagePath);
+        final BoardImage boardImage = BoardMapper.uploadImageRequestToEntity(changedImageName, storeImagePath);
         boardImageRepository.save(boardImage);
 
-        return boardMapper.entityToUploadImageResponse(boardImage);
+        return BoardMapper.entityToUploadImageResponse(boardImage);
     }
 
     private String uploadImage(final MultipartFile image,

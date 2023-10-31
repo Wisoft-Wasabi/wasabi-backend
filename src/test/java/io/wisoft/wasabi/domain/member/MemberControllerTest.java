@@ -6,8 +6,8 @@ import io.wisoft.wasabi.domain.auth.exception.TokenNotExistException;
 import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoRequest;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
-import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
@@ -41,9 +41,6 @@ class MemberControllerTest {
 
     @SpyBean
     private JwtTokenProvider jwtTokenProvider;
-
-    @SpyBean
-    private AuthorizationExtractor extractor;
 
     @SpyBean
     private ResponseAspect responseAspect;
@@ -80,7 +77,7 @@ class MemberControllerTest {
             final var result = mockMvc.perform(
                     get("/members")
                             .contentType(APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             // then
             result.andExpect(status().isOk());
@@ -115,7 +112,7 @@ class MemberControllerTest {
             final var result = mockMvc.perform(
                     patch("/members")
                             .contentType(APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken)
+                            .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken)
                             .content(objectMapper.writeValueAsString(request)));
 
             // then

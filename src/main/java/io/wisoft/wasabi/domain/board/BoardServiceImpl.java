@@ -27,21 +27,18 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
     private final BoardQueryRepository boardQueryRepository;
-    private final BoardMapper boardMapper;
 
 
     public BoardServiceImpl(final BoardRepository boardRepository,
                             final BoardImageRepository boardImageRepository,
                             final MemberRepository memberRepository,
                             final TagRepository tagRepository,
-                            final BoardQueryRepository boardQueryRepository,
-                            final BoardMapper boardMapper) {
+                            final BoardQueryRepository boardQueryRepository) {
         this.boardRepository = boardRepository;
         this.boardImageRepository = boardImageRepository;
         this.memberRepository = memberRepository;
         this.tagRepository = tagRepository;
         this.boardQueryRepository = boardQueryRepository;
-        this.boardMapper = boardMapper;
     }
 
     @Override
@@ -51,7 +48,7 @@ public class BoardServiceImpl implements BoardService {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberExceptionExecutor::MemberNotFound);
 
-        final Board board = boardMapper.writeBoardRequestToEntity(request, member);
+        final Board board = BoardMapper.writeBoardRequestToEntity(request, member);
 
         saveTag(board, request.tag());
         boardRepository.save(board);
@@ -60,7 +57,7 @@ public class BoardServiceImpl implements BoardService {
 
         logger.info("[Result] {}번 회원의 {}번 게시글 작성", memberId, board.getId());
 
-        return boardMapper.entityToWriteBoardResponse(board);
+        return BoardMapper.entityToWriteBoardResponse(board);
     }
 
     private void saveTag(final Board board,
@@ -120,7 +117,7 @@ public class BoardServiceImpl implements BoardService {
 
         logger.info("[Result] {}번 회원의 자신이 작성한 게시글 목록 조회", memberId);
 
-        return boardMapper.entityToMyBoardsResponse(myBoards);
+        return BoardMapper.entityToMyBoardsResponse(myBoards);
     }
 
     @Override
@@ -130,6 +127,6 @@ public class BoardServiceImpl implements BoardService {
 
         logger.info("[Result] {}번 회원의 자신이 좋아요 한 게시글 목록 조회", memberId);
 
-        return boardMapper.entityToMyLikeBoardsResponse(myLikeBoards);
+        return BoardMapper.entityToMyLikeBoardsResponse(myLikeBoards);
     }
 }
