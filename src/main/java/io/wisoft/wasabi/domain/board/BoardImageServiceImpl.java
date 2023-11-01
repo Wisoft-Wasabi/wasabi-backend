@@ -5,19 +5,23 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import io.wisoft.wasabi.domain.board.dto.DeleteImageRequest;
+import io.wisoft.wasabi.domain.board.dto.DeleteImageResponse;
 import io.wisoft.wasabi.domain.board.dto.UploadImageRequest;
 import io.wisoft.wasabi.domain.board.dto.UploadImageResponse;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
-import io.wisoft.wasabi.global.config.common.annotation.ValidFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -71,12 +75,37 @@ public class BoardImageServiceImpl implements BoardImageService {
     }
 
     /**
-     * TODO: 이미지 삭제 보완 필요
+     * TODO: 이미지 삭제 보완 필요 - 임시 구현
      */
-    public void deleteImage(final String key) {
+    @Override
+    @Transactional
+    public DeleteImageResponse deleteImage(final DeleteImageRequest request) {
 
-        final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, key);
+        final BoardImage boardImage = boardImageRepository.findBoardImageByStoreImagePath(request.storeImagePath());
+
+        final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, boardImage.getFileName());
         amazonS3.deleteObject(deleteRequest);
+        boardImageRepository.delete(boardImage);
+
+        return BoardMapper.entityToDeleteImageResponse(boardImage.getId());
+    }
+
+    /**
+     * 주기적으로 게시글에 포함되지 않은 이미지 삭제(불필요한 이미지) -> 24시간 동안 사용되지 않았다면 불필요하다고 판단
+     */
+    @Scheduled(cron = "${cloud.aws.cron}")
+    @Transactional
+    public void deleteUnNecessaryImage() {
+
+        final List<BoardImage> images = boardImageRepository.findAllBoardImagesByNull();
+
+        images.stream()
+                .filter(image -> Duration.between(image.getCreatedAt(), LocalDateTime.now()).toHours() >= 24)
+                .forEach(image -> {
+                    final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, image.getFileName());
+                    amazonS3.deleteObject(deleteRequest);
+                    boardImageRepository.delete(image);
+                });
     }
 
     private String changeImageName(final String ext) {
@@ -84,5 +113,4 @@ public class BoardImageServiceImpl implements BoardImageService {
         final String uuid = UUID.randomUUID().toString();
         return uuid + ext;
     }
-
 }
