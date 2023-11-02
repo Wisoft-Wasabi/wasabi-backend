@@ -46,4 +46,8 @@ public class BoardImage extends BaseTimeEntity {
     public String getStoreImagePath() {
         return storeImagePath;
     }
+
+    public Board getBoard() {
+        return board;
+    }
 }

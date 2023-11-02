@@ -74,6 +74,8 @@ public class BoardServiceImpl implements BoardService {
 
         final List<BoardImage> images = boardImageRepository.findAllBoardImagesById(request.imageIds());
         images.forEach(image -> image.setBoard(board));
+
+        logger.info("[Result] {}번 게시글과 {}번 이미지 연관관계 매핑", board.getId(), request.imageIds());
     }
 
     @Override
