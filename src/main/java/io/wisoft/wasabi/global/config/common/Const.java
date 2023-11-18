@@ -28,4 +28,11 @@ public final class Const {
     public static final String UNKNOWN = "unknown";
     public static final String LOCALHOST = "127.0.0.1";
     public static final String ALL_IP = "0:0:0:0:0:0:0:1";
+
+    /**
+     * 파일 확장자 검증에 사용
+     */
+    public static final String IMAGE_EXTENSION_JPEG = "image/jpeg";
+    public static final String IMAGE_EXTENSION_PNG = "image/png";
+    public static final String IMAGE_EXTENSION_JPG = "image/jpg";
 }
