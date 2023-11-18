@@ -10,6 +10,7 @@ import io.wisoft.wasabi.domain.board.dto.DeleteImageResponse;
 import io.wisoft.wasabi.domain.board.dto.UploadImageRequest;
 import io.wisoft.wasabi.domain.board.dto.UploadImageResponse;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.global.config.common.Const;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,10 +63,9 @@ public class BoardImageServiceImpl implements BoardImageService {
                                final String changedImageName) {
 
         final ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType("image/" + ext.substring(1));
+        metadata.setContentType(Const.CONTENT_TYPE_IMAGE + ext.substring(1));
         try {
-            amazonS3.putObject(new PutObjectRequest(
-                    bucket, changedImageName, image.getInputStream(), metadata)
+            amazonS3.putObject(new PutObjectRequest(bucket, changedImageName, image.getInputStream(), metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (final IOException e) {
             throw BoardExceptionExecutor.BoardImageUploadFail();
@@ -82,10 +82,7 @@ public class BoardImageServiceImpl implements BoardImageService {
     public DeleteImageResponse deleteImage(final DeleteImageRequest request) {
 
         final BoardImage boardImage = boardImageRepository.findBoardImageByStoreImagePath(request.storeImagePath());
-
-        final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, boardImage.getFileName());
-        amazonS3.deleteObject(deleteRequest);
-        boardImageRepository.delete(boardImage);
+        deleteImageFromDatabaseAndS3(boardImage);
 
         return BoardMapper.entityToDeleteImageResponse(boardImage.getId());
     }
@@ -101,11 +98,13 @@ public class BoardImageServiceImpl implements BoardImageService {
 
         images.stream()
                 .filter(image -> Duration.between(image.getCreatedAt(), LocalDateTime.now()).toHours() >= 24)
-                .forEach(image -> {
-                    final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, image.getFileName());
-                    amazonS3.deleteObject(deleteRequest);
-                    boardImageRepository.delete(image);
-                });
+                .forEach(this::deleteImageFromDatabaseAndS3);
+    }
+
+    private void deleteImageFromDatabaseAndS3(final BoardImage boardImage) {
+        final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, boardImage.getFileName());
+        amazonS3.deleteObject(deleteRequest);
+        boardImageRepository.delete(boardImage);
     }
 
     private String changeImageName(final String ext) {
