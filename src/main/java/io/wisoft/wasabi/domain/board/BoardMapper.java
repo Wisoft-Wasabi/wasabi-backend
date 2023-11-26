@@ -52,7 +52,7 @@ public class BoardMapper {
                 board.getTitle(),
                 board.getMember().getName(),
                 board.getCreatedAt(),
-                board.getLikes().size(),
+                board.getLikes().size() + board.getAnonymousLikes().size(),
                 board.getViews()
         ));
     }
@@ -64,7 +64,7 @@ public class BoardMapper {
                 board.getTitle(),
                 board.getMember().getName(),
                 board.getCreatedAt(),
-                board.getLikes().size(),
+                board.getLikes().size() + board.getAnonymousLikes().size(),
                 board.getViews()
         ));
     }
