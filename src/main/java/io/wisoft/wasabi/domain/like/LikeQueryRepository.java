@@ -1,7 +1,5 @@
 package io.wisoft.wasabi.domain.like;
 
-import com.querydsl.core.types.SubQueryExpressionImpl;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.wisoft.wasabi.domain.board.QBoard;
 import io.wisoft.wasabi.domain.like.anonymous.QAnonymousLike;
