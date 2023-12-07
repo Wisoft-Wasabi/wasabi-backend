@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Transactional(readOnly = true)
 @Service("likeService")
 public class LikeServiceImpl implements LikeService {
@@ -45,6 +47,12 @@ public class LikeServiceImpl implements LikeService {
 
         final Board board = boardRepository.findById(request.boardId())
                 .orElseThrow(BoardExceptionExecutor::BoardNotFound);
+
+        board.getLikes().forEach(like -> {
+            if (Objects.equals(like.getMember().getId(), member.getId())) {
+                throw LikeExceptionExecutor.ExistLike();
+            }
+        });
 
         final Like like = LikeMapper.registerLikeRequestToEntity(member, board);
 
