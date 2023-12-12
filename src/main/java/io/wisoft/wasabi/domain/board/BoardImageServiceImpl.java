@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +55,8 @@ public class BoardImageServiceImpl implements BoardImageService {
 
         final BoardImage boardImage = BoardMapper.uploadImageRequestToEntity(changedImageName, storeImagePath);
         boardImageRepository.save(boardImage);
+
+        logger.info("[Result] 저장되지 않은 게시글에 속한 {}번 이미지 저장", boardImage.getId());
 
         return BoardMapper.entityToUploadImageResponse(boardImage);
     }
@@ -88,6 +91,8 @@ public class BoardImageServiceImpl implements BoardImageService {
         amazonS3.deleteObject(deleteRequest);
         boardImageRepository.delete(boardImage);
 
+        logger.info("[Result] {}번 게시글에 대한 {}번 이미지 삭제", boardImage.getBoard(), boardImage.getId());
+
         return BoardMapper.entityToDeleteImageResponse(boardImage.getId());
     }
 
@@ -99,14 +104,18 @@ public class BoardImageServiceImpl implements BoardImageService {
     public void deleteUnNecessaryImage() {
 
         final List<BoardImage> images = boardImageRepository.findAllBoardImagesByNull();
+        final List<Long> imageIds = new ArrayList<>();
 
         images.stream()
                 .filter(image -> Duration.between(image.getCreatedAt(), LocalDateTime.now()).toHours() >= 24)
                 .forEach(image -> {
                     final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, image.getFileName());
                     amazonS3.deleteObject(deleteRequest);
-                    boardImageRepository.delete(image);
+                    imageIds.add(image.getId());
                 });
+
+        boardImageRepository.deleteBoardImagesByIds(imageIds);
+        logger.info("[Result] 사용되지 않는 {}번 이미지 삭제", imageIds);
     }
 
     private String changeImageName(final String ext) {
