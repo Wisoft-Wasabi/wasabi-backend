@@ -10,12 +10,14 @@ import io.wisoft.wasabi.domain.board.dto.DeleteImageResponse;
 import io.wisoft.wasabi.domain.board.dto.UploadImageRequest;
 import io.wisoft.wasabi.domain.board.dto.UploadImageResponse;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.global.config.common.annotation.ValidFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -27,7 +29,6 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 public class BoardImageServiceImpl implements BoardImageService {
-
     private final Logger logger = LoggerFactory.getLogger(BoardImageServiceImpl.class);
     private final AmazonS3 amazonS3;
     private final BoardImageRepository boardImageRepository;

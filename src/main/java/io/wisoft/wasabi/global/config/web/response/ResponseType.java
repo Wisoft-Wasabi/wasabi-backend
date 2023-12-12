@@ -76,4 +76,5 @@ public enum ResponseType {
         responseType.setDtoInvalidMessage(message);
         return responseType;
     }
+
 }
