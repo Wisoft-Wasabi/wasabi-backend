@@ -1,6 +1,3 @@
-server:
-  port: 8080
-
 spring:
   profiles:
     include: jwt, bcrypt, aws, slack
@@ -9,20 +6,5 @@ spring:
       dev: log-dev
       prod: log-prod
       test: test
-
 logging.level:
   org.hibernate.SQL: debug
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: dev
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: real

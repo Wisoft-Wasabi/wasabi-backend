@@ -8,7 +8,6 @@ import io.wisoft.wasabi.domain.board.dto.MyLikeBoardsResponse;
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.like.LikeMapper;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.tag.Tag;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static io.wisoft.wasabi.domain.board.BoardListToSliceMapper.*;
+import static io.wisoft.wasabi.domain.board.BoardListToSliceMapper.createBoardList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -42,9 +40,6 @@ class BoardServiceTest {
 
     @InjectMocks
     private BoardServiceImpl boardServiceImpl;
-
-    @Spy
-    private BoardMapper boardMapper;
 
     @Mock
     private MemberRepository memberRepository;
@@ -60,9 +55,6 @@ class BoardServiceTest {
 
     @Mock
     private BoardImageRepository boardImageRepository;
-
-    @Spy
-    private LikeMapper likeMapper;
 
     @Nested
     @DisplayName("게시글 작성")
@@ -84,7 +76,7 @@ class BoardServiceTest {
                     new String[]{"imageUrls"},
                     new ArrayList<>());
 
-            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
 
             given(tagRepository.save(any())).willReturn(tag);
             given(boardRepository.save(any())).willReturn(board);
@@ -117,7 +109,7 @@ class BoardServiceTest {
                     new String[]{"imageUrls"},
                     new ArrayList<>());
 
-            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
 
             // when
@@ -146,7 +138,7 @@ class BoardServiceTest {
                     new ArrayList<>());
 
 
-            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.save(any())).willReturn(board);
 
             // when
@@ -181,7 +173,7 @@ class BoardServiceTest {
                     new String[]{"imageUrls"},
                     new ArrayList<>());
 
-            final var board = boardMapper.writeBoardRequestToEntity(request, member);
+            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
             given(boardQueryRepository.readBoard(any(), any(), anyBoolean())).willReturn(response);
 
@@ -201,7 +193,7 @@ class BoardServiceTest {
             //given
             board2.increaseView();
 
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.VIEWS, "tag")).willReturn(boardList);
 
@@ -226,7 +218,7 @@ class BoardServiceTest {
                 final Board board3) {
 
             //given
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.LATEST, "tag")).willReturn(boardList);
 
@@ -250,7 +242,7 @@ class BoardServiceTest {
             given(memberRepository.save(member)).willReturn(member);
             memberRepository.save(member);
 
-            final var boardList = createBoardList(board2,board1);
+            final var boardList = createBoardList(board2, board1);
 
             given(boardQueryRepository.boardList(pageable, BoardSortType.LIKES, "tag")).willReturn(boardList);
 
@@ -316,15 +308,5 @@ class BoardServiceTest {
                 softAssertions.assertThat(response2.createdAt()).isAfter(response3.createdAt());
             });
         }
-//        private Slice<SortBoardResponse> createBoardList(final Board... boards) {
-//            return new SliceImpl<>(Arrays.asList(boards)).map(board -> new SortBoardResponse(
-//                    board.getId(),
-//                    board.getTitle(),
-//                    board.getMember().getName(),
-//                    board.getCreatedAt(),
-//                    board.getLikes().size(),
-//                    board.getViews()
-//            ));
-//        }
     }
 }

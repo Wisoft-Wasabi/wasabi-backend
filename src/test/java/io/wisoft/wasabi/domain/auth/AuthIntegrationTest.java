@@ -15,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -66,9 +65,6 @@ public class AuthIntegrationTest extends IntegrationTest {
     @DisplayName("로그인")
     class Login {
 
-        @Value("${bcrypt.secret.salt}")
-        private String salt;
-
         @DisplayName("이메일과 비밀번호가 일치해, 로그인에 성공한다.")
         @ParameterizedTest
         @AutoSource
@@ -78,7 +74,7 @@ public class AuthIntegrationTest extends IntegrationTest {
             //given
             final Member member = new Member(
                     request.email(),
-                    encryptHelper.encrypt(request.password(), salt),
+                    encryptHelper.encrypt(request.password()),
                     request.name(),
                     request.phoneNumber(),
                     false,

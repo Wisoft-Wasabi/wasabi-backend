@@ -1,5 +1,6 @@
 package io.wisoft.wasabi.global.config.web.filter;
 
+import io.wisoft.wasabi.global.config.common.Const;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public class LogFilter extends OncePerRequestFilter {
                                     final HttpServletResponse response,
                                     final FilterChain chain) throws ServletException, IOException {
 
-        MDC.put("traceId", UUID.randomUUID().toString());
+        MDC.put(Const.TRACE_ID, UUID.randomUUID().toString());
 
         final String ip = getClientIp(request);
         logger.info("[Request] path: {}, ip: {}", request.getRequestURI(), ip);
@@ -70,24 +71,5 @@ public class LogFilter extends OncePerRequestFilter {
         }
 
         return ip;
-    }
-
-
-    // TODO : 코드리뷰 & 디렉토리 구조 리팩토링 시 이 클래스 바깥으로 뺼 것
-    private final class Const {
-        /**
-         * IP 추출시 필요한 관련 헤더들
-         */
-        public static final String X_FORWARDED_FOR = "X-Forwarded-For";
-        public static final String PROXY_CLIENT_IP = "Proxy-Client-IP";
-        public static final String WL_PROXY_CLIENT_IP = "WL-Proxy-Client-IP";
-        public static final String HTTP_CLIENT_IP = "HTTP_CLIENT_IP";
-        public static final String HTTP_X_FORWARDED_FOR = "HTTP_X_FORWARDED_FOR";
-        public static final String X_REAL_IP = "X-Real-IP";
-        public static final String X_REALIP = "X-RealIP";
-        public static final String REMOTE_ADDR = "REMOTE_ADDR";
-        public static final String UNKNOWN = "unknown";
-        public static final String LOCALHOST = "127.0.0.1";
-        public static final String ALL_IP = "0:0:0:0:0:0:0:1";
     }
 }

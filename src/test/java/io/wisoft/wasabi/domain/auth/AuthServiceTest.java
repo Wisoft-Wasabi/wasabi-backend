@@ -11,6 +11,7 @@ import io.wisoft.wasabi.domain.member.MemberMapper;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.domain.member.exception.EmailOverlapException;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -56,11 +57,11 @@ class AuthServiceTest {
         void signUp_success(final SignupRequest request) {
 
             //given
-            given(encryptHelper.encrypt(any(), any())).willReturn(request.password());
+            given(encryptHelper.encrypt(any())).willReturn(request.password());
 
             final var mockMember = new Member(
                     request.email(),
-                    encryptHelper.encrypt(request.password(), "test"),
+                    encryptHelper.encrypt(request.password()),
                     request.name(),
                     request.phoneNumber(),
                     false,
@@ -95,11 +96,11 @@ class AuthServiceTest {
         void signUp_fail_duplicate_email(final SignupRequest request) {
 
             //given
-            given(encryptHelper.encrypt(any(), any())).willReturn(request.password());
+            given(encryptHelper.encrypt(any())).willReturn(request.password());
 
             final var mockMember = new Member(
                     request.email(),
-                    encryptHelper.encrypt(request.password(), "test"),
+                    encryptHelper.encrypt(request.password()),
                     request.name(),
                     request.phoneNumber(),
                     false,
@@ -132,7 +133,7 @@ class AuthServiceTest {
         void login_success(final Member member) {
 
             //given
-            final var TOKEN_TYPE = "bearer";
+            final var TOKEN_TYPE = Const.TOKEN_TYPE;
             final var ACCESS_TOKEN = "accessToken";
             final var request = new LoginRequest(member.getEmail(), member.getPassword());
 

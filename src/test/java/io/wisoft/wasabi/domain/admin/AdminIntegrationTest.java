@@ -8,6 +8,7 @@ import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
@@ -58,7 +59,7 @@ public class AdminIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/admin/members")
-                    .header("Authorization", "bearer " + token)
+                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + token)
                     .contentType(APPLICATION_JSON));
 
             //then
@@ -79,7 +80,7 @@ public class AdminIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(patch("/admin/members")
-                    .header("Authorization", "bearer " + token)
+                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + token)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(APPLICATION_JSON));
 

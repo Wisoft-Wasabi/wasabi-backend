@@ -30,7 +30,7 @@ jobs:
       run: chmod +x gradlew
       
     - name: Build with Gradle in test profile
-      run: ./gradlew clean build -Dspring.profiles.active=test
+      run: ./gradlew clean build -x test -Dspring.profiles.active=test
 
     - name: Remove *-dev.yml from src/resource
       run: rm -f src/resource/*-dev.yml

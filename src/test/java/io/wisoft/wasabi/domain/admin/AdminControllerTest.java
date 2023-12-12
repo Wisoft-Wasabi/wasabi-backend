@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.Role;
-import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
@@ -39,9 +39,6 @@ public class AdminControllerTest {
     @MockBean
     private MemberRepository memberRepository;
 
-    @SpyBean
-    private AuthorizationExtractor authorizationExtractor;
-
     @Spy
     private ObjectMapper objectMapper;
 
@@ -61,7 +58,7 @@ public class AdminControllerTest {
 
             // when
             final var result = mockMvc.perform(get("/admin/members")
-                    .header("Authorization", "bearer " + token)
+                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + token)
                     .contentType(APPLICATION_JSON));
 
             // then
@@ -76,7 +73,7 @@ public class AdminControllerTest {
 
             // when
             final var result = mockMvc.perform(patch("/admin/members")
-                    .header("Authorization", "bearer " + token)
+                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + token)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(APPLICATION_JSON));
 

@@ -3,12 +3,10 @@ package io.wisoft.wasabi.domain.board;
 import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.member.Member;
 import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Component;
 
-@Component
 public class BoardMapper {
 
-    Board writeBoardRequestToEntity(final WriteBoardRequest request, final Member member) {
+    static Board writeBoardRequestToEntity(final WriteBoardRequest request, final Member member) {
 
         return new Board(
                 request.title(),
@@ -17,8 +15,7 @@ public class BoardMapper {
         );
     }
 
-
-    WriteBoardResponse entityToWriteBoardResponse(final Board board) {
+    static WriteBoardResponse entityToWriteBoardResponse(final Board board) {
 
         return new WriteBoardResponse(
                 board.getId(),
@@ -27,7 +24,7 @@ public class BoardMapper {
         );
     }
 
-    BoardImage uploadImageRequestToEntity(final String fileName, final String storeImagePath) {
+    static BoardImage uploadImageRequestToEntity(final String fileName, final String storeImagePath) {
 
         return new BoardImage(
                 fileName,
@@ -35,7 +32,7 @@ public class BoardMapper {
         );
     }
 
-    UploadImageResponse entityToUploadImageResponse(final BoardImage boardImage) {
+    static UploadImageResponse entityToUploadImageResponse(final BoardImage boardImage) {
 
         return new UploadImageResponse(
                 boardImage.getStoreImagePath(),
@@ -43,6 +40,10 @@ public class BoardMapper {
         );
     }
 
+    static DeleteImageResponse entityToDeleteImageResponse(final Long imageId) {
+
+        return new DeleteImageResponse(imageId);
+    }
 
     ReadBoardResponse entityToReadBoardResponse(final Board board, final boolean isLike) {
 
@@ -66,7 +67,7 @@ public class BoardMapper {
         );
     }
 
-    public Slice<MyBoardsResponse> entityToMyBoardsResponse(final Slice<Board> myBoards) {
+    static Slice<MyBoardsResponse> entityToMyBoardsResponse(final Slice<Board> myBoards) {
 
         return myBoards.map(board -> new MyBoardsResponse(
                 board.getId(),
@@ -78,7 +79,7 @@ public class BoardMapper {
         ));
     }
 
-    Slice<MyLikeBoardsResponse> entityToMyLikeBoardsResponse(final Slice<Board> boards) {
+    static Slice<MyLikeBoardsResponse> entityToMyLikeBoardsResponse(final Slice<Board> boards) {
 
         return boards.map(board -> new MyLikeBoardsResponse(
                 board.getId(),

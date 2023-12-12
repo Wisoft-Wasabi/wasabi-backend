@@ -4,6 +4,7 @@ import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.like.Like;
+import io.wisoft.wasabi.domain.like.anonymous.AnonymousLike;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.tag.Tag;
 import io.wisoft.wasabi.setting.QueryDslTestConfig;
@@ -132,6 +133,31 @@ class BoardQueryRepositoryTest {
             // then
             final var mostLikedBoard = result.getContent().get(0);
             assertThat(mostLikedBoard.id()).isEqualTo(expected.getId());
+        }
+
+        @DisplayName("게시글 목록 조회시, 회원 좋아요와 비회원 좋아요 수의 합계가 조회된다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(BoardCompositeCustomizer.class)
+        void read_boards_returns_count_of_sum_of_auth_and_anonymous(final Member member,
+                                                                    final List<Board> boards,
+                                                                    final Long sessionId) {
+            // given
+            em.persist(member);
+            boardRepository.saveAll(boards);
+            em.persist(new Like(member, boards.get(0)));
+            em.persist(new AnonymousLike(sessionId, boards.get(0)));
+
+            // when
+            final var result = boardQueryRepository.boardList(pageable, BoardSortType.LIKES, "");
+
+            // then
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result).isNotNull();
+                softAssertions.assertThat(result).isNotEmpty();
+                softAssertions.assertThat(result.getContent().get(0).likeCount()).isEqualTo(2L);
+                softAssertions.assertThat(result.getContent().get(1).likeCount()).isEqualTo(0L);
+            });
         }
     }
 

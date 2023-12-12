@@ -28,6 +28,7 @@ public enum ResponseType {
     MY_BOARD_LIST_SUCCESS(HttpStatus.OK, "BOARD-S004", "My Board List Success"),
     MY_LIKE_BOARD_LIST_SUCCESS(HttpStatus.OK, "BOARD-S005", "My Like Board List Success"),
     BOARD_IMAGE_UPLOAD_SUCCESS(HttpStatus.OK, "BOARD_S006", "Board Image Upload Success"),
+    BOARD_IMAGE_DELETE_SUCCESS(HttpStatus.OK, "BOARD_S007", "Board Image Delete Success"),
 
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-F001", "Board Not Found"),
     SORT_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOARD-F002", "Sort Type Invalid"),
