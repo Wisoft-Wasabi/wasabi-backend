@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT board FROM Board board " +
@@ -25,4 +27,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query("SELECT EXISTS(SELECT board FROM Board board WHERE board.id = :id)")
     boolean existsById(@Param("id") final Long id);
+
+    /**
+     * Board와 관련된 좋아요는 @Formula로 직접 조회하기 때문에 board.like를 조인할 필요가 없어짐
+     */
+    @Query("SELECT board FROM Board board " +
+            "JOIN FETCH board.member LEFT JOIN FETCH board.tag")
+    Optional<Board> findBoardById(final Long boardId);
 }

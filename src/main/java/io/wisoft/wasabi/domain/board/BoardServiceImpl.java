@@ -2,6 +2,7 @@ package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.domain.like.LikeRepository;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
@@ -27,18 +28,21 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
     private final BoardQueryRepository boardQueryRepository;
+    private final LikeRepository likeRepository;
 
 
     public BoardServiceImpl(final BoardRepository boardRepository,
                             final BoardImageRepository boardImageRepository,
                             final MemberRepository memberRepository,
                             final TagRepository tagRepository,
-                            final BoardQueryRepository boardQueryRepository) {
+                            final BoardQueryRepository boardQueryRepository,
+                            final LikeRepository likeRepository) {
         this.boardRepository = boardRepository;
         this.boardImageRepository = boardImageRepository;
         this.memberRepository = memberRepository;
         this.tagRepository = tagRepository;
         this.boardQueryRepository = boardQueryRepository;
+        this.likeRepository = likeRepository;
     }
 
     @Override
@@ -89,6 +93,41 @@ public class BoardServiceImpl implements BoardService {
 
         logger.info("[Result] {}번 회원의 {}번 게시글 조회", accessId, boardId);
         return boardQueryRepository.readBoard(boardId, accessId, isAuthenticated);
+    }
+
+    /**
+     * 기존에 QueryDSL에서 조인을 통해 좋아요 갯수를 가져오던 로직을
+     * @Formula를 이용해 조인이 아닌 직접 쿼리로 조회하는 방식으로 바꾼 방법
+     */
+    @Override
+    @Transactional
+    public ReadBoardResponse readBoardWithFomula(final Long boardId, final Long accessId, final boolean isAuthenticated) {
+
+        final Board board = boardRepository.findBoardById(boardId)
+                .orElseThrow(BoardExceptionExecutor::BoardNotFound);
+
+        board.increaseView();
+
+        logger.info("[Result] {}번 회원의 {}번 게시글 조회", accessId, boardId);
+        Member member = board.getMember();
+        return new ReadBoardResponse(
+                board.getId(),
+                board.getTitle(),
+                board.getContent(),
+                new ReadBoardResponse.Writer(
+                        member.getEmail(),
+                        member.getName(),
+                        member.getReferenceUrl(),
+                        member.getPart(),
+                        member.getOrganization(),
+                        member.getMotto()
+                ),
+                board.getCreatedAt(),
+                board.getLikeCount() + board.getAnonymousLikeCount(),
+                board.getViews(),
+                likeRepository.existsByMemberIdAndBoardId(member.getId(), boardId),
+                board.getTag().getName()
+        );
     }
 
     @Override
