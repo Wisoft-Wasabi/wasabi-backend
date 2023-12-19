@@ -5,7 +5,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -22,6 +24,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying
     @Query("UPDATE Member m SET m.activation = :newActivation WHERE m.id = :memberId")
     void updateActivationStatus(final Long memberId, final boolean newActivation);
+
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM Member m WHERE m.id IN (:ids)")
+    int deleteAllByMemberIds(@Param("ids") final List<Long> ids);
 
 
 }

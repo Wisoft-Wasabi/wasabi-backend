@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -57,6 +59,30 @@ class MemberRepositoryTest {
 
             //then
             assertThat(result.getId()).isEqualTo(expected.getId());
+        }
+    }
+
+    @Nested
+    @DisplayName("회원 아이디 리스트로 회원 가입 요청 삭제")
+    class DeleteAllByMemberIds {
+
+        @DisplayName("회원 아이디 리스트로 회원 가입 요청(활성화가 안된 회원 정보)를 삭제할 수 있다.")
+        @ParameterizedTest
+        @AutoSource
+        void delete_all_by_member_ids(final List<Member> members) {
+
+            // given
+            memberRepository.saveAll(members);
+            final List<Long> ids =
+                members.stream()
+                    .map(Member::getId)
+                    .toList();
+
+            // when
+            final var result = memberRepository.deleteAllByMemberIds(ids);
+
+            // then
+            assertThat(result).isEqualTo(members.size());
         }
     }
 }

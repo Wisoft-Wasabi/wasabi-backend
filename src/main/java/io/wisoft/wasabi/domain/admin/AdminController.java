@@ -1,10 +1,9 @@
 package io.wisoft.wasabi.domain.admin;
 
-import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
-import io.wisoft.wasabi.domain.admin.dto.ApproveMemberResponse;
-import io.wisoft.wasabi.domain.admin.dto.MembersResponse;
+import io.wisoft.wasabi.domain.admin.dto.*;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
@@ -41,6 +40,19 @@ public class AdminController {
                         ResponseType.MEMBER_APPROVE_SUCCESS,
                         data
                 )
+        );
+    }
+
+    @DeleteMapping("/members")
+    public ResponseEntity<Response<DeleteSignUpResponse>> deleteSignUp(@RequestBody @Valid final DeleteSignUpRequest request) {
+
+        final DeleteSignUpResponse data = adminService.deleteSignUp(request);
+
+        return ResponseEntity.ofNullable(
+            Response.of(
+                ResponseType.DELETE_SIGN_UP_SUCCESS,
+                data
+            )
         );
     }
 }

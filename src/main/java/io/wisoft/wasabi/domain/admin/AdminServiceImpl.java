@@ -1,8 +1,6 @@
 package io.wisoft.wasabi.domain.admin;
 
-import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
-import io.wisoft.wasabi.domain.admin.dto.ApproveMemberResponse;
-import io.wisoft.wasabi.domain.admin.dto.MembersResponse;
+import io.wisoft.wasabi.domain.admin.dto.*;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberMapper;
 import io.wisoft.wasabi.domain.member.MemberRepository;
@@ -48,6 +46,15 @@ public class AdminServiceImpl implements AdminService {
 
         logger.info("[Result] {} 회원의 가입 승인", member.getName());
         return memberMapper.entityToApproveMemberResponses(member);
+    }
+
+    @Override
+    @Transactional
+    public DeleteSignUpResponse deleteSignUp(final DeleteSignUpRequest request) {
+
+        final int deletedCount = memberRepository.deleteAllByMemberIds(request.ids());
+
+        return new DeleteSignUpResponse(deletedCount);
     }
 
 }
