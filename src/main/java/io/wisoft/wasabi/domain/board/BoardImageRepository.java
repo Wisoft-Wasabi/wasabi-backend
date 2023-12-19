@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.domain.board;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,4 +17,9 @@ public interface BoardImageRepository extends JpaRepository<BoardImage, Long> {
 
     @Query("SELECT boardImage FROM BoardImage boardImage WHERE boardImage.storeImagePath = :path")
     BoardImage findBoardImageByStoreImagePath(@Param("path") final String storeImagePath);
+
+    @Modifying(clearAutomatically = true)
+    @Query("DELETE FROM BoardImage boardImage" +
+            " WHERE boardImage.id in :list")
+    void deleteBoardImagesByIds(@Param("list") final List<Long> boardImageIds);
 }

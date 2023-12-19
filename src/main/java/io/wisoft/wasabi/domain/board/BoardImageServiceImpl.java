@@ -28,7 +28,6 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 public class BoardImageServiceImpl implements BoardImageService {
-
     private final Logger logger = LoggerFactory.getLogger(BoardImageServiceImpl.class);
     private final AmazonS3 amazonS3;
     private final BoardImageRepository boardImageRepository;
@@ -54,6 +53,8 @@ public class BoardImageServiceImpl implements BoardImageService {
 
         final BoardImage boardImage = BoardMapper.uploadImageRequestToEntity(changedImageName, storeImagePath);
         boardImageRepository.save(boardImage);
+
+        logger.info("[Result] 저장되지 않은 게시글에 속한 {}번 이미지 저장", boardImage.getId());
 
         return BoardMapper.entityToUploadImageResponse(boardImage);
     }
@@ -83,6 +84,8 @@ public class BoardImageServiceImpl implements BoardImageService {
 
         final BoardImage boardImage = boardImageRepository.findBoardImageByStoreImagePath(request.storeImagePath());
         deleteImageFromDatabaseAndS3(boardImage);
+
+        logger.info("[Result] {}번 게시글에 대한 {}번 이미지 삭제", boardImage.getBoard(), boardImage.getId());
 
         return BoardMapper.entityToDeleteImageResponse(boardImage.getId());
     }
