@@ -8,7 +8,7 @@ public enum BoardSortType {
 
     private final String sortType;
 
-    BoardSortType(String sortType) {
+    BoardSortType(final String sortType) {
         this.sortType = sortType;
     }
 
