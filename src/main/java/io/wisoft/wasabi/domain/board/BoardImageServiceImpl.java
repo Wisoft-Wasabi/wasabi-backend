@@ -10,6 +10,7 @@ import io.wisoft.wasabi.domain.board.dto.DeleteImageResponse;
 import io.wisoft.wasabi.domain.board.dto.UploadImageRequest;
 import io.wisoft.wasabi.domain.board.dto.UploadImageResponse;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.global.config.common.Const;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,10 +64,9 @@ public class BoardImageServiceImpl implements BoardImageService {
                                final String changedImageName) {
 
         final ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType("image/" + ext.substring(1));
+        metadata.setContentType(Const.CONTENT_TYPE_IMAGE + ext.substring(1));
         try {
-            amazonS3.putObject(new PutObjectRequest(
-                    bucket, changedImageName, image.getInputStream(), metadata)
+            amazonS3.putObject(new PutObjectRequest(bucket, changedImageName, image.getInputStream(), metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (final IOException e) {
             throw BoardExceptionExecutor.BoardImageUploadFail();
@@ -84,10 +83,7 @@ public class BoardImageServiceImpl implements BoardImageService {
     public DeleteImageResponse deleteImage(final DeleteImageRequest request) {
 
         final BoardImage boardImage = boardImageRepository.findBoardImageByStoreImagePath(request.storeImagePath());
-
-        final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, boardImage.getFileName());
-        amazonS3.deleteObject(deleteRequest);
-        boardImageRepository.delete(boardImage);
+        deleteImageFromDatabaseAndS3(boardImage);
 
         logger.info("[Result] {}번 게시글에 대한 {}번 이미지 삭제", boardImage.getBoard(), boardImage.getId());
 
@@ -102,18 +98,16 @@ public class BoardImageServiceImpl implements BoardImageService {
     public void deleteUnNecessaryImage() {
 
         final List<BoardImage> images = boardImageRepository.findAllBoardImagesByNull();
-        final List<Long> imageIds = new ArrayList<>();
 
         images.stream()
                 .filter(image -> Duration.between(image.getCreatedAt(), LocalDateTime.now()).toHours() >= 24)
-                .forEach(image -> {
-                    final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, image.getFileName());
-                    amazonS3.deleteObject(deleteRequest);
-                    imageIds.add(image.getId());
-                });
+                .forEach(this::deleteImageFromDatabaseAndS3);
+    }
 
-        boardImageRepository.deleteBoardImagesByIds(imageIds);
-        logger.info("[Result] 사용되지 않는 {}번 이미지 삭제", imageIds);
+    private void deleteImageFromDatabaseAndS3(final BoardImage boardImage) {
+        final DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucket, boardImage.getFileName());
+        amazonS3.deleteObject(deleteRequest);
+        boardImageRepository.delete(boardImage);
     }
 
     private String changeImageName(final String ext) {

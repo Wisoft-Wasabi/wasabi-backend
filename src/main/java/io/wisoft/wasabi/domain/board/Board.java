@@ -99,6 +99,10 @@ public class Board extends BaseTimeEntity {
         return boardImages;
     }
 
+    public Set<AnonymousLike> getAnonymousLikes() {
+        return anonymousLikes;
+    }
+
     public int getViews() {
         return views;
     }
