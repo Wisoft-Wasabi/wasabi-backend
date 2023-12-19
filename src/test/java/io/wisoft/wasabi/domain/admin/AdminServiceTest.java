@@ -5,10 +5,12 @@ import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.domain.admin.dto.ApproveMemberRequest;
 import io.wisoft.wasabi.domain.admin.dto.ApproveMemberResponse;
+import io.wisoft.wasabi.domain.admin.dto.DeleteSignUpRequest;
 import io.wisoft.wasabi.domain.admin.dto.MembersResponse;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberMapper;
 import io.wisoft.wasabi.domain.member.MemberRepository;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,6 +95,29 @@ class AdminServiceTest {
 
             // then
             assertThat(approveMemberResponse.id()).isEqualTo(response.id());
+        }
+    }
+
+    @Nested
+    @DisplayName("회원 가입 요청 삭제")
+    class DeleteSignUp {
+
+        @DisplayName("회원 가입 요청들을 성공적으로 삭제된다.")
+        @ParameterizedTest
+        @AutoSource
+        void delete_sign_up_requests(final DeleteSignUpRequest request) {
+
+            // given
+            given(memberRepository.deleteAllByMemberIds(any())).willReturn(request.ids().size());
+
+            // when
+            final var result = adminServiceImpl.deleteSignUp(request);
+
+            // then
+            SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result).isNotNull();
+                softAssertions.assertThat(result.deletedCount()).isEqualTo(request.ids().size());
+            });
         }
     }
 }

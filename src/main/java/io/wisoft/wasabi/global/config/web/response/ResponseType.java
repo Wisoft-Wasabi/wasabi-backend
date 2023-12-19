@@ -18,6 +18,7 @@ public enum ResponseType {
     READ_MEMBER_INFO_SUCCESS(HttpStatus.OK, "MEMBER-S002", "Member Info Read Success"),
     MEMBER_APPROVE_SUCCESS(HttpStatus.OK, "MEMBER-S003", "Member Approve Success"),
     READ_MEMBER_UN_APPROVE_SUCCESS(HttpStatus.OK, "MEMBER-S004", "Read Member Unapprove Success"),
+    DELETE_SIGN_UP_SUCCESS(HttpStatus.OK, "MEMBER_S005", "Delete Sign Up Requests Success"),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER-F001", "User Not Found"),
     MEMBER_EMAIL_OVERLAP(HttpStatus.CONFLICT, "MEMBER-F003", "User Email Overlap"),
 
