@@ -15,13 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class AdminServiceImpl implements AdminService {
-    private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public AdminServiceImpl(final MemberMapper memberMapper,
-                            final MemberRepository memberRepository) {
-        this.memberMapper = memberMapper;
+    public AdminServiceImpl(final MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
@@ -29,13 +26,12 @@ public class AdminServiceImpl implements AdminService {
         final Slice<Member> members = memberRepository.findMemberByUnactivated(pageable);
 
         logger.info("[Result] 관리자가 승인되지 않은 회원 전체조회");
-        return memberMapper.entityToReadMembersInfoResponses(members);
+        return MemberMapper.entityToReadMembersInfoResponses(members);
     }
 
     @Transactional
     public ApproveMemberResponse approveMember(final ApproveMemberRequest request) {
 
-//        final Long memberId = memberMapper.approveMemberRequestToMemberId(request);
         final Long memberId = request.memberId();
 
         final Member member = memberRepository.findById(memberId)
@@ -45,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
         memberRepository.save(member);
 
         logger.info("[Result] {} 회원의 가입 승인", member.getName());
-        return memberMapper.entityToApproveMemberResponses(member);
+        return MemberMapper.entityToApproveMemberResponses(member);
     }
 
     @Override

@@ -29,9 +29,6 @@ class MemberServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
-    @Mock
-    private MemberMapper memberMapper;
-
     @Nested
     @DisplayName("회원 개인 정보 수정")
     class UpdateInfo {
@@ -122,7 +119,6 @@ class MemberServiceTest {
                     member.getOrganization(),
                     member.getMotto()
             );
-            given(memberMapper.entityToReadMemberInfoResponse(member)).willReturn(mockResponse);
 
             //when
             final var response = memberService.getMemberInfo(memberId);

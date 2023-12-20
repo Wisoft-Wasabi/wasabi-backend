@@ -10,7 +10,6 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.Const;
-import io.wisoft.wasabi.global.config.common.bcrypt.EncryptHelper;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -40,9 +39,6 @@ public class AdminIntegrationTest extends IntegrationTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private EncryptHelper encryptHelper;
-
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
 
@@ -62,12 +58,12 @@ public class AdminIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(get("/admin/members")
-                .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
-                .contentType(APPLICATION_JSON));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
+                    .contentType(APPLICATION_JSON));
 
             //then
             result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content[0].name").value(member.getName()));
+                    .andExpect(jsonPath("$.data.content[0].name").value(member.getName()));
         }
 
         @DisplayName("관리자가 승인되지 않은 회원을 승인한다.")
@@ -83,16 +79,16 @@ public class AdminIntegrationTest extends IntegrationTest {
 
             //when
             final var result = mockMvc.perform(patch("/admin/members")
-                .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(APPLICATION_JSON));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(APPLICATION_JSON));
 
             final Member approvedMember = memberRepository.findById(member.getId())
-                .orElse(null);
+                    .orElse(null);
 
             //then
             result.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(member.getId()));
+                    .andExpect(jsonPath("$.data.id").value(member.getId()));
             assertTrue(approvedMember.isActivation());
         }
 
@@ -113,9 +109,9 @@ public class AdminIntegrationTest extends IntegrationTest {
             // given
             memberRepository.saveAll(members);
             final List<Long> ids =
-                members.stream()
-                    .map(Member::getId)
-                    .toList();
+                    members.stream()
+                            .map(Member::getId)
+                            .toList();
 
             final DeleteSignUpRequest request = new DeleteSignUpRequest(ids);
 
@@ -123,9 +119,9 @@ public class AdminIntegrationTest extends IntegrationTest {
 
             // when
             final var result = mockMvc.perform(delete("/admin/members")
-                .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
-                .contentType(APPLICATION_JSON)
-                .content(content));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
+                    .contentType(APPLICATION_JSON)
+                    .content(content));
 
             // then
             result.andExpect(status().isOk());
@@ -142,9 +138,9 @@ public class AdminIntegrationTest extends IntegrationTest {
 
             // when
             final var result = mockMvc.perform(delete("/admin/members")
-                .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
-                .contentType(APPLICATION_JSON)
-                .content(content));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
+                    .contentType(APPLICATION_JSON)
+                    .content(content));
 
             // then
             result.andExpect(status().isBadRequest());
