@@ -11,6 +11,6 @@ public record WriteBoardRequest(
         @NotBlank String content,
         @Nullable String tag,
         @Nullable String[] imageUrls,
-        @NotNull List<Long> imageIds
+        @Nullable List<Long> imageIds
 ) {
 }

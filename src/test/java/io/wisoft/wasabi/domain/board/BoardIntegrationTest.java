@@ -111,6 +111,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
             // then
             result.andExpect(status().isUnauthorized());
+
         }
 
         @DisplayName("요청시 제목과 본문은 필수다.")

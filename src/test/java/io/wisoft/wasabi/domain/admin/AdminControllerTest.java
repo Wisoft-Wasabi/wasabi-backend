@@ -8,6 +8,7 @@ import io.wisoft.wasabi.domain.member.Role;
 import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,6 @@ public class AdminControllerTest {
 
     @SpyBean
     private ResponseAspect responseAspect;
-
 
     @Nested
     @DisplayName("승인되지 않은 회원 조회")
