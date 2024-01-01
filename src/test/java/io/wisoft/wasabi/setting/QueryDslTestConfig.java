@@ -1,8 +1,8 @@
 package io.wisoft.wasabi.setting;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import io.wisoft.wasabi.domain.board.BoardQueryRepository;
-import io.wisoft.wasabi.domain.like.LikeQueryRepository;
+import io.wisoft.wasabi.domain.board.persistence.BoardQueryRepository;
+import io.wisoft.wasabi.domain.like.persistence.LikeQueryRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.boot.test.context.TestConfiguration;
