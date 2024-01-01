@@ -5,6 +5,7 @@ import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.web.filter.LogFilter;
 import io.wisoft.wasabi.global.config.web.filter.SessionFilter;
 import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final AdminInterceptor adminInterceptor;
     private final MemberIdResolver memberIdResolver;
     private final AnyoneResolver anyoneResolver;
+
+    @Value("${cors.allowed-mapping}")
+    private String corsMapping;
+
+    @Value("${cors.allowed-origins}")
+    private String[] corsOrigins;
+
+    @Value("${cors.allowed-headers}")
+    private String[] corsHeaders;
+
+    @Value("${cors.allowed-methods}")
+    private String[] corsMethods;
 
     public WebMvcConfig(final AdminInterceptor adminInterceptor,
                         final MemberIdResolver memberIdResolver,
@@ -57,9 +70,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedHeaders("*")
+        registry.addMapping(corsMapping)
+                .allowedOriginPatterns(corsOrigins)
+                .allowedHeaders(corsHeaders)
+                .allowedMethods(corsMethods)
                 .allowCredentials(true);
     }
 
