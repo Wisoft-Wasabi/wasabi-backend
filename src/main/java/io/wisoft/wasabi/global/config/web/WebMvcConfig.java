@@ -27,16 +27,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private final MemberIdResolver memberIdResolver;
     private final AnyoneResolver anyoneResolver;
 
-    @Value("${cors.allowed-mapping}")
+    @Value("${spring.cors.allowed-mapping}")
     private String corsMapping;
 
-    @Value("${cors.allowed-origins}")
+    @Value("${spring.cors.allowed-origins}")
     private String[] corsOrigins;
 
-    @Value("${cors.allowed-headers}")
+    @Value("${spring.cors.allowed-headers}")
     private String[] corsHeaders;
 
-    @Value("${cors.allowed-methods}")
+    @Value("${spring.cors.allowed-methods}")
     private String[] corsMethods;
 
     public WebMvcConfig(final AdminInterceptor adminInterceptor,
