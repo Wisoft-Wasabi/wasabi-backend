@@ -2,7 +2,10 @@ package io.wisoft.wasabi.domain.member;
 
 import autoparams.AutoSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoRequest;
+import io.wisoft.wasabi.domain.member.application.MemberRepository;
+import io.wisoft.wasabi.domain.member.web.dto.UpdateMemberInfoRequest;
+import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.persistence.Part;
 import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;

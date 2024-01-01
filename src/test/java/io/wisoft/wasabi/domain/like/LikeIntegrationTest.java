@@ -1,13 +1,15 @@
 package io.wisoft.wasabi.domain.like;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.domain.board.Board;
-import io.wisoft.wasabi.domain.board.BoardRepository;
-import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
-import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.domain.member.Part;
-import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.domain.board.persistence.Board;
+import io.wisoft.wasabi.domain.board.application.BoardRepository;
+import io.wisoft.wasabi.domain.like.web.dto.RegisterLikeRequest;
+import io.wisoft.wasabi.domain.like.persistence.Like;
+import io.wisoft.wasabi.domain.like.application.LikeRepository;
+import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.application.MemberRepository;
+import io.wisoft.wasabi.domain.member.persistence.Part;
+import io.wisoft.wasabi.domain.member.persistence.Role;
 import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;

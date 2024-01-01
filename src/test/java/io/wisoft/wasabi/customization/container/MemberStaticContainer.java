@@ -1,6 +1,6 @@
 package io.wisoft.wasabi.customization.container;
 
-import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.domain.member.persistence.Member;
 
 import java.util.Map;
 import java.util.Optional;

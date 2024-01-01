@@ -3,7 +3,7 @@ package io.wisoft.wasabi.customization;
 import autoparams.customization.Customizer;
 import autoparams.generator.ObjectContainer;
 import autoparams.generator.ObjectGenerator;
-import io.wisoft.wasabi.domain.tag.Tag;
+import io.wisoft.wasabi.domain.tag.persistence.Tag;
 
 public class NotSaveTagCustomization implements Customizer {
 

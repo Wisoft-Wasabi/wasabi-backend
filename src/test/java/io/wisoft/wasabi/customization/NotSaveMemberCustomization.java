@@ -5,9 +5,9 @@ import autoparams.generator.ObjectContainer;
 import autoparams.generator.ObjectGenerationContext;
 import autoparams.generator.ObjectGenerator;
 import io.wisoft.wasabi.customization.container.MemberStaticContainer;
-import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.member.Part;
-import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.persistence.Part;
+import io.wisoft.wasabi.domain.member.persistence.Role;
 
 import java.util.Random;
 

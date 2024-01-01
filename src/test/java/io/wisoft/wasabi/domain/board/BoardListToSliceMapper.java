@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.domain.board;
 
-import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
+import io.wisoft.wasabi.domain.board.web.dto.SortBoardResponse;
+import io.wisoft.wasabi.domain.board.persistence.Board;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
