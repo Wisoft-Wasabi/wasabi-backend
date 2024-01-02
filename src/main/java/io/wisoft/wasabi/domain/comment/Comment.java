@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -31,6 +34,7 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
+
     public Comment(
             final String content,
             final Member member,
@@ -40,8 +44,8 @@ public class Comment extends BaseTimeEntity {
         setBoard(board);
     }
 
-
     protected Comment() {
 
     }
+
 }

@@ -1,4 +1,9 @@
 package io.wisoft.wasabi.domain.comment.dto;
 
-public record WriteCommentRequest(Long boardId, String content) {
+import jakarta.validation.constraints.NotNull;
+
+public record WriteCommentRequest(
+        @NotNull Long boardId,
+        @NotNull String content
+) {
 }

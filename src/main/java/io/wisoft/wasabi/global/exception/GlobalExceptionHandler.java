@@ -21,13 +21,6 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final SlackService slackService;
-    private final ThreadPoolTaskExecutor executor;
-
-    public GlobalExceptionHandler(final SlackService slackService, @Qualifier("asyncExecutor") final ThreadPoolTaskExecutor executor) {
-        this.slackService = slackService;
-        this.executor = executor;
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response<?>> handlerMethodArgumentNotValidException(final MethodArgumentNotValidException ex) {
