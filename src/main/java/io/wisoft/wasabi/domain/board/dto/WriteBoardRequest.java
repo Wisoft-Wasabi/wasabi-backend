@@ -2,7 +2,6 @@ package io.wisoft.wasabi.domain.board.dto;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 

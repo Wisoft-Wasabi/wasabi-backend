@@ -45,28 +45,6 @@ public class BoardMapper {
         return new DeleteImageResponse(imageId);
     }
 
-    ReadBoardResponse entityToReadBoardResponse(final Board board, final boolean isLike) {
-
-        return new ReadBoardResponse(
-                board.getId(),
-                board.getTitle(),
-                board.getContent(),
-                new ReadBoardResponse.Writer(
-                        board.getMember().getEmail(),
-                        board.getMember().getName(),
-                        board.getMember().getReferenceUrl(),
-                        board.getMember().getPart(),
-                        board.getMember().getOrganization(),
-                        board.getMember().getMotto()
-                ),
-                board.getCreatedAt(),
-                board.getLikes().size(),
-                board.getViews(),
-                isLike,
-                String.valueOf(board.getTag())
-        );
-    }
-
     static Slice<MyBoardsResponse> entityToMyBoardsResponse(final Slice<Board> myBoards) {
 
         return myBoards.map(board -> new MyBoardsResponse(
@@ -74,7 +52,7 @@ public class BoardMapper {
                 board.getTitle(),
                 board.getMember().getName(),
                 board.getCreatedAt(),
-                board.getLikes().size(),
+                board.getLikes().size() + board.getAnonymousLikes().size(),
                 board.getViews()
         ));
     }
@@ -86,7 +64,7 @@ public class BoardMapper {
                 board.getTitle(),
                 board.getMember().getName(),
                 board.getCreatedAt(),
-                board.getLikes().size(),
+                board.getLikes().size() + board.getAnonymousLikes().size(),
                 board.getViews()
         ));
     }

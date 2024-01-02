@@ -5,7 +5,6 @@ import io.wisoft.wasabi.domain.like.dto.GetLikeResponse;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.dto.RegisterLikeResponse;
 import io.wisoft.wasabi.global.config.common.annotation.Anyone;
-import io.wisoft.wasabi.global.config.common.annotation.MemberId;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;
