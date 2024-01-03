@@ -2,6 +2,7 @@ package io.wisoft.wasabi.domain.member;
 
 import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
 import io.wisoft.wasabi.domain.board.Board;
+import io.wisoft.wasabi.domain.comment.Comment;
 import io.wisoft.wasabi.domain.like.Like;
 import jakarta.persistence.*;
 
@@ -54,6 +55,9 @@ public class Member extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "member")
     private Set<Board> boards = new HashSet<>();
+
+    @OneToMany(mappedBy = "member")
+    private Set<Comment> comments = new HashSet<>();
 
     public Member(final String email,
                   final String password,
@@ -147,5 +151,9 @@ public class Member extends BaseTimeEntity {
 
     public String getMotto() {
         return motto;
+    }
+
+    public void addComment(final Comment comment) {
+        this.comments.add(comment);
     }
 }

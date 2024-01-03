@@ -43,6 +43,9 @@ public enum ResponseType {
     LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "LIKE-F001", "Like Not Found"),
     EXIST_LIKE(HttpStatus.BAD_REQUEST, "LIKE-F0002", "Exist Like"),
 
+    /* 댓글 - COMMENTS */
+    COMMENT_WRITE_SUCCESS(HttpStatus.CREATED,"COMMENT-S001","Comment Write Success"),
+
     /* 공통(시스템) - COMM */
     UNCAUGHT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMM-F001", "Uncaught Error Occur"),
     DTO_INVALID(HttpStatus.BAD_REQUEST, "COMM-0002", "DTO Validate Fail");

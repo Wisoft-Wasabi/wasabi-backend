@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
+import io.wisoft.wasabi.domain.comment.Comment;
 import io.wisoft.wasabi.domain.like.Like;
 import io.wisoft.wasabi.domain.like.anonymous.AnonymousLike;
 import io.wisoft.wasabi.domain.member.Member;
@@ -8,7 +9,9 @@ import io.wisoft.wasabi.domain.tag.Tag;
 import jakarta.persistence.*;
 import org.hibernate.annotations.BatchSize;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -48,9 +51,16 @@ public class Board extends BaseTimeEntity {
     @OneToMany(mappedBy = "board")
     private Set<AnonymousLike> anonymousLikes = new HashSet<>();
 
+    @OneToMany(mappedBy = "board")
+    private Set<Comment> comments = new HashSet<>();
+
     private void setMember(final Member member) {
         this.member = member;
         member.getBoards().add(this);
+    }
+
+    public void addComment(final Comment comment) {
+        this.comments.add(comment);
     }
 
     protected Board() {
