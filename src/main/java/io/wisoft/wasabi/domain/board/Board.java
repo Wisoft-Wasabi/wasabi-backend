@@ -51,8 +51,8 @@ public class Board extends BaseTimeEntity {
     @OneToMany(mappedBy = "board")
     private Set<AnonymousLike> anonymousLikes = new HashSet<>();
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-    private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "board")
+    private Set<Comment> comments = new HashSet<>();
 
     private void setMember(final Member member) {
         this.member = member;
@@ -60,8 +60,7 @@ public class Board extends BaseTimeEntity {
     }
 
     public void addComment(final Comment comment) {
-        comments.add(comment);
-        comment.setBoard(this);
+        this.comments.add(comment);
     }
 
     protected Board() {

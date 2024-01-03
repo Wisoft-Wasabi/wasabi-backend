@@ -11,6 +11,7 @@ import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
 import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
+import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,6 +46,9 @@ public class CommentControllerTest {
 
     @MockBean
     private MemberIdResolver memberIdResolver;
+
+    @SpyBean
+    private ResponseAspect responseAspect;
 
     @Nested
     @DisplayName("댓글 작성")

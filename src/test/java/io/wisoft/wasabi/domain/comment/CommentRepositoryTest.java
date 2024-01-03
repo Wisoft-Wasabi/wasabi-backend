@@ -35,13 +35,12 @@ public class CommentRepositoryTest {
         @ParameterizedTest
         @AutoSource
         @Customization(CommentCompositeCustomizer.class)
-        void write_board(final Member member,
-                         final Board board,
-                         final Comment comment) {
+        void write_comment(final Member member,
+                           final Board board,
+                           final Comment comment) {
 
             // given
             em.persist(member);
-            board.addComment(comment);
             em.persist(board);
 
             // when

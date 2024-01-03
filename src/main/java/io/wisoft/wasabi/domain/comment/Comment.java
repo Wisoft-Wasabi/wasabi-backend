@@ -16,7 +16,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "comments")
 @Getter
-@Setter
 public class Comment extends BaseTimeEntity {
 
     @Id
@@ -46,6 +45,16 @@ public class Comment extends BaseTimeEntity {
 
     protected Comment() {
 
+    }
+
+    private void setMember(final Member member) {
+        this.member = member;
+        member.addComment(this);
+    }
+
+    private void setBoard(final Board board) {
+        this.board = board;
+        board.addComment(this);
     }
 
 }
