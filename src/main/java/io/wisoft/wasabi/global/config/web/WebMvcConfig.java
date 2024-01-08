@@ -1,7 +1,7 @@
 package io.wisoft.wasabi.global.config.web;
 
-import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
-import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
+import io.wisoft.wasabi.global.config.web.resolver.AnyoneResolver;
+import io.wisoft.wasabi.global.config.web.resolver.MemberIdResolver;
 import io.wisoft.wasabi.global.config.web.filter.LogFilter;
 import io.wisoft.wasabi.global.config.web.filter.SessionFilter;
 import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;

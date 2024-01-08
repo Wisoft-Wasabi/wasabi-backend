@@ -35,6 +35,8 @@ public class GlobalExceptionHandler {
 
         final String message = String.join(", ", allErrors);
 
+        logger.info("\n [Error] MethodArgumentNotValidException : ErrorMessage : {}", message);
+
         return buildResponse(ResponseType.dtoInvalid(message));
     }
 

@@ -1,6 +1,7 @@
 package io.wisoft.wasabi.global.config.web.filter;
 
 import io.wisoft.wasabi.global.config.common.Const;
+import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ public class SessionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(final HttpServletRequest request,
                                     final HttpServletResponse response,
                                     final FilterChain filterChain) throws ServletException, IOException {
-        final String token = this.extractToken(request);
+        final String token = AuthorizationExtractor.extract(request, Const.TOKEN_TYPE);
 
         final boolean isAuthenticated = StringUtils.hasText(token);
         request.setAttribute(Const.IS_AUTHENTICATED, isAuthenticated);
@@ -28,15 +29,6 @@ public class SessionFilter extends OncePerRequestFilter {
         }
 
         doFilter(request, response, filterChain);
-    }
-
-    private String extractToken(final HttpServletRequest request) {
-        final String authorization = request.getHeader(Const.AUTH_HEADER);
-        if (StringUtils.hasText(authorization)) {
-            return authorization.substring(7).trim();
-        }
-
-        return Strings.EMPTY;
     }
 
 }
