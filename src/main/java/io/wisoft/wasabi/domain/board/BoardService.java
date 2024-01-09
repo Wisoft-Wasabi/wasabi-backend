@@ -9,6 +9,7 @@ public interface BoardService {
     WriteBoardResponse writeBoard(final WriteBoardRequest request, final Long memberId);
 
     ReadBoardResponse readBoard(final Long boardId, final Long accessId, final boolean isAuthenticated);
+    ReadBoardResponse readBoardWithFomula(final Long boardId, final Long accessId, final boolean isAuthenticated);
 
     Slice<SortBoardResponse> getBoardList(final String sortBy, final Pageable pageable, final String keyword);
 

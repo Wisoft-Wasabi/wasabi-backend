@@ -7,6 +7,7 @@ import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.tag.Tag;
 import jakarta.persistence.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Formula;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,6 +48,20 @@ public class Board extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "board")
     private Set<AnonymousLike> anonymousLikes = new HashSet<>();
+
+    @Formula("(SELECT COUNT(1) FROM likes l WHERE l.board_id = id)")
+    private Long likeCount;
+
+    @Formula("(SELECT COUNT(1) FROM anonymous_likes al WHERE al.board_id = id)")
+    private Long anonymousLikeCount;
+
+    public Long getLikeCount() {
+        return likeCount;
+    }
+
+    public Long getAnonymousLikeCount() {
+        return anonymousLikeCount;
+    }
 
     private void setMember(final Member member) {
         this.member = member;

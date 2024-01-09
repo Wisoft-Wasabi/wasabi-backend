@@ -39,12 +39,30 @@ public class BoardController {
         );
     }
 
-    @GetMapping("/{boardId}")
+    @GetMapping("/v1/{boardId}")
     public ResponseEntity<Response<ReadBoardResponse>> readBoard(@PathVariable final Long boardId,
                                                                  @Anyone final Long accessId,
                                                                  @RequestAttribute(value = "isAuthenticated") final boolean isAuthenticated) {
 
         final ReadBoardResponse data = boardService.readBoard(boardId, accessId, isAuthenticated);
+        return ResponseEntity.ofNullable(
+                Response.of(
+                        ResponseType.BOARD_READ_SUCCESS,
+                        data
+                )
+        );
+    }
+
+    /**
+     * 게시글 조회시 @Formular를 이용해 조인이 아닌
+     * 직접 쿼리로 좋아요 갯수를 가져오는 로직을 호출하는 API
+     */
+    @GetMapping("/v2/{boardId}")
+    public ResponseEntity<Response<ReadBoardResponse>> readBoardWithFormula(@PathVariable final Long boardId,
+                                                                 @Anyone final Long accessId,
+                                                                 @RequestAttribute(value = "isAuthenticated") final boolean isAuthenticated) {
+
+        final ReadBoardResponse data = boardService.readBoardWithFomula(boardId, accessId, isAuthenticated);
         return ResponseEntity.ofNullable(
                 Response.of(
                         ResponseType.BOARD_READ_SUCCESS,
