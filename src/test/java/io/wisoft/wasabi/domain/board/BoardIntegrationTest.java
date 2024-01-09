@@ -5,11 +5,13 @@ import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.like.Like;
-import io.wisoft.wasabi.domain.like.LikeRepository;
-import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.board.web.dto.WriteBoardRequest;
+import io.wisoft.wasabi.domain.board.persistence.Board;
+import io.wisoft.wasabi.domain.board.application.BoardRepository;
+import io.wisoft.wasabi.domain.like.persistence.Like;
+import io.wisoft.wasabi.domain.like.application.LikeRepository;
+import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.application.MemberRepository;
 import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
@@ -79,7 +81,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(post("/boards")
                     .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken)
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
                     .content(json));
 
             // then
@@ -136,7 +138,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(post("/boards")
                     .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken)
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
                     .content(json));
 
             // then
@@ -231,7 +233,7 @@ class BoardIntegrationTest extends IntegrationTest {
                             .param("page", "0")
                             .param("size", "3")
                             .contentType(APPLICATION_JSON)
-                            .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken)
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
             );
 
             // then
@@ -253,7 +255,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(get("/boards/my-like")
                     .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             // then
             result.andExpect(status().isOk());

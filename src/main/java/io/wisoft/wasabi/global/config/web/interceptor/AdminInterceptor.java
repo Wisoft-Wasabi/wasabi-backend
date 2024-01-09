@@ -1,7 +1,7 @@
 package io.wisoft.wasabi.global.config.web.interceptor;
 
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
-import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.domain.member.persistence.Role;
 import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.AuthorizationExtractor;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;

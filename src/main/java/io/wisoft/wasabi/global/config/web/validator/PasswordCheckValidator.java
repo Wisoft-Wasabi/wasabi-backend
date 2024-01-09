@@ -1,6 +1,6 @@
 package io.wisoft.wasabi.global.config.web.validator;
 
-import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
+import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

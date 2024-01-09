@@ -3,7 +3,7 @@ package io.wisoft.wasabi.global.config.common.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.domain.member.persistence.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

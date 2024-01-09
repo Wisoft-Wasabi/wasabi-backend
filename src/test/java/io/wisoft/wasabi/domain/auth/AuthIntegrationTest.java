@@ -4,11 +4,11 @@ import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.SignupRequestCustomization;
-import io.wisoft.wasabi.domain.auth.dto.LoginRequest;
-import io.wisoft.wasabi.domain.auth.dto.SignupRequest;
-import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.member.MemberRepository;
-import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.domain.auth.web.dto.LoginRequest;
+import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
+import io.wisoft.wasabi.domain.member.persistence.Member;
+import io.wisoft.wasabi.domain.member.application.MemberRepository;
+import io.wisoft.wasabi.domain.member.persistence.Role;
 import io.wisoft.wasabi.global.config.common.bcrypt.BcryptEncoder;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +53,7 @@ public class AuthIntegrationTest extends IntegrationTest {
 
             //then
             result.andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.data.name").value(request.name()));
+                    .andExpect(jsonPath("$.data.id").exists());
         }
     }
 
