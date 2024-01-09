@@ -81,7 +81,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(post("/boards")
                     .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken)
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
                     .content(json));
 
             // then
@@ -113,6 +113,7 @@ class BoardIntegrationTest extends IntegrationTest {
 
             // then
             result.andExpect(status().isUnauthorized());
+
         }
 
         @DisplayName("요청시 제목과 본문은 필수다.")
@@ -137,7 +138,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(post("/boards")
                     .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken)
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
                     .content(json));
 
             // then
@@ -232,7 +233,7 @@ class BoardIntegrationTest extends IntegrationTest {
                             .param("page", "0")
                             .param("size", "3")
                             .contentType(APPLICATION_JSON)
-                            .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken)
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
             );
 
             // then
@@ -254,7 +255,7 @@ class BoardIntegrationTest extends IntegrationTest {
             // when
             final var result = mockMvc.perform(get("/boards/my-like")
                     .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             // then
             result.andExpect(status().isOk());

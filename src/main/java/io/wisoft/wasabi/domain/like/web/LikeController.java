@@ -4,7 +4,7 @@ import io.wisoft.wasabi.domain.like.web.dto.CancelLikeResponse;
 import io.wisoft.wasabi.domain.like.web.dto.GetLikeResponse;
 import io.wisoft.wasabi.domain.like.web.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.web.dto.RegisterLikeResponse;
-import io.wisoft.wasabi.global.config.common.annotation.Anyone;
+import io.wisoft.wasabi.global.config.web.resolver.Anyone;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;
@@ -31,13 +31,13 @@ public class LikeController {
                                                                        @RequestBody @Valid final RegisterLikeRequest request) {
 
         final RegisterLikeResponse data = isAuthenticated
-            ? likeService.registerLike(accessId, request)
-            : anonymousLikeService.registerLike(accessId, request);
+                ? likeService.registerLike(accessId, request)
+                : anonymousLikeService.registerLike(accessId, request);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.LIKE_REGISTER_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.LIKE_REGISTER_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -47,13 +47,13 @@ public class LikeController {
                                                                    @RequestParam("boardId") @Valid final Long boardId) {
 
         final CancelLikeResponse data = isAuthenticated
-            ? likeService.cancelLike(accessId, boardId)
-            : anonymousLikeService.cancelLike(accessId, boardId);
+                ? likeService.cancelLike(accessId, boardId)
+                : anonymousLikeService.cancelLike(accessId, boardId);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.LIKE_CANCEL_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.LIKE_CANCEL_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -63,13 +63,13 @@ public class LikeController {
                                                                    @RequestParam("boardId") final Long boardId) {
 
         final GetLikeResponse data = isAuthenticated
-            ? likeService.getLikeStatus(accessId, boardId)
-            : anonymousLikeService.getLikeStatus(accessId, boardId);
+                ? likeService.getLikeStatus(accessId, boardId)
+                : anonymousLikeService.getLikeStatus(accessId, boardId);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.GET_LIKE_STATUS_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.GET_LIKE_STATUS_SUCCESS,
+                        data
+                )
         );
     }
 }

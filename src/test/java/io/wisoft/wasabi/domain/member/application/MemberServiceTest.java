@@ -16,6 +16,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.util.Optional;
 
@@ -33,9 +34,6 @@ class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
-
-    @Mock
-    private MemberMapper memberMapper;
 
     @Nested
     @DisplayName("회원 개인 정보 수정")
@@ -127,7 +125,6 @@ class MemberServiceTest {
                     member.getOrganization(),
                     member.getMotto()
             );
-            given(memberMapper.entityToReadMemberInfoResponse(member)).willReturn(mockResponse);
 
             //when
             final var response = memberService.getMemberInfo(memberId);

@@ -10,7 +10,7 @@ import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.Part;
 import io.wisoft.wasabi.domain.member.persistence.Role;
 import io.wisoft.wasabi.global.config.common.Const;
-import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
+import io.wisoft.wasabi.global.config.web.resolver.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;
@@ -115,7 +115,7 @@ class MemberControllerTest {
             final var result = mockMvc.perform(
                     patch("/members")
                             .contentType(APPLICATION_JSON)
-                            .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + accessToken)
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
                             .content(objectMapper.writeValueAsString(request)));
 
             // then

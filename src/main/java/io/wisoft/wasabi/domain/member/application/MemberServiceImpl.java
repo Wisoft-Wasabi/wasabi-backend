@@ -14,11 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-    private final MemberMapper memberMapper;
 
-    public MemberServiceImpl(final MemberRepository memberRepository, final MemberMapper memberMapper) {
+    public MemberServiceImpl(final MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
-        this.memberMapper = memberMapper;
     }
 
     @Override
@@ -36,13 +34,13 @@ public class MemberServiceImpl implements MemberService {
                 request.organization(),
                 request.motto());
 
-        return memberMapper.entityToUpdateMemberInfoResponse(member);
+        return MemberMapper.entityToUpdateMemberInfoResponse(member);
     }
 
     public ReadMemberInfoResponse getMemberInfo(final Long memberId) {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberExceptionExecutor::MemberNotFound);
 
-        return memberMapper.entityToReadMemberInfoResponse(member);
+        return MemberMapper.entityToReadMemberInfoResponse(member);
     }
 }

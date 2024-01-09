@@ -49,6 +49,10 @@ public class LikeServiceImpl implements LikeService {
         final Board board = boardRepository.findById(request.boardId())
                 .orElseThrow(BoardExceptionExecutor::BoardNotFound);
 
+        if (isAlreadyLiked(member.getId(), board.getId())) {
+            throw LikeExceptionExecutor.ExistLike();
+        }
+
         final Like like = LikeMapper.registerLikeRequestToEntity(member, board);
 
         likeRepository.save(like);
@@ -78,7 +82,7 @@ public class LikeServiceImpl implements LikeService {
             throw BoardExceptionExecutor.BoardNotFound();
         }
 
-        final boolean isLike = generateIsLike(memberId, boardId);
+        final boolean isLike = isAlreadyLiked(memberId, boardId);
 
         final int likeCount = Math.toIntExact(likeQueryRepository.countByBoardId(boardId));
 
@@ -87,7 +91,12 @@ public class LikeServiceImpl implements LikeService {
         return new GetLikeResponse(isLike, likeCount);
     }
 
-    private boolean generateIsLike(final Long memberId, final Long boardId) {
+    /**
+     * 메서드 사용처 <br/>
+     * 1. 게시글 상세 조회시 좋아요 여부 (조회 결과가 없으면, 빈 하트로 화면에 출력) <br/>
+     * 2. 특정 게시글에 회원이 좋아요 등록시 중복 여부 확인 (조회 결과가 있으면 중복)
+     */
+    private boolean isAlreadyLiked(final Long memberId, final Long boardId) {
         return likeRepository.existsByMemberIdAndBoardId(memberId, boardId);
     }
 }

@@ -48,7 +48,6 @@ public class AdminControllerTest {
     @SpyBean
     private ResponseAspect responseAspect;
 
-
     @Nested
     @DisplayName("승인되지 않은 회원 조회")
     class getUnapprovedMembers {
@@ -61,7 +60,7 @@ public class AdminControllerTest {
 
             // when
             final var result = mockMvc.perform(get("/admin/members")
-                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + token)
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
                     .contentType(APPLICATION_JSON));
 
             // then
@@ -76,7 +75,7 @@ public class AdminControllerTest {
 
             // when
             final var result = mockMvc.perform(patch("/admin/members")
-                    .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + token)
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(APPLICATION_JSON));
 
@@ -103,9 +102,9 @@ public class AdminControllerTest {
 
             // when
             final var result = mockMvc.perform(delete("/admin/members")
-                .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + token)
-                .contentType(APPLICATION_JSON)
-                .content(content));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
+                    .contentType(APPLICATION_JSON)
+                    .content(content));
 
             // then
             result.andExpect(status().isOk());
@@ -123,9 +122,9 @@ public class AdminControllerTest {
 
             // when
             final var result = mockMvc.perform(delete("/admin/members")
-                .header(Const.AUTH_HEADER,  Const.TOKEN_TYPE + " " + token)
-                .contentType(APPLICATION_JSON)
-                .content(content));
+                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + token)
+                    .contentType(APPLICATION_JSON)
+                    .content(content));
 
             // then
             result.andExpect(status().isBadRequest());

@@ -41,6 +41,7 @@ public enum ResponseType {
     GET_LIKE_STATUS_SUCCESS(HttpStatus.OK, "LIKE-S003", "Get Like Status Success"),
 
     LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "LIKE-F001", "Like Not Found"),
+    EXIST_LIKE(HttpStatus.BAD_REQUEST, "LIKE-F0002", "Exist Like"),
 
     /* 공통(시스템) - COMM */
     UNCAUGHT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMM-F001", "Uncaught Error Occur"),

@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.config.common.annotation;
+package io.wisoft.wasabi.global.config.web.resolver;
 
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
 import io.wisoft.wasabi.global.config.common.Const;

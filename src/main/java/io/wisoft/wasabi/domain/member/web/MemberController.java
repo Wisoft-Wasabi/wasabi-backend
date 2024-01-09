@@ -3,7 +3,7 @@ package io.wisoft.wasabi.domain.member.web;
 import io.wisoft.wasabi.domain.member.web.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.web.dto.UpdateMemberInfoRequest;
 import io.wisoft.wasabi.domain.member.web.dto.UpdateMemberInfoResponse;
-import io.wisoft.wasabi.global.config.common.annotation.MemberId;
+import io.wisoft.wasabi.global.config.web.resolver.MemberId;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;
@@ -26,10 +26,10 @@ public class MemberController {
 
         final UpdateMemberInfoResponse data = memberService.updateMemberInfo(memberId, request);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.MEMBER_UPDATE_INFO_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.MEMBER_UPDATE_INFO_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -38,10 +38,10 @@ public class MemberController {
 
         final ReadMemberInfoResponse data = memberService.getMemberInfo(memberId);
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.READ_MEMBER_INFO_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.READ_MEMBER_INFO_SUCCESS,
+                        data
+                )
         );
     }
 }

@@ -6,4 +6,7 @@ public class LikeExceptionExecutor {
         return new LikeNotFoundException();
     }
 
+    public static ExistLikeException ExistLike() {
+        return new ExistLikeException();
+    }
 }
