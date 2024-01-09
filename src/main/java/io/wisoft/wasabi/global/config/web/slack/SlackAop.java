@@ -1,4 +1,4 @@
-package io.wisoft.wasabi.global.config.web.aspect;
+package io.wisoft.wasabi.global.config.web.slack;
 
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import io.wisoft.wasabi.global.config.web.slack.*;

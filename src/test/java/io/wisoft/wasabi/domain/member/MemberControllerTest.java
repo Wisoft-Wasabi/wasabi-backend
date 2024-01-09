@@ -7,7 +7,7 @@ import io.wisoft.wasabi.domain.member.dto.ReadMemberInfoResponse;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoRequest;
 import io.wisoft.wasabi.domain.member.dto.UpdateMemberInfoResponse;
 import io.wisoft.wasabi.global.config.common.Const;
-import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
+import io.wisoft.wasabi.global.config.web.resolver.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
 import org.junit.jupiter.api.DisplayName;

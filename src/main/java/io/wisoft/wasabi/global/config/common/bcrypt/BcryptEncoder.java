@@ -1,12 +1,15 @@
 package io.wisoft.wasabi.global.config.common.bcrypt;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BcryptEncoder {
 
     private static String salt;
 
-    public BcryptEncoder(final String salt) {
+    public BcryptEncoder(@Value("${bcrypt.secret.salt}") final String salt) {
         BcryptEncoder.salt = salt;
     }
 
