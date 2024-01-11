@@ -2,6 +2,7 @@ package io.wisoft.wasabi.domain.comment;
 
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
+import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.customization.composite.CommentCompositeCustomizer;
 import io.wisoft.wasabi.domain.board.Board;
 import io.wisoft.wasabi.domain.member.Member;
@@ -34,14 +35,15 @@ public class CommentRepositoryTest {
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
         @ParameterizedTest
         @AutoSource
-        @Customization(CommentCompositeCustomizer.class)
+        @Customization(BoardCompositeCustomizer.class)
         void write_comment(final Member member,
-                           final Board board,
-                           final Comment comment) {
+                           final Board board) {
 
             // given
             em.persist(member);
             em.persist(board);
+
+            final Comment comment = new Comment("content", member, board);
 
             // when
             final var result = commentRepository.save(comment);

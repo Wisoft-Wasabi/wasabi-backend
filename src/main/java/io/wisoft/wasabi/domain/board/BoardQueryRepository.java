@@ -1,15 +1,13 @@
 package io.wisoft.wasabi.domain.board;
 
-import com.querydsl.core.types.ConstructorExpression;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.wisoft.wasabi.domain.board.dto.ReadBoardResponse;
 import io.wisoft.wasabi.domain.board.dto.SortBoardResponse;
+import io.wisoft.wasabi.domain.comment.QComment;
 import io.wisoft.wasabi.domain.like.QLike;
 import io.wisoft.wasabi.domain.like.anonymous.QAnonymousLike;
 import io.wisoft.wasabi.domain.member.QMember;
@@ -30,6 +28,7 @@ public class BoardQueryRepository {
     private final QMember member = QMember.member;
     private final QLike like = QLike.like;
     private final QTag tag = QTag.tag;
+    private final QComment comment = QComment.comment;
     private final QAnonymousLike anonymousLike = QAnonymousLike.anonymousLike;
 
     public BoardQueryRepository(final JPAQueryFactory jpaQueryFactory) {
@@ -70,44 +69,61 @@ public class BoardQueryRepository {
     public ReadBoardResponse readBoard(final Long boardId, final Long accessId, final boolean isAuthenticated) {
 
         final ConstructorExpression<ReadBoardResponse.Writer> writer =
-            Projections.constructor(
-                ReadBoardResponse.Writer.class,
-                member.email,
-                member.name,
-                member.referenceUrl,
-                member.part,
-                member.organization,
-                member.motto
-            );
+                Projections.constructor(
+                        ReadBoardResponse.Writer.class,
+                        member.email,
+                        member.name,
+                        member.referenceUrl,
+                        member.part,
+                        member.organization,
+                        member.motto
+                );
 
         final ConstructorExpression<ReadBoardResponse> readBoardResponse =
-            Projections.constructor(
-                ReadBoardResponse.class,
-                board.id,
-                board.title,
-                board.content,
-                writer,
-                board.createdAt,
-                like.count().add(anonymousLike.count()),
-                board.views,
-                isLike(boardId, accessId, isAuthenticated),
-                tag.name
-            );
+                Projections.constructor(
+                        ReadBoardResponse.class,
+                        board.id,
+                        board.title,
+                        board.content,
+                        writer,
+                        board.createdAt,
+                        like.count().add(anonymousLike.count()),
+                        board.views,
+                        isLike(boardId, accessId, isAuthenticated),
+                        tag.name
+                );
 
-        return
-            getJpaQuery(readBoardResponse)
-            .leftJoin(tag).on(board.tag.eq(tag))
-            .where(board.id.eq(boardId))
-            .fetchFirst();
+        final ReadBoardResponse response = getJpaQuery(readBoardResponse)
+                    .leftJoin(tag).on(board.tag.eq(tag))
+                    .where(board.id.eq(boardId))
+                    .fetchFirst();
+
+        return response.addComments(getComments(boardId));
+    }
+
+    private List<ReadBoardResponse.Comment> getComments(final Long boardId) {
+
+        return getJpaQuery(Projections.constructor(
+                ReadBoardResponse.Comment.class,
+                comment.id,
+                comment.content,
+                comment.member.id,
+                comment.member.name,
+                comment.member.id.eq(board.member.id),
+                comment.createdAt
+        ))
+                .leftJoin(comment).on(comment.board.eq(board))
+                .where(board.id.eq(boardId))
+                .fetch();
     }
 
     private BooleanExpression isLike(final Long boardId, final Long accessId, final boolean isAuthenticated) {
         return isAuthenticated
-            ? JPAExpressions
+                ? JPAExpressions
                 .selectFrom(like)
                 .where(like.member.id.eq(accessId).and(like.board.id.eq(boardId)))
                 .exists()
-            : JPAExpressions
+                : JPAExpressions
                 .selectFrom(anonymousLike)
                 .where(anonymousLike.sessionId.eq(accessId).and(anonymousLike.board.id.eq(boardId)))
                 .exists();
@@ -121,10 +137,12 @@ public class BoardQueryRepository {
                     .on(tag.eq(board.tag))
                     .where(tag.name.contains(keyword));
         }
+
         return jpaQuery;
     }
 
     private <T> JPAQuery<T> getJpaQuery(final ConstructorExpression<T> constructorExpression) {
+
         return jpaQueryFactory
                 .query()
                 .select(constructorExpression)
@@ -137,11 +155,11 @@ public class BoardQueryRepository {
     private OrderSpecifier ordering(final BoardSortType sortType) {
 
         return switch (sortType) {
-
             case VIEWS -> board.views.desc();
             case LATEST -> board.createdAt.desc();
             case LIKES -> like.count().desc();
             default -> board.createdAt.desc();
         };
     }
+
 }

@@ -2,6 +2,7 @@ package io.wisoft.wasabi.domain.board;
 
 import io.wisoft.wasabi.domain.board.dto.*;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.domain.comment.Comment;
 import io.wisoft.wasabi.domain.member.Member;
 import io.wisoft.wasabi.domain.member.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
