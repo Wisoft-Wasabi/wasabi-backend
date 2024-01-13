@@ -1,9 +1,9 @@
 package io.wisoft.wasabi.global.config.web.slack;
 
-import io.wisoft.wasabi.global.config.web.response.ResponseType;
-import io.wisoft.wasabi.global.config.web.slack.*;
 import io.wisoft.wasabi.global.exception.BusinessException;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -28,11 +28,10 @@ public class SlackAop {
         });
     }
 
-    @After("execution(* io.wisoft.wasabi.domain.auth.AuthController.signup(..))")
+    @After("execution(* io.wisoft.wasabi.domain.auth.web.AuthController.signup(..))")
     public void afterSendMessage() {
         executor.execute(() -> {
             slackService.sendSignUpMessage(new SlackSignUpMessage(), SlackConstant.SIGN_UP_CHANNEL);
         });
     }
-
 }
