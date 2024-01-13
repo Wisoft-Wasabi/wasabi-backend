@@ -1,14 +1,9 @@
 package io.wisoft.wasabi.domain.comment;
 
 import io.wisoft.wasabi.domain.basetime.BaseTimeEntity;
-import io.wisoft.wasabi.domain.board.Board;
-import io.wisoft.wasabi.domain.member.Member;
+import io.wisoft.wasabi.domain.board.persistence.Board;
+import io.wisoft.wasabi.domain.member.persistence.Member;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -62,5 +57,9 @@ public class Comment extends BaseTimeEntity {
 
     public Board getBoard() {
         return board;
+    }
+
+    public String getContent() {
+        return content;
     }
 }

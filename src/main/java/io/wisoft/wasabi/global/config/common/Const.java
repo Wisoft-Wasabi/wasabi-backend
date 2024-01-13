@@ -28,4 +28,28 @@ public final class Const {
     public static final String UNKNOWN = "unknown";
     public static final String LOCALHOST = "127.0.0.1";
     public static final String ALL_IP = "0:0:0:0:0:0:0:1";
+
+    /**
+     * 이미지 파일 확장자
+     */
+    public static final String IMAGE_EXTENSION_JPEG = "image/jpeg";
+    public static final String IMAGE_EXTENSION_PNG = "image/png";
+    public static final String IMAGE_EXTENSION_JPG = "image/jpg";
+    public static final String CONTENT_TYPE_IMAGE = "image/";
+
+    public static String[] getClientIpHeaders() {
+        return new String[] {
+            Const.X_FORWARDED_FOR,
+            Const.PROXY_CLIENT_IP,
+            Const.WL_PROXY_CLIENT_IP,
+            Const.HTTP_CLIENT_IP,
+            Const.HTTP_X_FORWARDED_FOR,
+            Const.X_REAL_IP,
+            Const.X_REALIP,
+            Const.REMOTE_ADDR,
+            Const.UNKNOWN,
+            Const.LOCALHOST,
+            Const.ALL_IP
+        };
+    }
 }

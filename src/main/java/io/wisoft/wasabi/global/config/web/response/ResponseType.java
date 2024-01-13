@@ -18,6 +18,7 @@ public enum ResponseType {
     READ_MEMBER_INFO_SUCCESS(HttpStatus.OK, "MEMBER-S002", "Member Info Read Success"),
     MEMBER_APPROVE_SUCCESS(HttpStatus.OK, "MEMBER-S003", "Member Approve Success"),
     READ_MEMBER_UN_APPROVE_SUCCESS(HttpStatus.OK, "MEMBER-S004", "Read Member Unapprove Success"),
+    DELETE_SIGN_UP_SUCCESS(HttpStatus.OK, "MEMBER_S005", "Delete Sign Up Requests Success"),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER-F001", "User Not Found"),
     MEMBER_EMAIL_OVERLAP(HttpStatus.CONFLICT, "MEMBER-F003", "User Email Overlap"),
 
@@ -40,6 +41,7 @@ public enum ResponseType {
     GET_LIKE_STATUS_SUCCESS(HttpStatus.OK, "LIKE-S003", "Get Like Status Success"),
 
     LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "LIKE-F001", "Like Not Found"),
+    EXIST_LIKE(HttpStatus.BAD_REQUEST, "LIKE-F0002", "Exist Like"),
 
     /* 댓글 - COMMENTS */
     COMMENT_WRITE_SUCCESS(HttpStatus.CREATED,"COMMENT-S001","Comment Write Success"),

@@ -1,15 +1,14 @@
 package io.wisoft.wasabi.domain.comment;
 
-import io.wisoft.wasabi.domain.board.Board;
-import io.wisoft.wasabi.domain.board.BoardImageServiceImpl;
-import io.wisoft.wasabi.domain.board.BoardMapper;
-import io.wisoft.wasabi.domain.board.BoardRepository;
+import io.wisoft.wasabi.domain.board.application.BoardImageServiceImpl;
+import io.wisoft.wasabi.domain.board.application.BoardRepository;
 import io.wisoft.wasabi.domain.board.exception.BoardExceptionExecutor;
+import io.wisoft.wasabi.domain.board.persistence.Board;
 import io.wisoft.wasabi.domain.comment.dto.WriteCommentRequest;
 import io.wisoft.wasabi.domain.comment.dto.WriteCommentResponse;
-import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.member.application.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.MemberExceptionExecutor;
+import io.wisoft.wasabi.domain.member.persistence.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

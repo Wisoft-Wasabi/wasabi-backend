@@ -1,11 +1,11 @@
 package io.wisoft.wasabi.domain.comment;
 
 import autoparams.AutoSource;
-import io.wisoft.wasabi.domain.board.Board;
-import io.wisoft.wasabi.domain.board.BoardRepository;
+import io.wisoft.wasabi.domain.board.application.BoardRepository;
+import io.wisoft.wasabi.domain.board.persistence.Board;
 import io.wisoft.wasabi.domain.comment.dto.WriteCommentRequest;
-import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.member.application.MemberRepository;
+import io.wisoft.wasabi.domain.member.persistence.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;

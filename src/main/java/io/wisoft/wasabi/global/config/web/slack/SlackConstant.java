@@ -2,7 +2,8 @@ package io.wisoft.wasabi.global.config.web.slack;
 
 public enum SlackConstant {
 
-    ERROR_CHANNEL("#backend-server-error");
+    ERROR_CHANNEL("#backend-server-error"),
+    SIGN_UP_CHANNEL("#sign-up-message");
 
     private String channel;
 

@@ -1,17 +1,13 @@
 package io.wisoft.wasabi.domain.comment;
 
 import autoparams.AutoSource;
-import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
-import io.wisoft.wasabi.domain.board.Board;
-import io.wisoft.wasabi.domain.board.BoardRepository;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
+import io.wisoft.wasabi.domain.board.application.BoardRepository;
+import io.wisoft.wasabi.domain.board.persistence.Board;
 import io.wisoft.wasabi.domain.comment.dto.WriteCommentRequest;
-import io.wisoft.wasabi.domain.comment.dto.WriteCommentResponse;
-import io.wisoft.wasabi.domain.like.LikeRepository;
-import io.wisoft.wasabi.domain.member.Member;
-import io.wisoft.wasabi.domain.member.MemberRepository;
+import io.wisoft.wasabi.domain.like.application.LikeRepository;
+import io.wisoft.wasabi.domain.member.application.MemberRepository;
+import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;

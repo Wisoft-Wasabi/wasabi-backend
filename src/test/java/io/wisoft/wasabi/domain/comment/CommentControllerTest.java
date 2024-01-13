@@ -1,18 +1,13 @@
 package io.wisoft.wasabi.domain.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.board.dto.WriteBoardResponse;
 import io.wisoft.wasabi.domain.comment.dto.WriteCommentRequest;
 import io.wisoft.wasabi.domain.comment.dto.WriteCommentResponse;
-import io.wisoft.wasabi.domain.member.Role;
+import io.wisoft.wasabi.domain.member.persistence.Role;
 import io.wisoft.wasabi.global.config.common.Const;
-import io.wisoft.wasabi.global.config.common.annotation.AnyoneResolver;
-import io.wisoft.wasabi.global.config.common.annotation.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
-import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
+import io.wisoft.wasabi.global.config.web.resolver.MemberIdResolver;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
-import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

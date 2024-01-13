@@ -2,7 +2,7 @@ package io.wisoft.wasabi.domain.comment;
 
 import io.wisoft.wasabi.domain.comment.dto.WriteCommentRequest;
 import io.wisoft.wasabi.domain.comment.dto.WriteCommentResponse;
-import io.wisoft.wasabi.global.config.common.annotation.MemberId;
+import io.wisoft.wasabi.global.config.web.resolver.MemberId;
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
 import jakarta.validation.Valid;

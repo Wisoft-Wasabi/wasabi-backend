@@ -5,21 +5,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BcryptEncoder implements EncryptHelper {
+public class BcryptEncoder {
 
-    private final String salt;
+    private static String salt;
 
     public BcryptEncoder(@Value("${bcrypt.secret.salt}") final String salt) {
-        this.salt = salt;
+        BcryptEncoder.salt = salt;
     }
 
-    @Override
-    public String encrypt(final String password) {
+    public static String encrypt(final String password) {
         return BCrypt.hashpw(password, salt);
     }
 
-    @Override
-    public boolean isMatch(final String password, final String hashed) {
+    public static boolean isMatch(final String password, final String hashed) {
         return BCrypt.checkpw(password, hashed);
     }
 }

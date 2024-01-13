@@ -2,12 +2,9 @@ package io.wisoft.wasabi.global.exception;
 
 import io.wisoft.wasabi.global.config.web.response.Response;
 import io.wisoft.wasabi.global.config.web.response.ResponseType;
-import io.wisoft.wasabi.global.config.web.slack.SlackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,6 +34,8 @@ public class GlobalExceptionHandler {
         allErrors.addAll(fieldErrors);
 
         final String message = String.join(", ", allErrors);
+
+        logger.info("\n [Error] MethodArgumentNotValidException : ErrorMessage : {}", message);
 
         return buildResponse(ResponseType.dtoInvalid(message));
     }
