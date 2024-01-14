@@ -19,7 +19,7 @@ public class SlackAop {
         this.executor = executor;
     }
 
-    @AfterThrowing(pointcut = "execution(* io.wisoft.wasabi.domain..*.*Service*.*(..)) || execution(* io.wisoft.wasabi.global.exception..*.*(..))", throwing = "ex")
+    @AfterThrowing(pointcut = "execution(* io.wisoft.wasabi.domain..*..application..*Service*.*(..)) || execution(* io.wisoft.wasabi.global.exception.GlobalExceptionHandler..*(..))", throwing = "ex")
     public void afterThrowing(final BusinessException ex) {
         executor.execute(() -> {
             slackService.sendSlackMessage(new SlackErrorMessage(LocalDateTime.now(), ex.getErrorType()), SlackConstant.ERROR_CHANNEL);

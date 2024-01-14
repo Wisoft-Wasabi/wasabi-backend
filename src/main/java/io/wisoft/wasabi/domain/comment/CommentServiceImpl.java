@@ -12,8 +12,10 @@ import io.wisoft.wasabi.domain.member.persistence.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class CommentServiceImpl implements CommentService {
     private final Logger logger = LoggerFactory.getLogger(BoardImageServiceImpl.class);
     private final CommentRepository commentRepository;

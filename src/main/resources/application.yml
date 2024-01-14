@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: jwt, bcrypt, aws, slack, dev
+    include: jwt, bcrypt, aws, slack
     #    active: local
     group:
       dev: log-dev

@@ -48,13 +48,13 @@ public class GlobalExceptionHandler {
         return buildResponse(ex.getErrorType());
     }
 
-//    @ExceptionHandler(RuntimeException.class)
-//    public ResponseEntity<Response<?>> handleRuntimeException(final RuntimeException ex) {
-//
-//        logger.info("\n [Error] RuntimeException : ErrorMessage : {}  Path: {}", ex.getMessage(), ex.fillInStackTrace());
-//
-//        return buildResponse(ResponseType.UNCAUGHT_ERROR);
-//    }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Response<?>> handleRuntimeException(final RuntimeException ex) {
+
+        logger.info("\n [Error] RuntimeException : ErrorMessage : {}  Path: {}", ex.getMessage(), ex.fillInStackTrace());
+
+        return buildResponse(ResponseType.UNCAUGHT_ERROR);
+    }
 
     private ResponseEntity<Response<?>> buildResponse(final ResponseType responseType) {
         return ResponseEntity.ofNullable(
