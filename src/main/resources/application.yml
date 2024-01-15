@@ -6,5 +6,27 @@ spring:
       dev: log-dev
       prod: log-prod
       test: test
+      set1: prod, redis
+      set2: prod, redis
 logging.level:
   org.hibernate.SQL: debug
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: set1
+
+server:
+  port: 8081
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: set2
+
+server:
+  port: 8082
