@@ -25,6 +25,10 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    jwt_version = "0.12.3"
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.h2database:h2'
@@ -37,7 +41,9 @@ dependencies {
 
     implementation 'org.mindrot:jbcrypt:0.4'
 
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation "io.jsonwebtoken:jjwt-api:${jwt_version}"
+    runtimeOnly "io.jsonwebtoken:jjwt-gson:${jwt_version}"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwt_version}"
     implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
     // actuator
