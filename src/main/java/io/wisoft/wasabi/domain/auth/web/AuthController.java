@@ -29,10 +29,10 @@ public class AuthController {
         final SignupResponse data = authService.signup(request);
 
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.SIGN_UP_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.SIGN_UP_SUCCESS,
+                        data
+                )
         );
     }
 
@@ -41,10 +41,10 @@ public class AuthController {
         final LoginResponse data = authService.login(request);
 
         return ResponseEntity.ofNullable(
-            Response.of(
-                ResponseType.LOGIN_SUCCESS,
-                data
-            )
+                Response.of(
+                        ResponseType.LOGIN_SUCCESS,
+                        data
+                )
         );
     }
 

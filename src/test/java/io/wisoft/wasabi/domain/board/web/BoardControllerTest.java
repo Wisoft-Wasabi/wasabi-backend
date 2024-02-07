@@ -122,7 +122,7 @@ class BoardControllerTest {
 
         @ParameterizedTest
         @AutoSource
-        @DisplayName("요청이 성공적으로 수행되어, 게시글 조회에 성공한다.")
+        @DisplayName("요청이 성공적으로 수행되어, 댓글이 없는 게시글 조회에 성공한다.")
         void read_board_success(final ReadBoardResponse.Writer writer) throws Exception {
 
             //given
@@ -140,7 +140,45 @@ class BoardControllerTest {
                     0,
                     1,
                     false,
+                    null,
                     null
+            );
+
+            given(boardService.readBoard(any(), any(), anyBoolean())).willReturn(response);
+
+            //when
+            final var result = mockMvc.perform(
+                    get("/boards/{boardId}", boardId)
+                            .contentType(APPLICATION_JSON)
+                            .accept(APPLICATION_JSON)
+                            .session(session));
+
+            //then
+            result.andExpect(status().isOk());
+        }
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("요청이 성공적으로 수행되어, 댓글이 있는 게시글 조회에 성공한다.")
+        void read_board_success(final ReadBoardResponse.Writer writer, final List<ReadBoardResponse.Comment> comments) throws Exception {
+
+            //given
+            final UUID sessionId = UUID.randomUUID();
+            final MockHttpSession session = new MockHttpSession(null, sessionId.toString());
+
+            final Long boardId = 1L;
+
+            final var response = new ReadBoardResponse(
+                    1L,
+                    "title",
+                    "content",
+                    writer,
+                    LocalDateTime.now(),
+                    0,
+                    1,
+                    false,
+                    null,
+                    comments
             );
 
             given(boardService.readBoard(any(), any(), anyBoolean())).willReturn(response);

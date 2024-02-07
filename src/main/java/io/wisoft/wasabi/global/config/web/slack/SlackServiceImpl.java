@@ -15,7 +15,6 @@ import java.io.IOException;
 @Slf4j
 @Service
 @Transactional(readOnly = true)
-//@ConditionalOnProperty(name = "slack.enabled", havingValue = "true")
 public class SlackServiceImpl implements SlackService{
 
     @Value(value = "${slack.hooks.token}")
