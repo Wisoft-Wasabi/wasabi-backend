@@ -247,6 +247,8 @@ class BoardIntegrationTest extends IntegrationTest {
         void read_my_like_boards(final Member member, final Board board1, final Board board2) throws Exception {
 
             // given
+            memberRepository.save(member);
+
             new Like(member, board1);
             new Like(member, board2);
 
