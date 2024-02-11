@@ -12,6 +12,7 @@ import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
 import io.wisoft.wasabi.domain.auth.web.dto.SignupResponse;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.Part;
+import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.interceptor.AdminInterceptor;
 import io.wisoft.wasabi.global.config.web.resolver.AnyoneResolver;
@@ -57,16 +58,14 @@ class AuthControllerTest {
     @SpyBean
     private ResponseAspect responseAspect;
 
-    @Spy
+    @Autowired
     private ObjectMapper objectMapper;
-
-    private final String TOKEN_TYPE = "bearer";
 
     @Nested
     @DisplayName("회원 가입")
     class SignUp {
 
-        @DisplayName("입력 정보가 적합하여 회원 가입에 성공한다.")
+        @DisplayName("입력한 정보가 적합하여 회원 가입에 성공한다.")
         @ParameterizedTest
         @AutoSource
         @Customization(SignupRequestCustomization.class)
@@ -136,7 +135,7 @@ class AuthControllerTest {
                     member.getRole(),
                     member.isActivation(),
                     accessToken,
-                    TOKEN_TYPE
+                    Const.TOKEN_TYPE
             );
 
             given(authService.login(request)).willReturn(response);
@@ -152,25 +151,23 @@ class AuthControllerTest {
             result.andExpect(status().isOk());
         }
 
-        @Test
-        @DisplayName("입력한 정보가 유효성 검사에 적합하지 않아, 로그인에 실패한다.")
-        void login_fail_invalid_email_format() throws Exception {
+    }
 
-            //given
-            final var request = new LoginRequest(
-                    "not-email-format",
-                    "pass12"
-            );
+    @DisplayName("입력한 정보가 유효성 검사에 적합하지 않아, 로그인에 실패한다.")
+    @ParameterizedTest
+    @AutoSource
+    void login_fail_invalid_email_format(final SignupRequest request) throws Exception {
 
-            //when
-            final var result = mockMvc.perform(
-                    post("/auth/login")
-                            .accept(APPLICATION_JSON)
-                            .contentType(APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)));
+        //given
 
-            //then
-            result.andExpect(status().isBadRequest());
-        }
+        //when
+        final var result = mockMvc.perform(
+                post("/auth/login")
+                        .accept(APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)));
+
+        //then
+        result.andExpect(status().isBadRequest());
     }
 }

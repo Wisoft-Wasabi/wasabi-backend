@@ -3,6 +3,7 @@ package io.wisoft.wasabi.domain.auth;
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.customization.SignupRequestCustomization;
 import io.wisoft.wasabi.domain.auth.web.dto.LoginRequest;
 import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
@@ -64,26 +65,27 @@ public class AuthIntegrationTest extends IntegrationTest {
         @DisplayName("이메일과 비밀번호가 일치해, 로그인에 성공한다.")
         @ParameterizedTest
         @AutoSource
-        @Customization(SignupRequestCustomization.class)
-        void login_success(final SignupRequest request) throws Exception {
+        @Customization({NotSaveMemberCustomization.class,SignupRequestCustomization.class})
+        void login_success(final SignupRequest request, final Member member) throws Exception {
 
             //given
-            final Member member = new Member(
-                    request.email(),
-                    BcryptEncoder.encrypt(request.password()),
-                    request.name(),
-                    request.phoneNumber(),
-                    false,
-                    Role.GENERAL,
-                    request.referenceUrl(),
-                    request.part(),
-                    request.organization(),
-                    request.motto()
-            );
+//            final Member member = new Member(
+//                    request.email(),
+//                    BcryptEncoder.encrypt(request.password()),
+//                    request.name(),
+//                    request.phoneNumber(),
+//                    false,
+//                    Role.GENERAL,
+//                    request.referenceUrl(),
+//                    request.part(),
+//                    request.organization(),
+//                    request.motto()
+//            );
+
 
             memberRepository.save(member);
 
-            final var loginRequest = new LoginRequest(request.email(), request.password());
+            final var loginRequest = new LoginRequest(member.getEmail(), member.getPassword());
 
             //when
             final var result = mockMvc.perform(post("/auth/login")

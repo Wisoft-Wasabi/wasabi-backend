@@ -26,6 +26,7 @@ public class NotSaveMemberCustomization implements Customizer {
                 .append(random.nextInt(1_000_000))
                 .append("@gmail.com")
                 .toString();
+
         final Member member = new Member(
                 email,
                 "test1234",

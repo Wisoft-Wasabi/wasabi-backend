@@ -38,7 +38,7 @@ public class AuthService {
             throw MemberExceptionExecutor.EmailOverlap();
         }
 
-        final Member member = MemberMapper.signUpRequestToEntity(request);
+        final Member member = MemberMapper.signuprequesttoentity(request);
 
         memberRepository.save(member);
 

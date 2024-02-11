@@ -77,6 +77,9 @@ public class Member extends BaseTimeEntity {
         this.motto = motto;
     }
 
+    protected Member() {
+    }
+
     /* 비즈니스 로직 */
     public void update(final String name,
                        final String phoneNumber,
@@ -94,9 +97,6 @@ public class Member extends BaseTimeEntity {
 
     public void activate() {
         this.activation = true;
-    }
-
-    protected Member() {
     }
 
     public Long getId() {

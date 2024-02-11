@@ -8,6 +8,9 @@ public final class Const {
     public static final String TOKEN_TYPE = "Bearer";
     public static final String IS_AUTHENTICATED = "isAuthenticated";
     public static final String AUTH_HEADER = "Authorization";
+    public static final String AUTH_REFERENCE_URL = "www.wisoft.io";
+    public static final String AUTH_ORGANIZATION = "wisoft";
+    public static final String AUTH_MOTTO = "아자아자";
 
     /**
      * MDC 관련

@@ -142,7 +142,6 @@ class MemberServiceTest {
         void read_member_info_fail(final Long invalidId) {
 
             //given
-            given(memberRepository.findById(any())).willThrow(new MemberNotFoundException());
 
             //when
 

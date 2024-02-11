@@ -48,7 +48,7 @@ class MemberControllerTest {
     @SpyBean
     private ResponseAspect responseAspect;
 
-    @Spy
+    @Autowired
     private ObjectMapper objectMapper;
 
     @Nested
@@ -112,8 +112,7 @@ class MemberControllerTest {
             given(memberService.updateMemberInfo(any(), any())).willReturn(response);
 
             // when
-            final var result = mockMvc.perform(
-                    patch("/members")
+            final var result = mockMvc.perform(patch("/members")
                             .contentType(APPLICATION_JSON)
                             .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
                             .content(objectMapper.writeValueAsString(request)));

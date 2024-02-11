@@ -14,7 +14,7 @@ import io.wisoft.wasabi.global.config.common.bcrypt.BcryptEncoder;
 import org.springframework.data.domain.Slice;
 
 public class MemberMapper {
-    public static Member signUpRequestToEntity(final SignupRequest request) {
+    public static Member signuprequesttoentity(final SignupRequest request) {
         return new Member(
                 request.email(),
                 BcryptEncoder.encrypt(request.password()),

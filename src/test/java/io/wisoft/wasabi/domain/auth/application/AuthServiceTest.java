@@ -62,7 +62,7 @@ class AuthServiceTest {
                     request.organization(),
                     request.motto()
             );
-            final var member = MemberMapper.signUpRequestToEntity(request);
+            final var member = MemberMapper.signuprequesttoentity(request);
             given(memberRepository.existsByEmail(request.email())).willReturn(false);
 
             // TODO
