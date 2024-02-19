@@ -54,6 +54,10 @@ public class AuthService {
             throw AuthExceptionExecutor.LoginFail();
         }
 
+        if (!member.isActivation()) {
+            throw AuthExceptionExecutor.Forbidden();
+        }
+
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole(), member.isActivation());
 
         logger.info("[Result] 이메일 : {} 의 로그인 요청", request.email());
