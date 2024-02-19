@@ -2,14 +2,12 @@ package io.wisoft.wasabi.domain.auth.web;
 
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.customization.SignupRequestCustomization;
 import io.wisoft.wasabi.domain.auth.application.AuthService;
-import io.wisoft.wasabi.domain.auth.web.dto.LoginRequest;
-import io.wisoft.wasabi.domain.auth.web.dto.LoginResponse;
-import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
-import io.wisoft.wasabi.domain.auth.web.dto.SignupResponse;
+import io.wisoft.wasabi.domain.auth.web.dto.*;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.Part;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
@@ -171,6 +169,30 @@ class AuthControllerTest {
 
             //then
             result.andExpect(status().isBadRequest());
+        }
+    }
+
+    @Nested
+    @DisplayName("이메일 인증")
+    class VerifyEmail {
+
+        @Test
+        @DisplayName("이메일 인증을 위한 인증 코드를 성공적으로 반환한다.")
+        void verify_email_success() throws Exception {
+
+            // given
+            final VerifyEmailRequest request =
+                new VerifyEmailRequest("test@test.com");
+            final String content = objectMapper.writeValueAsString(request);
+
+            // when
+            final var result = mockMvc.perform(
+                post("/auth/mail")
+                    .contentType(APPLICATION_JSON)
+                    .content(content));
+
+            // then
+            result.andExpect(status().isOk());
         }
     }
 }

@@ -1,9 +1,6 @@
 package io.wisoft.wasabi.domain.auth.application;
 
-import io.wisoft.wasabi.domain.auth.web.dto.LoginRequest;
-import io.wisoft.wasabi.domain.auth.web.dto.LoginResponse;
-import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
-import io.wisoft.wasabi.domain.auth.web.dto.SignupResponse;
+import io.wisoft.wasabi.domain.auth.web.dto.*;
 import io.wisoft.wasabi.domain.auth.exception.AuthExceptionExecutor;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.application.MemberMapper;
@@ -22,14 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EmailService emailService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     public AuthService(
             final MemberRepository memberRepository,
-            final JwtTokenProvider jwtTokenProvider) {
+            final JwtTokenProvider jwtTokenProvider,
+            final EmailService emailService) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -58,6 +58,14 @@ public class AuthService {
 
         logger.info("[Result] 이메일 : {} 의 로그인 요청", request.email());
         return MemberMapper.entityToLoginResponse(member, accessToken);
+    }
+
+    public VerifyEmailResponse verifyEmail(final VerifyEmailRequest request) {
+
+        final String authCode = emailService.sendSimpleMessage(request.email());
+
+        logger.info("[Result] 이메일 : {} 의 인증을 위한 인증 코드 전송", request.email());
+        return new VerifyEmailResponse(authCode);
     }
 
 }
