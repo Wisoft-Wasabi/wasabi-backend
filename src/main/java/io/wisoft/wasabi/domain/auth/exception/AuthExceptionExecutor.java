@@ -7,7 +7,7 @@ public class AuthExceptionExecutor {
         return new TokenNotExistException();
     }
 
-    public static NotActivatedException Forbidden() {
-        return new NotActivatedException();
+    public static PermissionDeniedException Forbidden() {
+        return new PermissionDeniedException();
     }
 }
