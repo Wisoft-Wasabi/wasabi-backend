@@ -37,6 +37,20 @@ public final class Const {
     public static final String IMAGE_EXTENSION_JPG = "image/jpg";
     public static final String CONTENT_TYPE_IMAGE = "image/";
 
+    /**
+     * 메일 인증 관련
+     */
+    public static final String MAIL_SUBJECT = "Wasabi 가입 이메일 인증";
+    public static final String MAIL_AUTH_MESSAGE =
+        """
+        안녕하세요? Wasabi 서비스에 가입 요청해주셔서 감사합니다.
+        본 이메일 계정에 대한 인증 코드는 %s 입니다.
+        3분 안에 인증을 완료해 주세요.
+        
+        ※ 본 서비스에 가입과 관련한 문의는 다음의 이메일로 문의해주시기 바랍니다.
+          관리자: migni4575@naver.com
+        """;
+
     public static String[] getClientIpHeaders() {
         return new String[] {
             Const.X_FORWARDED_FOR,

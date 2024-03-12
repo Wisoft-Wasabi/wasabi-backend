@@ -4,6 +4,8 @@ import autoparams.AutoSource;
 import io.wisoft.wasabi.domain.auth.exception.LoginFailException;
 import io.wisoft.wasabi.domain.auth.web.dto.LoginRequest;
 import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
+import io.wisoft.wasabi.domain.auth.web.dto.VerifyEmailRequest;
+import io.wisoft.wasabi.domain.auth.web.dto.VerifyEmailResponse;
 import io.wisoft.wasabi.domain.member.application.MemberMapper;
 import io.wisoft.wasabi.domain.member.application.MemberRepository;
 import io.wisoft.wasabi.domain.member.exception.EmailOverlapException;
@@ -11,6 +13,7 @@ import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.persistence.Role;
 import io.wisoft.wasabi.global.config.common.bcrypt.BcryptEncoder;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,8 +26,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +40,9 @@ class AuthServiceTest {
 
     @Mock
     private JwtTokenProvider jwtTokenProvider;
+
+    @Mock
+    private EmailService emailService;
 
     @Nested
     @DisplayName("회원 가입")
@@ -148,6 +153,29 @@ class AuthServiceTest {
 
             //then
             assertThrows(LoginFailException.class, () -> authService.login(request));
+        }
+    }
+
+    @Nested
+    @DisplayName("이메일 인증")
+    class VerifyEmail {
+
+        @ParameterizedTest
+        @AutoSource
+        @DisplayName("이메일 인증을 위한 인증 코드 전송 후 성공적으로 인증 코드가 반환된다.")
+        void verify_email_success(final VerifyEmailRequest request) {
+
+            // given
+            given(emailService.sendSimpleMessage(anyString())).willReturn("000000");
+
+            // when
+            final var result = authService.verifyEmail(request);
+
+            // then
+            SoftAssertions.assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result).isNotNull();
+                softAssertions.assertThat(result.authCode()).isEqualTo("000000");
+            });
         }
     }
 }

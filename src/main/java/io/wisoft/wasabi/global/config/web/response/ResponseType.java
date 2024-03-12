@@ -8,6 +8,7 @@ public enum ResponseType {
     /* 인증 - AUTH */
     SIGN_UP_SUCCESS(HttpStatus.CREATED, "AUTH-S001", "Sign up Success"),
     LOGIN_SUCCESS(HttpStatus.OK, "AUTH-S002", "Login Success"),
+    SEND_AUTH_CODE_SUCCESS(HttpStatus.OK, "AUTH-S003", "Send Auth code to Email Success"),
 
     LOGIN_FAIL(HttpStatus.BAD_REQUEST, "AUTH-F001", "Login Fail"),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-F002", "Token Not Exist"),

@@ -2,10 +2,12 @@ package io.wisoft.wasabi.domain.auth;
 
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wisoft.wasabi.customization.SignupRequestCustomization;
 import io.wisoft.wasabi.domain.auth.web.dto.LoginRequest;
 import io.wisoft.wasabi.domain.auth.web.dto.SignupRequest;
+import io.wisoft.wasabi.domain.auth.web.dto.VerifyEmailRequest;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.domain.member.application.MemberRepository;
 import io.wisoft.wasabi.domain.member.persistence.Role;
@@ -13,6 +15,7 @@ import io.wisoft.wasabi.global.config.common.bcrypt.BcryptEncoder;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
@@ -94,6 +97,30 @@ public class AuthIntegrationTest extends IntegrationTest {
             //then
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.accessToken").isNotEmpty());
+        }
+    }
+
+    @Nested
+    @DisplayName("이메일 인증")
+    class VerifyEmail {
+
+        @Test
+        @DisplayName("이메일 인증을 위한 인증 코드가 성공적으로 반환된다.")
+        void verify_email_success() throws Exception {
+
+            // given
+            final VerifyEmailRequest request =
+                new VerifyEmailRequest("migni4575@naver.com");
+            final String content = objectMapper.writeValueAsString(request);
+
+            // when
+            final var result = mockMvc.perform(
+                post("/auth/mail")
+                    .contentType(APPLICATION_JSON)
+                    .content(content));
+
+            // then
+            result.andExpect(status().isOk());
         }
     }
 }
