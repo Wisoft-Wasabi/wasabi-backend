@@ -2,27 +2,26 @@ package io.wisoft.wasabi.domain.like.web;
 
 import autoparams.AutoSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.domain.like.web.LikeService;
 import io.wisoft.wasabi.domain.like.web.dto.CancelLikeResponse;
 import io.wisoft.wasabi.domain.like.web.dto.GetLikeResponse;
 import io.wisoft.wasabi.domain.like.web.dto.RegisterLikeRequest;
 import io.wisoft.wasabi.domain.like.web.dto.RegisterLikeResponse;
 import io.wisoft.wasabi.domain.like.exception.LikeNotFoundException;
-import io.wisoft.wasabi.domain.like.web.LikeController;
 import io.wisoft.wasabi.domain.member.persistence.Role;
 import io.wisoft.wasabi.global.config.common.Const;
 import io.wisoft.wasabi.global.config.web.resolver.MemberIdResolver;
 import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.global.config.web.response.ResponseAspect;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.validation.constraints.Min;
@@ -34,6 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
 @WebMvcTest(controllers = LikeController.class)
 class LikeControllerTest {
 
@@ -58,29 +58,38 @@ class LikeControllerTest {
     @SpyBean
     private ResponseAspect responseAspect;
 
+    private String accessToken;
+
+    @BeforeEach
+    void createToken() {
+        accessToken = jwtTokenProvider.createAccessToken(
+                1L,
+                "wasabi",
+                Role.GENERAL,
+                false
+        );
+    }
+
     @Nested
     @DisplayName("좋아요 등록")
     class RegisterLike {
 
-        @Test
         @DisplayName("요청 시 정상적으로 등록되어야 한다.")
-        void register_like() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void register_like(final RegisterLikeRequest request) throws Exception {
 
             //given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
-
-            final var request = new RegisterLikeRequest(1L);
-
             final var response = new RegisterLikeResponse(1L);
+
             given(likeService.registerLike(any(), any())).willReturn(response);
 
-
             //when
-            final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
-                    .content(objectMapper.writeValueAsString(request)));
-
+            final var result = mockMvc.perform(
+                    post("/likes")
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
+                            .content(objectMapper.writeValueAsString(request))
+                            .contentType(APPLICATION_JSON));
 
             //then
             result.andExpect(status().isCreated());
@@ -101,33 +110,32 @@ class LikeControllerTest {
             final String content = objectMapper.writeValueAsString(request);
 
             // when
-            final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .content(content)
-                    .session(session));
+            final var result = mockMvc.perform(
+                    post("/likes")
+                            .content(content)
+                            .contentType(APPLICATION_JSON)
+                            .session(session));
 
             // then
             result.andExpect(status().isCreated());
         }
 
-        @Test
         @DisplayName("존재하지 않는 데이터 요청 시 404 에러를 반환한다.")
-        void register_like_fail() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void register_like_fail(final RegisterLikeRequest request) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, false);
-
-            final var request = new RegisterLikeRequest(1L);
-
-            final var response = new RegisterLikeResponse(1L);
             given(likeService.registerLike(any(), any())).willThrow(new LikeNotFoundException());
 
-            // when
-            final var result = mockMvc.perform(post("/likes")
-                    .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
-                    .content(objectMapper.writeValueAsString(request)));
+            final String content = objectMapper.writeValueAsString(request);
 
+            // when
+            final var result = mockMvc.perform(
+                    post("/likes")
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
+                            .content(content)
+                            .contentType(APPLICATION_JSON));
 
             // then
             result.andExpect(status().isNotFound());
@@ -141,21 +149,17 @@ class LikeControllerTest {
         @DisplayName("요청 시 정상적으로 응답된다.")
         @ParameterizedTest
         @AutoSource
-        void cancel_like(
-                final Long boardId,
-                final CancelLikeResponse response
-        ) throws Exception {
+        void cancel_like(final Long boardId,
+                         final CancelLikeResponse response) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
-
             given(likeService.cancelLike(any(), any())).willReturn(response);
 
             // when
-            final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
-
+            final var result = mockMvc.perform(
+                    delete("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             // then
             result.andExpect(status().isOk());
@@ -174,9 +178,10 @@ class LikeControllerTest {
             given(anonymousLikeService.cancelLike(any(), any())).willReturn(response);
 
             // when
-            final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .session(session));
+            final var result = mockMvc.perform(
+                    delete("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .session(session));
 
             // then
             result.andExpect(status().isOk());
@@ -185,20 +190,16 @@ class LikeControllerTest {
         @DisplayName("존재하지 않는 데이터 요청 시 404 에러를 반환한다.")
         @ParameterizedTest
         @AutoSource
-        void cancel_like_fail(
-                final Long boardId,
-                final LikeNotFoundException exception
-        ) throws Exception {
+        void cancel_like_fail(final Long boardId) throws Exception {
 
             // given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
-
-            given(likeService.cancelLike(any(), any())).willThrow(exception);
+            given(likeService.cancelLike(any(), any())).willThrow(new LikeNotFoundException());
 
             // when
-            final var result = mockMvc.perform(delete("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
+            final var result = mockMvc.perform(
+                    delete("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             // then
             result.andExpect(status().isNotFound());
@@ -209,44 +210,39 @@ class LikeControllerTest {
     @DisplayName("좋아요 상태 조회")
     class GetLikeStatus {
 
-        @Test
         @DisplayName("요청 시 정상적으로 조회되어야 한다.")
-        void get_like_status() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void get_like_status(final Long boardId) throws Exception {
 
             //given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
-
-            final Long boardId = 1L;
-
             final var response = new GetLikeResponse(false, 0);
+
             given(likeService.getLikeStatus(any(), any())).willReturn(response);
 
             //when
-            final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
+            final var result = mockMvc.perform(
+                    get("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             //then
             result.andExpect(status().isOk());
         }
 
-        @Test
         @DisplayName("존재하지 않는 데이터 요청 시 404 에러를 반환한다.")
-        void get_like_status_fail() throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void get_like_status_fail(final Long boardId) throws Exception {
 
             //given
-            final String accessToken = jwtTokenProvider.createAccessToken(1L, "wasabi", Role.GENERAL, true);
-
-            final Long boardId = 10L;
-
-            final var response = new GetLikeResponse(false, 0);
             given(likeService.getLikeStatus(any(), any())).willThrow(new LikeNotFoundException());
 
             //when
-            final var result = mockMvc.perform(get("/likes")
-                    .param("boardId", String.valueOf(boardId))
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
-
+            final var result = mockMvc.perform(
+                    get("/likes")
+                            .param("boardId", String.valueOf(boardId))
+                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
 
             //then
             result.andExpect(status().isNotFound());

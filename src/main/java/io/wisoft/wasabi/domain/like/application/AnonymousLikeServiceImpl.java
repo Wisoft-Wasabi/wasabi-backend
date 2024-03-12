@@ -28,6 +28,7 @@ public class AnonymousLikeServiceImpl implements LikeService {
     public AnonymousLikeServiceImpl(final AnonymousLikeRepository anonymousLikeRepository,
                                     final BoardRepository boardRepository,
                                     final LikeQueryRepository likeQueryRepository) {
+
         this.anonymousLikeRepository = anonymousLikeRepository;
         this.boardRepository = boardRepository;
         this.likeQueryRepository = likeQueryRepository;
@@ -66,7 +67,9 @@ public class AnonymousLikeServiceImpl implements LikeService {
 
     @Override
     public GetLikeResponse getLikeStatus(final Long accessId, final Long boardId) {
+
         final boolean isExistsBoard = boardRepository.existsById(boardId);
+
         if (!isExistsBoard) {
             throw BoardExceptionExecutor.BoardNotFound();
         }

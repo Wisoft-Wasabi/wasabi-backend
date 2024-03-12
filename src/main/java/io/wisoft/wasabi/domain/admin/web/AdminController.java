@@ -25,6 +25,7 @@ public class AdminController {
 
     @GetMapping("/members")
     public ResponseEntity<Response<Slice<MembersResponse>>> getUnapprovedMembers(@PageableDefault final Pageable pageable) {
+
         final Slice<MembersResponse> data = adminService.getUnapprovedMembers(pageable);
 
         return ResponseEntity.ofNullable(
@@ -37,6 +38,7 @@ public class AdminController {
 
     @PatchMapping("/members")
     public ResponseEntity<Response<ApproveMemberResponse>> approveMember(@RequestBody final ApproveMemberRequest request) {
+
         final ApproveMemberResponse data = adminService.approveMember(request);
 
         return ResponseEntity.ofNullable(

@@ -4,8 +4,8 @@ import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.board.persistence.Board;
+import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.like.persistence.Like;
-import io.wisoft.wasabi.domain.like.application.LikeRepository;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @ActiveProfiles("test")
@@ -34,6 +34,7 @@ class LikeRepositoryTest {
 
     private Like init(final Member member,
                       final Board board) {
+
         em.persist(member);
         em.persist(board);
 
@@ -97,10 +98,8 @@ class LikeRepositoryTest {
             final var expected = likeRepository.save(like);
 
             // when
-            final var result = likeRepository.findByMemberIdAndBoardId(
-                    member.getId(),
-                    board.getId()
-            ).orElseThrow();
+            final var result = likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId())
+                    .orElseThrow();
 
             // then
             assertSoftly(softAssertions -> {
@@ -122,6 +121,33 @@ class LikeRepositoryTest {
 
             // then
             assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("좋아요 취소")
+    class CancelLike {
+
+        @DisplayName("요청 시 정상적으로 취소되어야 한다.")
+        @ParameterizedTest
+        @AutoSource
+        @Customization(BoardCompositeCustomizer.class)
+        void cancel_like(final Member member,
+                         final Board board) {
+
+            // given
+            final Like like = init(member, board);
+
+            likeRepository.save(like);
+
+            // when
+            like.delete();
+            likeRepository.deleteById(like.getId());
+
+            // then
+            assertThatThrownBy(() ->
+                    likeRepository.findByMemberIdAndBoardId(member.getId(), board.getId())
+                            .orElseThrow(LikeExceptionExecutor::LikeNotFound));
         }
     }
 }

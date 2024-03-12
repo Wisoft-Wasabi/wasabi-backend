@@ -33,6 +33,7 @@ public class LikeServiceImpl implements LikeService {
                            final MemberRepository memberRepository,
                            final BoardRepository boardRepository,
                            final LikeQueryRepository likeQueryRepository) {
+
         this.likeRepository = likeRepository;
         this.memberRepository = memberRepository;
         this.boardRepository = boardRepository;
@@ -65,6 +66,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     @Transactional
     public CancelLikeResponse cancelLike(final Long memberId, final Long boardId) {
+
         final Like like = likeRepository.findByMemberIdAndBoardId(memberId, boardId)
                 .orElseThrow(LikeExceptionExecutor::LikeNotFound);
 
@@ -78,6 +80,7 @@ public class LikeServiceImpl implements LikeService {
     public GetLikeResponse getLikeStatus(final Long memberId, final Long boardId) {
 
         final boolean isExistsBoard = boardRepository.existsById(boardId);
+
         if (!isExistsBoard) {
             throw BoardExceptionExecutor.BoardNotFound();
         }
