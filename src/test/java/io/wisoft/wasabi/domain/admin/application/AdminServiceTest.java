@@ -3,14 +3,13 @@ package io.wisoft.wasabi.domain.admin.application;
 import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
-import io.wisoft.wasabi.domain.admin.web.dto.DeleteSignUpRequest;
-import org.assertj.core.api.SoftAssertions;
 import io.wisoft.wasabi.domain.admin.web.dto.ApproveMemberRequest;
 import io.wisoft.wasabi.domain.admin.web.dto.ApproveMemberResponse;
+import io.wisoft.wasabi.domain.admin.web.dto.DeleteSignUpRequest;
 import io.wisoft.wasabi.domain.admin.web.dto.MembersResponse;
-import io.wisoft.wasabi.domain.member.persistence.Member;
-import io.wisoft.wasabi.domain.member.application.MemberMapper;
 import io.wisoft.wasabi.domain.member.application.MemberRepository;
+import io.wisoft.wasabi.domain.member.exception.MemberNotFoundException;
+import io.wisoft.wasabi.domain.member.persistence.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -48,24 +49,28 @@ class AdminServiceTest {
         @ParameterizedTest
         @AutoSource
         @Customization(NotSaveMemberCustomization.class)
-        void read_unapproved_members(final Member member1, final Member member2) {
+        void read_unapproved_members(final Member member1,
+                                     final Member member2) {
 
             // given
-            final var members = new SliceImpl<>(List.of(member1, member2));
+            final SliceImpl<Member> members = new SliceImpl<>(List.of(member1, member2));
 
-            given(memberRepository.findMemberByUnactivated(pageable)).willReturn(members);
+            given(memberRepository.findMemberByUnactivated(any())).willReturn(members);
 
-            final var mockResponse = members.map(member -> new MembersResponse(
+            final var response = members.map(member -> new MembersResponse(
                     member.getId(),
                     member.getName(),
                     member.getEmail()
             ));
 
             // when
-            final var unapprovedMembers = adminServiceImpl.getUnapprovedMembers(pageable);
+            final var result = adminServiceImpl.getUnapprovedMembers(pageable);
 
             // then
-            assertThat(unapprovedMembers.getContent()).hasSize(members.getContent().size());
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result.getContent().size()).isEqualTo(response.getSize());
+                softAssertions.assertThat(result.getContent().get(0).name()).isEqualTo(response.getContent().get(0).name());
+            });
         }
     }
 
@@ -79,15 +84,32 @@ class AdminServiceTest {
         void update_approve_activate_member(final Member member) {
 
             // given
-            final ApproveMemberRequest request = new ApproveMemberRequest(member.getId());
+            final var request = new ApproveMemberRequest(member.getId());
 
-            given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+            given(memberRepository.findById(any())).willReturn(Optional.of(member));
+
+            final var response = new ApproveMemberResponse(request.memberId());
 
             // when
-            final var approveMemberResponse = adminServiceImpl.approveMember(request);
+            final var result = adminServiceImpl.approveMember(request);
 
             // then
-            assertThat(approveMemberResponse.id()).isEqualTo(member.getId());
+            assertThat(result.id()).isEqualTo(response.id());
+        }
+
+        @DisplayName("존재하지 않는 유저의 승인 요청은 거절된다.")
+        @ParameterizedTest
+        @AutoSource
+        void update_approve_fail_member_not_found(final ApproveMemberRequest request) {
+
+            // given
+            given(memberRepository.findById(any())).willReturn(Optional.empty());
+
+            // when
+
+            // then
+            assertThrows(MemberNotFoundException.class,
+                    () -> adminServiceImpl.approveMember(request));
         }
     }
 
@@ -107,7 +129,7 @@ class AdminServiceTest {
             final var result = adminServiceImpl.deleteSignUp(request);
 
             // then
-            SoftAssertions.assertSoftly(softAssertions -> {
+            assertSoftly(softAssertions -> {
                 softAssertions.assertThat(result).isNotNull();
                 softAssertions.assertThat(result.deletedCount()).isEqualTo(request.ids().size());
             });

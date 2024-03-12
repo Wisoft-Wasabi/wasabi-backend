@@ -2,8 +2,6 @@ package io.wisoft.wasabi.domain.like.application;
 
 import autoparams.AutoSource;
 import io.wisoft.wasabi.domain.like.persistence.AnonymousLike;
-import io.wisoft.wasabi.domain.like.application.AnonymousLikeRepository;
-import io.wisoft.wasabi.domain.like.application.AnonymousLikeServiceImpl;
 import io.wisoft.wasabi.domain.board.persistence.Board;
 import io.wisoft.wasabi.domain.board.application.BoardRepository;
 import io.wisoft.wasabi.domain.like.persistence.LikeQueryRepository;

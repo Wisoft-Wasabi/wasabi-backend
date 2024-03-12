@@ -21,6 +21,7 @@ public class LikeController {
 
     public LikeController(@Qualifier("likeService") final LikeService likeService,
                           @Qualifier("anonymousLikeService") final LikeService anonymousLikeService) {
+
         this.likeService = likeService;
         this.anonymousLikeService = anonymousLikeService;
     }

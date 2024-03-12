@@ -4,9 +4,6 @@ import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.board.persistence.Board;
-import io.wisoft.wasabi.domain.like.persistence.AnonymousLike;
-import io.wisoft.wasabi.domain.like.persistence.Like;
-import io.wisoft.wasabi.domain.like.persistence.LikeQueryRepository;
 import io.wisoft.wasabi.domain.member.persistence.Member;
 import io.wisoft.wasabi.setting.QueryDslTestConfig;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +32,7 @@ class LikeQueryRepositoryTest {
 
     private void init(final Member member,
                       final Board board) {
+
         em.persist(member);
         em.persist(board);
     }

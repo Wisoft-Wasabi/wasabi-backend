@@ -4,7 +4,6 @@ import autoparams.AutoSource;
 import autoparams.customization.Customization;
 import io.wisoft.wasabi.customization.composite.BoardCompositeCustomizer;
 import io.wisoft.wasabi.domain.like.persistence.AnonymousLike;
-import io.wisoft.wasabi.domain.like.application.AnonymousLikeRepository;
 import io.wisoft.wasabi.domain.board.persistence.Board;
 import io.wisoft.wasabi.domain.like.exception.LikeExceptionExecutor;
 import io.wisoft.wasabi.domain.member.persistence.Member;
@@ -37,6 +36,7 @@ class AnonymousLikeRepositoryTest {
     private AnonymousLike init(final Member member,
                                final Board board,
                                final Long sessionId) {
+
         em.persist(member);
         em.persist(board);
 

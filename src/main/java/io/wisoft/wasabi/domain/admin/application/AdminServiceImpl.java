@@ -24,6 +24,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     public Slice<MembersResponse> getUnapprovedMembers(final Pageable pageable) {
+
         final Slice<Member> members = memberRepository.findMemberByUnactivated(pageable);
 
         logger.info("[Result] 관리자가 승인되지 않은 회원 전체조회");
