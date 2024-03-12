@@ -10,9 +10,9 @@ public enum ResponseType {
     LOGIN_SUCCESS(HttpStatus.OK, "AUTH-S002", "Login Success"),
     SEND_AUTH_CODE_SUCCESS(HttpStatus.OK, "AUTH-S003", "Send Auth code to Email Success"),
 
-    LOGIN_FAIL(HttpStatus.BAD_REQUEST, "AUTH-F001", "Login Fail"),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-F002", "Token Not Exist"),
-    FORBIDDEN(HttpStatus.FORBIDDEN, "AUTH-F003", "Member Not Activated"),
+    LOGIN_FAIL(HttpStatus.BAD_REQUEST, "AUTH-F001", "Email Or Password Do Not Match"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-F002", "Login Is Required"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "AUTH-F003", "Permission Denied"),
 
     /* 회원 - MEMBER */
     MEMBER_UPDATE_INFO_SUCCESS(HttpStatus.OK, "MEMBER-S001", "Member Update Success"),
