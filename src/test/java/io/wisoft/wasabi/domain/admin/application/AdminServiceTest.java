@@ -81,7 +81,7 @@ class AdminServiceTest {
             // given
             final ApproveMemberRequest request = new ApproveMemberRequest(member.getId());
 
-            given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+            given(memberRepository.existsById(any())).willReturn(true);
 
             // when
             final var approveMemberResponse = adminServiceImpl.approveMember(request);

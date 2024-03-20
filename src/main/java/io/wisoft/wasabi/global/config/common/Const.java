@@ -48,7 +48,7 @@ public final class Const {
         3분 안에 인증을 완료해 주세요.
         
         ※ 본 서비스에 가입과 관련한 문의는 다음의 이메일로 문의해주시기 바랍니다.
-          관리자: migni4575@naver.com
+          관리자: wasabi.auth@gmail.com
         """;
 
     public static String[] getClientIpHeaders() {

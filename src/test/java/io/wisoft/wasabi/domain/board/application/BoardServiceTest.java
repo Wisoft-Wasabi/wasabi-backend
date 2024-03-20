@@ -69,21 +69,16 @@ class BoardServiceTest {
         @ParameterizedTest
         @AutoSource
         @Customization(NotSaveTagCustomization.class)
-        void write_board_with_tag(final Member member, final Tag tag) {
+        void write_board_with_tag(final Member member,
+                                  final WriteBoardRequest request,
+                                  final Tag tag) {
 
             // given
             given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
-            final var request = new WriteBoardRequest(
-                    "title",
-                    "content",
-                    "tag",
-                    new String[]{"imageUrls"},
-                    new ArrayList<>());
-
             final var board = BoardMapper.writeBoardRequestToEntity(request, member);
 
-            given(tagRepository.save(any())).willReturn(tag);
+            given(tagRepository.findByName(any())).willReturn(Optional.of(tag));
             given(boardRepository.save(any())).willReturn(board);
 
             // when
@@ -157,18 +152,11 @@ class BoardServiceTest {
         @ParameterizedTest
         @AutoSource
         void read_board_success(final Member member,
+                                final Board board,
                                 final boolean isAuthenticated,
                                 final ReadBoardResponse response) {
 
             //given
-            final var request = new WriteBoardRequest(
-                    "title",
-                    "content",
-                    "tag",
-                    new String[]{"imageUrls"},
-                    new ArrayList<>());
-
-            final var board = BoardMapper.writeBoardRequestToEntity(request, member);
             given(boardRepository.findById(any())).willReturn(Optional.of(board));
             given(boardQueryRepository.readBoard(any(), any(), anyBoolean())).willReturn(response);
 

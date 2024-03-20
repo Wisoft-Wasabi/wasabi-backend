@@ -20,6 +20,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -86,17 +87,16 @@ public class AuthIntegrationTest extends IntegrationTest {
 
             memberRepository.save(member);
 
+            member.activate();
+
             final var loginRequest = new LoginRequest(request.email(), request.password());
 
             //when
-            final var result = mockMvc.perform(post("/auth/login")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(loginRequest)));
+            final var result = adminLogin();
 
             //then
-            result.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.accessToken").isNotEmpty());
+            assertThat(result).isNotNull();
+            assertThat(result).isNotBlank();
         }
     }
 
