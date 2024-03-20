@@ -35,14 +35,14 @@ public class AdminServiceImpl implements AdminService {
 
         final Long memberId = request.memberId();
 
-        final Member member = memberRepository.findById(memberId)
-                .orElseThrow(MemberExceptionExecutor::MemberNotFound);
+        if (!memberRepository.existsById(memberId)) {
+            throw MemberExceptionExecutor.MemberNotFound();
+        }
 
-        member.activate();
-        memberRepository.save(member);
+        memberRepository.updateActivationStatus(memberId, true);
 
-        logger.info("[Result] {} 회원의 가입 승인", member.getName());
-        return MemberMapper.entityToApproveMemberResponses(member);
+        logger.info("[Result] {} 회원의 가입 승인", memberId);
+        return new ApproveMemberResponse(memberId);
     }
 
     @Override

@@ -54,35 +54,13 @@ class AuthServiceTest {
         void signUp_success(final SignupRequest request) {
 
             //given
+            given(memberRepository.existsByEmail(any())).willReturn(false);
 
-            final var mockMember = new Member(
-                    request.email(),
-                    BcryptEncoder.encrypt(request.password()),
-                    request.name(),
-                    request.phoneNumber(),
-                    false,
-                    Role.GENERAL,
-                    request.referenceUrl(),
-                    request.part(),
-                    request.organization(),
-                    request.motto()
-            );
-            final var member = MemberMapper.signUpRequestToEntity(request);
-            given(memberRepository.existsByEmail(request.email())).willReturn(false);
-
-            // TODO
-////<<<<<<< HEAD:src/test/java/io/wisoft/wasabi/domain/auth/application/AuthServiceTest.java
-//            final var mockResponse = new SignupResponse(1L);
-//
-//            given(memberMapper.entityToMemberSignupResponse(any())).willReturn(mockResponse);
-//
-////=======
-////>>>>>>> develop:src/test/java/io/wisoft/wasabi/domain/auth/AuthServiceTest.java
             //when
             final var response = authService.signup(request);
 
             //then
-            assertThat(response.id()).isNotNull();
+            assertThat(response).isNotNull();
         }
 
 

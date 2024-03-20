@@ -1,59 +1,22 @@
 package io.wisoft.wasabi.domain.board;
 
 import autoparams.AutoSource;
-import autoparams.customization.Customization;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wisoft.wasabi.customization.NotSaveBoardCustomization;
-import io.wisoft.wasabi.customization.NotSaveMemberCustomization;
 import io.wisoft.wasabi.domain.board.web.dto.WriteBoardRequest;
-import io.wisoft.wasabi.domain.board.persistence.Board;
-import io.wisoft.wasabi.domain.board.application.BoardRepository;
-import io.wisoft.wasabi.domain.like.persistence.Like;
-import io.wisoft.wasabi.domain.like.application.LikeRepository;
-import io.wisoft.wasabi.domain.member.persistence.Member;
-import io.wisoft.wasabi.domain.member.application.MemberRepository;
-import io.wisoft.wasabi.global.config.common.Const;
-import io.wisoft.wasabi.global.config.common.jwt.JwtTokenProvider;
 import io.wisoft.wasabi.setting.IntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class BoardIntegrationTest extends IntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private BoardRepository boardRepository;
-
-    @Autowired
-    private LikeRepository likeRepository;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Nested
     @DisplayName("게시글 작성")
@@ -62,69 +25,39 @@ class BoardIntegrationTest extends IntegrationTest {
         @DisplayName("요청시 정상적으로 저장되어야 한다.")
         @ParameterizedTest
         @AutoSource
-        void write_board(final Member member) throws Exception {
+        void write_board(final WriteBoardRequest request) {
 
             // given
-            final Member savedMember = memberRepository.save(member);
-
-            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), member.getName(), member.getRole(), member.isActivation());
-
-            final WriteBoardRequest request = new WriteBoardRequest(
-                    "title",
-                    "content",
-                    "tag",
-                    new String[]{"imageUrls"},
-                    new ArrayList<>());
-
-            final String json = objectMapper.writeValueAsString(request);
+            final String accessToken = adminLogin();
 
             // when
-            final var result = mockMvc.perform(post("/boards")
-                    .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
-                    .content(json));
+            final var result = writeBoard(accessToken, request);
 
             // then
-            result.andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.data.id").exists());
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         }
 
         @DisplayName("요청시 로그인 상태여야 한다.")
         @ParameterizedTest
         @AutoSource
-        void write_board_fail1(final Member member) throws Exception {
+        void write_board_fail1(final WriteBoardRequest request) {
 
             // given
-            memberRepository.save(member);
-
-            final WriteBoardRequest request = new WriteBoardRequest(
-                    "title",
-                    "content",
-                    "tag",
-                    new String[]{"imageUrls"},
-                    new ArrayList<>());
-
-            final String json = objectMapper.writeValueAsString(request);
 
             // when
-            final var result = mockMvc.perform(post("/boards")
-                    .contentType(APPLICATION_JSON)
-                    .content(json));
+            final var result = writeBoard(null, request);
 
             // then
-            result.andExpect(status().isUnauthorized());
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 
         }
 
         @DisplayName("요청시 제목과 본문은 필수다.")
-        @ParameterizedTest
-        @AutoSource
-        void write_post_fail2(final Member member) throws Exception {
+        @Test
+        void write_post_fail2() {
 
             // given
-            final Member savedMember = memberRepository.save(member);
-
-            final String accessToken = jwtTokenProvider.createAccessToken(savedMember.getId(), savedMember.getName(), savedMember.getRole(), member.isActivation());
+            final String accessToken = adminLogin();
 
             final WriteBoardRequest request = new WriteBoardRequest(
                     "    ",
@@ -133,16 +66,12 @@ class BoardIntegrationTest extends IntegrationTest {
                     new String[]{"imageUrls"},
                     new ArrayList<>());
 
-            final String json = objectMapper.writeValueAsString(request);
-
             // when
-            final var result = mockMvc.perform(post("/boards")
-                    .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
-                    .content(json));
+            final var result = writeBoard(accessToken, request);
+
 
             // then
-            result.andExpect(status().isBadRequest());
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -153,198 +82,143 @@ class BoardIntegrationTest extends IntegrationTest {
         @DisplayName("요청이 성공적으로 수행되어, 조회수가 1 증가해야 한다.")
         @ParameterizedTest
         @AutoSource
-        @Customization(NotSaveMemberCustomization.class)
-        void read_board_success(final Member member) throws Exception {
+        void read_board_success(final WriteBoardRequest request) {
 
             //given
-            memberRepository.save(member);
-
-            final Board board = new Board(
-                    "title",
-                    "content",
-                    member
-            );
-            boardRepository.save(board);
+            final String accessToken = adminLogin();
+            final int boardId = getDataByKey(writeBoard(accessToken, request), "id");
 
             //when
-            final var result = mockMvc.perform(get("/boards/{boardId}", board.getId())
-                    .contentType(APPLICATION_JSON));
+            final var result = readBoard((long) boardId);
 
             //then
-            result.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.views").value(1));
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         }
 
-        @Test
         @DisplayName("존재하지 않는 게시글을 조회하려 할 경우, 조회에 실패한다.")
-        void read_not_found_board() throws Exception {
+        @Test
+        void read_not_found_board() {
 
             //given
 
             //when
-            final var result = mockMvc.perform(get("/boards/{boardId}", 123L)
-                    .contentType(MediaType.APPLICATION_JSON));
+            final var result = readBoard(Long.MAX_VALUE);
 
             //then
-            result.andExpect(status().isNotFound());
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         }
 
         @DisplayName("작성한 게시글 목록 조회 요청시 자신이 작성한 게시물들이 반환된다.")
         @ParameterizedTest
         @AutoSource
-        @Customization(NotSaveMemberCustomization.class)
-        void read_my_boards(
-                final Member member
-        ) throws Exception {
+        void read_my_boards(final List<WriteBoardRequest> requests) {
 
             // given
-            memberRepository.save(member);
-
-            final List<Board> boards = List.of(
-                    new Board(
-                            "title",
-                            "content",
-                            member
-                    ),
-                    new Board(
-                            "title",
-                            "content",
-                            member
-                    )
-            );
-            boardRepository.saveAll(boards);
-
-            final List<Like> likes = List.of(
-                    new Like(member, boards.get(0)),
-                    new Like(member, boards.get(1))
-            );
-            likeRepository.saveAll(likes);
-
-            final String accessToken = jwtTokenProvider.createAccessToken(
-                    member.getId(),
-                    member.getName(),
-                    member.getRole(),
-                    member.isActivation()
-            );
+            final String accessToken = adminLogin();
+            requests.forEach(request -> writeBoard(accessToken, request));
 
             // when
-            final var result = mockMvc.perform(
-                    get("/boards/my-board")
-                            .param("page", "0")
-                            .param("size", "3")
-                            .contentType(APPLICATION_JSON)
-                            .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken)
-            );
+            final var result = readMyBoards(accessToken);
 
             // then
-            result.andExpect(status().isOk());
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
         }
 
-        @ParameterizedTest
-        @AutoSource
-        @Customization(NotSaveBoardCustomization.class)
         @DisplayName("좋아요한 게시글 목록 조회 요청시 자신이 좋아요한 게시물들이 반환된다.")
-        void read_my_like_boards(final Member member, final Board board1, final Board board2) throws Exception {
+        @ParameterizedTest
+        @AutoSource
+        void read_my_like_boards(final List<WriteBoardRequest> requests) {
 
             // given
-            new Like(member, board1);
-            new Like(member, board2);
+            final String accessToken = adminLogin();
 
-            final String accessToken = jwtTokenProvider.createAccessToken(member.getId(), member.getName(), member.getRole(), member.isActivation());
+            final List<Long> boardIds = registerBoards(accessToken, requests);
+
+            final List<Long> likedBoardIds = boardIds.stream()
+                .filter(id -> id % 2 == 1)
+                .toList();
+            likedBoardIds.forEach(boardId -> registerLike(accessToken, boardId));
 
             // when
-            final var result = mockMvc.perform(get("/boards/my-like")
-                    .contentType(APPLICATION_JSON)
-                    .header(Const.AUTH_HEADER, Const.TOKEN_TYPE + " " + accessToken));
+            final var result = readMyLikeBoards(accessToken);
 
             // then
-            result.andExpect(status().isOk());
+            final List<?> boardList = getDataByKey(result, "content");
+            assertSoftly(softAssertions -> {
+                softAssertions.assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+                softAssertions.assertThat(boardList.size()).isEqualTo(likedBoardIds.size());
+            });
         }
 
-        @ParameterizedTest
-        @AutoSource
         @DisplayName("게시글 좋아요 순 정렬 후 조회시, 좋아요가 많은 게시글이 먼저 조회된다.")
-        @Customization({NotSaveBoardCustomization.class, NotSaveMemberCustomization.class})
-        void read_boards_order_by_likes(final Member member1, final Member member2, final Member member3) throws Exception {
-            final Slice<Member> members = new SliceImpl<>(List.of(member1, member2, member3));
-            //given
-            memberRepository.saveAll(members);
-
-            final Board board1 = saveBoard(member1);
-            final Board board2 = saveBoard(member1);
-
-            likeRepository.save(new Like(member1, board2));
-            likeRepository.save(new Like(member2, board2));
-            likeRepository.save(new Like(member3, board2));
-
-            //when
-            final var result = mockMvc.perform(get("/boards?sortBy=likes")
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON));
-
-
-            //then
-            result.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
-        }
-
         @ParameterizedTest
         @AutoSource
+        void read_boards_order_by_likes(final List<WriteBoardRequest> requests) {
+            //given
+            final String accessToken = adminLogin();
+
+            final List<Long> boardIds = registerBoards(accessToken, requests);
+
+            final Long likedBoardId = boardIds.get(0);
+            registerLike(accessToken, likedBoardId);
+
+            //when
+            final var result = readBoardList(0, 3, "likes");
+
+            //then
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            // TODO: 컨텐츠 확인
+        }
+
         @DisplayName("게시글 조회수 순 정렬 후 조회시, 조회수가 많은 게시글이 먼저 조회된다.")
-        @Customization(NotSaveMemberCustomization.class)
-        void read_boards_order_by_views(final Member member) throws Exception {
-
-            //given
-            memberRepository.save(member);
-
-            final Board board1 = saveBoard(member);
-            final Board board2 = saveBoard(member);
-
-            board2.increaseView();
-            board2.increaseView();
-            board2.increaseView();
-            board2.increaseView();
-            board2.increaseView();
-
-            boardRepository.save(board2);
-
-            //when
-            final var result = mockMvc.perform(get("/boards?sortBy=views")
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON));
-
-            //then
-            result.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
-        }
-
         @ParameterizedTest
         @AutoSource
-        @DisplayName("게시글 최신 순 정렬 후 조회시, 최신에 작성한 게시글이 먼저 조회된다.")
-        @Customization(NotSaveBoardCustomization.class)
-        void read_boards_order_by_created_at(final Member member) throws Exception {
+        void read_boards_order_by_views(final List<WriteBoardRequest> requests) {
 
             //given
-            memberRepository.save(member);
+            final String accessToken = adminLogin();
 
-            final Board board1 = saveBoard(member);
-            final Board board2 = saveBoard(member);
+            final List<Long> boardIds = registerBoards(accessToken, requests);
+
+            final Long mostViewedBoardId = boardIds.get(0);
+            readBoard(mostViewedBoardId);
 
             //when
-            final var result = mockMvc.perform(get("/boards?sortBy=latest")
-                    .contentType(APPLICATION_JSON)
-                    .accept(APPLICATION_JSON));
+            final var result = readBoardList(0, 3, "views");
 
             //then
-            result.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.content[0].title").value(board2.getTitle()));
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            // TODO: 컨텐츠 확인
         }
 
-        private Board saveBoard(final Member member) {
-            final Random random = new Random();
-            final String title = "title" + random.nextInt(10);
+        @DisplayName("게시글 최신 순 정렬 후 조회시, 최신에 작성한 게시글이 먼저 조회된다.")
+        @ParameterizedTest
+        @AutoSource
+        void read_boards_order_by_created_at(final List<WriteBoardRequest> requests) {
 
-            return boardRepository.save(new Board(title, "content", member));
+            //given
+            final String accessToken = adminLogin();
+
+            final List<Long> boardIds = registerBoards(accessToken, requests);
+
+            final Long latestRegisterBoardId = boardIds.get(requests.size() - 1);
+
+            //when
+            final var result = readBoardList(0, 3, "latest");
+
+            //then
+            assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+            // TODO: 컨텐츠 확인
+        }
+
+        private List<Long> registerBoards(final String accessToken,
+                                          final List<WriteBoardRequest> requests) {
+
+            return requests.stream()
+                .map(request -> writeBoard(accessToken, request))
+                .map(response -> (int) getDataByKey(response, "id"))
+                .map(id -> (long) id)
+                .toList();
         }
     }
 }

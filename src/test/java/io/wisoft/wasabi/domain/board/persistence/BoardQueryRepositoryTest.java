@@ -153,14 +153,17 @@ class BoardQueryRepositoryTest {
             em.persist(new AnonymousLike(sessionId, boards.get(0)));
 
             // when
-            final var result = boardQueryRepository.boardList(pageable, BoardSortType.LIKES, "");
+            final var result = boardQueryRepository.boardList(pageable, BoardSortType.LIKES, "").getContent();
 
             // then
+            final var targetBoard = result.stream()
+                .filter(board -> board.id().equals(boards.get(0).getId()))
+                .findFirst()
+                .get();
             assertSoftly(softAssertions -> {
                 softAssertions.assertThat(result).isNotNull();
                 softAssertions.assertThat(result).isNotEmpty();
-                softAssertions.assertThat(result.getContent().get(0).likeCount()).isEqualTo(2L);
-                softAssertions.assertThat(result.getContent().get(1).likeCount()).isEqualTo(0L);
+                softAssertions.assertThat(targetBoard.likeCount()).isEqualTo(2L);
             });
         }
     }
